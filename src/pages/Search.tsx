@@ -1,20 +1,51 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Search as SearchIcon, Filter, MapPin, Star, Clock } from 'lucide-react';
 import { Link, useSearchParams } from 'react-router-dom';
-
-const PACKAGES = [
-  { id: 1, title: 'Kyoto Cherry Blossom Special', agency: 'Zen Tours', duration: '7 Days', rating: 4.9, price: 85000, image: 'https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?q=80&w=800&auto=format&fit=crop', tags: ['Nature', 'Couples'] },
-  { id: 2, title: 'Santorini Luxury Getaway', agency: 'Aegean Dreams', duration: '5 Days', rating: 5.0, price: 112000, image: 'https://images.unsplash.com/photo-1533105079780-92b9be482077?q=80&w=800&auto=format&fit=crop', tags: ['Luxury', 'Honeymoon'] },
-  { id: 3, title: 'Bali Adventure & Surf', agency: 'Island Explorers', duration: '10 Days', rating: 4.8, price: 45000, image: 'https://images.unsplash.com/photo-1537996194471-e657df975ab4?q=80&w=800&auto=format&fit=crop', tags: ['Adventure', 'Beach'] },
-  { id: 4, title: 'Swiss Alps Ski Retreat', agency: 'Alpine Adventures', duration: '6 Days', rating: 4.9, price: 150000, image: 'https://images.unsplash.com/photo-1531366936337-77b5a83ab825?q=80&w=800&auto=format&fit=crop', tags: ['Snow', 'Luxury'] },
-  { id: 5, title: 'Kerala Backwaters Tour', agency: 'Incredible India', duration: '4 Days', rating: 4.7, price: 25000, image: 'https://images.unsplash.com/photo-1602216056096-3b40cc0c9944?q=80&w=800&auto=format&fit=crop', tags: ['Nature', 'Family'] },
-  { id: 6, title: 'Dubai City & Desert Safari', agency: 'Desert Oasis Tours', duration: '5 Days', rating: 4.8, price: 65000, image: 'https://images.unsplash.com/photo-1512453979436-5a5338098f94?q=80&w=800&auto=format&fit=crop', tags: ['City', 'Adventure'] },
-];
+import { supabase } from '../lib/supabase';
 
 export default function Search() {
   const [searchParams] = useSearchParams();
   const initialQuery = searchParams.get('dest') || '';
   const [query, setQuery] = useState(initialQuery);
+  const [trips, setTrips] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchTrips = async () => {
+      setLoading(true);
+      let queryBuilder = supabase
+        .from('trips')
+        .select('*, agencies(name), packages(price)');
+
+      if (query) {
+        queryBuilder = queryBuilder.ilike('destination', `%${query}%`);
+      }
+
+      const { data } = await queryBuilder;
+      
+      if (data) {
+        const formatted = data.map((trip: any) => {
+          const minPrice = trip.packages && trip.packages.length > 0 
+            ? Math.min(...trip.packages.map((p: any) => p.price)) 
+            : trip.base_price;
+          
+          return {
+            id: trip.id,
+            title: trip.title,
+            agency: trip.agencies?.name || 'Trioo Partner',
+            duration: 'Flexible',
+            rating: 4.9,
+            price: minPrice,
+            image: trip.cover_image || 'https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?q=80&w=800&auto=format&fit=crop',
+          };
+        });
+        setTrips(formatted);
+      }
+      setLoading(false);
+    };
+
+    fetchTrips();
+  }, [query]);
 
   return (
     <div className="max-w-7xl mx-auto px-6 py-8">
@@ -67,7 +98,11 @@ export default function Search() {
         {/* Results Grid */}
         <div className="flex-1">
           <div className="flex justify-between items-center mb-6">
-            <p className="text-gray-500 font-medium">Found <span className="text-gray-900 font-bold">{PACKAGES.length}</span> packages</p>
+            <p className="text-gray-500 font-medium">
+              {loading ? 'Searching...' : `Found `}
+              {!loading && <span className="text-gray-900 font-bold">{trips.length}</span>}
+              {!loading && ` packages`}
+            </p>
             <select className="bg-transparent border-none outline-none font-medium text-gray-900 cursor-pointer">
               <option>Recommended</option>
               <option>Price: Low to High</option>
@@ -77,33 +112,41 @@ export default function Search() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-            {PACKAGES.map((pkg) => (
-              <Link to={`/package/${pkg.id}`} key={pkg.id} className="clay-card-interactive group flex flex-col overflow-hidden">
-                <div className="relative h-56 overflow-hidden">
-                  <img src={pkg.image} alt={pkg.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
-                  <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm px-2.5 py-1 rounded-full text-xs font-bold flex items-center gap-1 shadow-sm">
-                    <Star className="w-3 h-3 text-accent fill-accent" /> {pkg.rating}
-                  </div>
-                </div>
-                <div className="p-5 flex flex-col flex-1">
-                  <div className="flex items-center gap-1 text-xs text-primary font-bold uppercase tracking-wider mb-2">
-                    <MapPin className="w-3 h-3" /> {pkg.agency}
-                  </div>
-                  <h3 className="font-bold text-lg leading-tight mb-2 group-hover:text-primary transition-colors line-clamp-2">
-                    {pkg.title}
-                  </h3>
-                  <div className="flex items-center gap-4 text-sm text-gray-500 mb-4 mt-auto pt-4">
-                    <span className="flex items-center gap-1"><Clock className="w-4 h-4" /> {pkg.duration}</span>
-                  </div>
-                  <div className="flex items-center justify-between pt-4 border-t border-gray-100">
-                    <div>
-                      <p className="text-xs text-gray-400">Starting from</p>
-                      <p className="font-bold text-xl">₹{pkg.price.toLocaleString()}</p>
+            {loading ? (
+              [1, 2, 3].map(i => (
+                 <div key={i} className="h-72 bg-white/20 animate-pulse rounded-[2rem]"></div>
+              ))
+            ) : trips.length === 0 ? (
+              <p className="text-gray-500 col-span-full">No trips found for "{query}".</p>
+            ) : (
+              trips.map((pkg) => (
+                <Link to={`/package/${pkg.id}`} key={pkg.id} className="clay-card-interactive group flex flex-col overflow-hidden">
+                  <div className="relative h-56 overflow-hidden">
+                    <img src={pkg.image} alt={pkg.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
+                    <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm px-2.5 py-1 rounded-full text-xs font-bold flex items-center gap-1 shadow-sm">
+                      <Star className="w-3 h-3 text-accent fill-accent" /> {pkg.rating}
                     </div>
                   </div>
-                </div>
-              </Link>
-            ))}
+                  <div className="p-5 flex flex-col flex-1">
+                    <div className="flex items-center gap-1 text-xs text-primary font-bold uppercase tracking-wider mb-2">
+                      <MapPin className="w-3 h-3" /> {pkg.agency}
+                    </div>
+                    <h3 className="font-bold text-lg leading-tight mb-2 group-hover:text-primary transition-colors line-clamp-2">
+                      {pkg.title}
+                    </h3>
+                    <div className="flex items-center gap-4 text-sm text-gray-500 mb-4 mt-auto pt-4">
+                      <span className="flex items-center gap-1"><Clock className="w-4 h-4" /> {pkg.duration}</span>
+                    </div>
+                    <div className="flex items-center justify-between pt-4 border-t border-gray-100">
+                      <div>
+                        <p className="text-xs text-gray-400">Starting from</p>
+                        <p className="font-bold text-xl">₹{pkg.price.toLocaleString()}</p>
+                      </div>
+                    </div>
+                  </div>
+                </Link>
+              ))
+            )}
           </div>
         </div>
       </div>

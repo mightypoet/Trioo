@@ -1,18 +1,62 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'motion/react';
 import { Search, MapPin, Calendar, Users, ArrowRight, Star, Wallet, PlayCircle } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { DestinationCard } from '../components/ui/card-21';
-
-const DESTINATIONS = [
-  { id: 1, name: 'Kyoto, Japan', image: 'https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?q=80&w=800&auto=format&fit=crop', price: '₹85,000', flag: '🇯🇵', themeColor: '330 100% 70%', stats: 'Packages from ₹85,000' },
-  { id: 2, name: 'Santorini, Greece', image: 'https://images.unsplash.com/photo-1533105079780-92b9be482077?q=80&w=800&auto=format&fit=crop', price: '₹1,12,000', flag: '🇬🇷', themeColor: '210 100% 60%', stats: 'Packages from ₹1,12,000' },
-  { id: 3, name: 'Bali, Indonesia', image: 'https://images.unsplash.com/photo-1537996194471-e657df975ab4?q=80&w=800&auto=format&fit=crop', price: '₹45,000', flag: '🇮🇩', themeColor: '140 70% 50%', stats: 'Packages from ₹45,000' },
-  { id: 4, name: 'Swiss Alps', image: 'https://images.unsplash.com/photo-1531366936337-77b5a83ab825?q=80&w=800&auto=format&fit=crop', price: '₹1,50,000', flag: '🇨🇭', themeColor: '20 100% 60%', stats: 'Packages from ₹1,50,000' },
-];
+import { Marquee } from '../components/ui/Marquee';
+import { supabase } from '../lib/supabase';
+import LandingAuthModal from '../components/auth/LandingAuthModal';
 
 export default function Home() {
   const navigate = useNavigate();
+  const [agencies, setAgencies] = useState<any[]>([]);
+  const [destinations, setDestinations] = useState<any[]>([]);
+  const [loadingTrips, setLoadingTrips] = useState(true);
+
+  useEffect(() => {
+    const fetchAgencies = async () => {
+      const { data } = await supabase
+        .from('agencies')
+        .select('id, name, logo_url')
+        .eq('verification_status', 'verified');
+      if (data) {
+        setAgencies(data);
+      }
+    };
+    fetchAgencies();
+  }, []);
+
+  useEffect(() => {
+    const fetchTrips = async () => {
+      setLoadingTrips(true);
+      const { data } = await supabase
+        .from('trips')
+        .select('*, agencies(name), packages(price)')
+        .order('created_at', { ascending: false })
+        .limit(4);
+
+      if (data) {
+        const formatted = data.map((trip: any) => {
+          const minPrice = trip.packages && trip.packages.length > 0 
+            ? Math.min(...trip.packages.map((p: any) => p.price)) 
+            : trip.base_price;
+          
+          return {
+            id: trip.id,
+            name: `${trip.destination}`,
+            image: trip.cover_image || 'https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?q=80&w=800&auto=format&fit=crop',
+            price: `₹${minPrice.toLocaleString()}`,
+            flag: '🌍',
+            themeColor: '210 100% 60%',
+            stats: `Packages from ₹${minPrice.toLocaleString()}`
+          };
+        });
+        setDestinations(formatted);
+      }
+      setLoadingTrips(false);
+    };
+    fetchTrips();
+  }, []);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -21,6 +65,7 @@ export default function Home() {
 
   return (
     <div className="w-full">
+      <LandingAuthModal />
       {/* Hero Section */}
       <section className="relative px-6 pt-12 pb-32 z-10">
 
@@ -110,6 +155,24 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Trusted Travel Partners */}
+      <section className="py-12 bg-gray-50/50 backdrop-blur-md border-b border-white/50 relative z-10 overflow-hidden">
+        <div className="max-w-7xl mx-auto px-6 mb-8 text-center">
+          <p className="text-sm font-bold text-gray-400 uppercase tracking-widest">Trusted Travel Partners</p>
+        </div>
+        {agencies.length > 0 ? (
+          <Marquee items={agencies} />
+        ) : (
+          <div className="flex justify-center">
+            <div className="animate-pulse flex gap-6">
+              {[1, 2, 3, 4].map(i => (
+                <div key={i} className="h-12 w-48 bg-white/20 rounded-full border border-white/30"></div>
+              ))}
+            </div>
+          </div>
+        )}
+      </section>
+
       {/* Featured Destinations */}
       <section className="px-6 py-20 bg-white/40 backdrop-blur-xl border-y border-white/50 relative z-10">
         <div className="max-w-7xl mx-auto">
@@ -124,25 +187,33 @@ export default function Home() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {DESTINATIONS.map((dest, i) => (
-              <motion.div 
-                key={dest.id}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.1 }}
-                className="h-[400px]"
-              >
-                <DestinationCard
-                  imageUrl={dest.image}
-                  location={dest.name.split(',')[0]}
-                  flag={dest.flag}
-                  stats={dest.stats}
-                  href={`/search?dest=${dest.name}`}
-                  themeColor={dest.themeColor}
-                />
-              </motion.div>
-            ))}
+            {loadingTrips ? (
+              [1, 2, 3, 4].map(i => (
+                <div key={i} className="h-[400px] bg-white/20 animate-pulse rounded-[2rem]"></div>
+              ))
+            ) : destinations.length === 0 ? (
+              <p className="text-gray-500 col-span-full text-center">No trips available right now.</p>
+            ) : (
+              destinations.map((dest, i) => (
+                <motion.div 
+                  key={dest.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: i * 0.1 }}
+                  className="h-[400px]"
+                >
+                  <DestinationCard
+                    imageUrl={dest.image}
+                    location={dest.name}
+                    flag={dest.flag}
+                    stats={dest.stats}
+                    href={`/package/${dest.id}`}
+                    themeColor={dest.themeColor}
+                  />
+                </motion.div>
+              ))
+            )}
           </div>
         </div>
       </section>
