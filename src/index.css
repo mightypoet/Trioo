@@ -1,0 +1,70 @@
+@import "tailwindcss";
+
+@theme {
+  --color-primary: #0C1838;
+  --color-primary-hover: #1A2B56;
+  --color-secondary: #0099FF;
+  --color-accent: #FF8E53;
+  --color-success: #43C581;
+  --color-pink: #FF4B82;
+  --color-purple: #8A2BE2;
+  --color-bg: #F8FAFC;
+  --color-card: #FFFFFF;
+  --color-text-main: #0C1838;
+  --color-text-muted: #64748B;
+
+  --font-heading: 'Outfit', sans-serif;
+  --font-sans: 'Plus Jakarta Sans', sans-serif;
+}
+
+@layer base {
+  html, body {
+    @apply bg-[var(--color-bg)] text-[var(--color-text-main)] font-sans antialiased;
+  }
+  
+  h1, h2, h3 {
+    @apply font-heading tracking-tighter font-black;
+  }
+
+  h4, h5, h6 {
+    @apply font-heading tracking-tight font-bold;
+  }
+}
+
+@layer utilities {
+  .clay-card {
+    @apply bg-white/70 backdrop-blur-2xl border border-white rounded-[40px];
+    box-shadow: 0 32px 64px -16px rgba(0,0,0,0.08);
+  }
+  
+  .clay-card-interactive {
+    @apply bg-white/70 backdrop-blur-2xl border border-white rounded-[40px] transition-all duration-300;
+    box-shadow: 0 32px 64px -16px rgba(0,0,0,0.08);
+  }
+  
+  .clay-card-interactive:hover {
+    box-shadow: 0 40px 80px -16px rgba(0,0,0,0.12);
+    transform: translateY(-2px);
+  }
+
+  .clay-btn-primary {
+    @apply bg-[var(--color-text-main)] text-white rounded-full font-bold transition-all duration-300 shadow-xl active:scale-95 hover:bg-[var(--color-primary)];
+  }
+
+  .clay-btn-white {
+    @apply bg-white/60 backdrop-blur-xl border border-white/40 text-[var(--color-text-main)] rounded-full font-bold transition-all duration-300 shadow-sm active:scale-95;
+  }
+
+  .clay-btn-white:hover {
+    @apply bg-white/80 border-white/60;
+  }
+
+  .glass-panel {
+    @apply bg-white/70 backdrop-blur-xl border border-white/50 rounded-[32px];
+    box-shadow: 0 8px 32px rgba(17, 24, 39, 0.03);
+  }
+
+  .text-gradient {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-[var(--color-secondary)] via-[var(--color-purple)] to-[var(--color-pink)];
+  }
+}
