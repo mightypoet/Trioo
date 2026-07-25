@@ -9,7 +9,7 @@ export default function LandingAuthModal() {
   useEffect(() => {
     if (loading) return;
 
-    const isDismissed = sessionStorage.getItem('trioo_welcome_dismissed') === 'true';
+    const isDismissed = sessionStorage.getItem('travy_welcome_dismissed') === 'true';
     if (!user && !isDismissed) {
       const timer = setTimeout(() => {
         setIsOpen(true);
@@ -21,7 +21,7 @@ export default function LandingAuthModal() {
   if (!isOpen) return null;
 
   const handleDismiss = () => {
-    sessionStorage.setItem('trioo_welcome_dismissed', 'true');
+    sessionStorage.setItem('travy_welcome_dismissed', 'true');
     setIsOpen(false);
   };
 
@@ -48,7 +48,7 @@ export default function LandingAuthModal() {
           </svg>
         </div>
         
-        <h2 className="text-2xl font-black text-gray-900 mb-2">Welcome to Trioo ✈️</h2>
+        <h2 className="text-2xl font-black text-gray-900 mb-2">Welcome to TRAVY ✈️</h2>
         <p className="text-gray-600 font-medium mb-8">
           Sign in with Google to unlock exclusive agency packages, save favorite trips, and earn creator rewards.
         </p>

@@ -1,31 +1,65 @@
 @import "tailwindcss";
 
-@theme {
-  --color-primary: #0C1838;
-  --color-primary-hover: #1A2B56;
-  --color-secondary: #0099FF;
-  --color-accent: #FF8E53;
-  --color-success: #43C581;
-  --color-pink: #FF4B82;
-  --color-purple: #8A2BE2;
-  --color-bg: #F8FAFC;
-  --color-card: #FFFFFF;
-  --color-text-main: #0C1838;
-  --color-text-muted: #64748B;
+@custom-variant dark (&:where(.dark, .dark *));
 
+@theme {
+  --color-primary: var(--primary);
+  --color-primary-hover: var(--primary-hover);
+  --color-secondary: var(--secondary);
+  --color-accent: var(--accent);
+  --color-success: var(--success);
+  --color-pink: var(--pink);
+  --color-purple: var(--purple);
+  --color-bg: var(--bg);
+  --color-card: var(--card);
+  --color-text-main: var(--text-main);
+  --color-text-muted: var(--text-muted);
   --font-heading: 'Outfit', sans-serif;
-  --font-sans: 'Plus Jakarta Sans', sans-serif; --animate-marquee: marquee var(--duration, 40s) linear infinite; @keyframes marquee { from { transform: translateX(0); } to { transform: translateX(calc(-100% - var(--gap, 1rem))); } }
+  --font-sans: 'Plus Jakarta Sans', sans-serif;
+  --animate-marquee: marquee var(--duration, 40s) linear infinite;
+  
+  @keyframes marquee {
+    from { transform: translateX(0); }
+    to { transform: translateX(calc(-100% - var(--gap, 1rem))); }
+  }
 }
 
 @layer base {
+  :root {
+    --primary: #0C1838;
+    --primary-hover: #1A2B56;
+    --secondary: #0099FF;
+    --accent: #FF8E53;
+    --success: #43C581;
+    --pink: #FF4B82;
+    --purple: #8A2BE2;
+    --bg: #F8FAFC;
+    --card: #FFFFFF;
+    --text-main: #0C1838;
+    --text-muted: #64748B;
+  }
+
+  .dark {
+    --primary: #93C5FD;
+    --primary-hover: #60A5FA;
+    --secondary: #3B82F6;
+    --accent: #FF8E53;
+    --success: #10B981;
+    --pink: #FF4B82;
+    --purple: #8A2BE2;
+    --bg: #0F172A;
+    --card: #1E293B;
+    --text-main: #F8FAFC;
+    --text-muted: #94A3B8;
+  }
+
   html, body {
-    @apply bg-[var(--color-bg)] text-[var(--color-text-main)] font-sans antialiased;
+    @apply bg-[var(--color-bg)] text-[var(--color-text-main)] font-sans antialiased transition-colors duration-300;
   }
   
   h1, h2, h3 {
     @apply font-heading tracking-tighter font-black;
   }
-
   h4, h5, h6 {
     @apply font-heading tracking-tight font-bold;
   }
@@ -33,12 +67,12 @@
 
 @layer utilities {
   .clay-card {
-    @apply bg-white/70 backdrop-blur-2xl border border-white rounded-[40px];
+    @apply bg-white/70 dark:bg-gray-800/70 backdrop-blur-2xl border border-white dark:border-gray-700 rounded-[40px];
     box-shadow: 0 32px 64px -16px rgba(0,0,0,0.08);
   }
   
   .clay-card-interactive {
-    @apply bg-white/70 backdrop-blur-2xl border border-white rounded-[40px] transition-all duration-300;
+    @apply bg-white/70 dark:bg-gray-800/70 backdrop-blur-2xl border border-white dark:border-gray-700 rounded-[40px] transition-all duration-300;
     box-shadow: 0 32px 64px -16px rgba(0,0,0,0.08);
   }
   
@@ -48,19 +82,19 @@
   }
 
   .clay-btn-primary {
-    @apply bg-[var(--color-text-main)] text-white rounded-full font-bold transition-all duration-300 shadow-xl active:scale-95 hover:bg-[var(--color-primary)];
+    @apply bg-[var(--color-text-main)] text-[var(--color-bg)] rounded-full font-bold transition-all duration-300 shadow-xl active:scale-95 hover:bg-[var(--color-primary)];
   }
 
   .clay-btn-white {
-    @apply bg-white/60 backdrop-blur-xl border border-white/40 text-[var(--color-text-main)] rounded-full font-bold transition-all duration-300 shadow-sm active:scale-95;
+    @apply bg-white/60 dark:bg-gray-800/60 backdrop-blur-xl border border-white/40 dark:border-gray-700/40 text-[var(--color-text-main)] rounded-full font-bold transition-all duration-300 shadow-sm active:scale-95;
   }
 
   .clay-btn-white:hover {
-    @apply bg-white/80 border-white/60;
+    @apply bg-white/80 dark:bg-gray-800/80 border-white/60 dark:border-gray-700/60;
   }
 
   .glass-panel {
-    @apply bg-white/70 backdrop-blur-xl border border-white/50 rounded-[32px];
+    @apply bg-white/70 dark:bg-gray-800/70 backdrop-blur-xl border border-white/50 dark:border-gray-700/50 rounded-[32px];
     box-shadow: 0 8px 32px rgba(17, 24, 39, 0.03);
   }
 

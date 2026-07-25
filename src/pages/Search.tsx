@@ -32,7 +32,7 @@ export default function Search() {
           return {
             id: trip.id,
             title: trip.title,
-            agency: trip.agencies?.name || 'Trioo Partner',
+            agency: trip.agencies?.name || 'TRAVY Partner',
             duration: 'Flexible',
             rating: 4.9,
             price: minPrice,

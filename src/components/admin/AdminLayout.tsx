@@ -20,7 +20,7 @@ export default function AdminLayout() {
             <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-[var(--color-secondary)] via-[var(--color-purple)] to-[var(--color-pink)] flex items-center justify-center text-white shadow-lg">
               <Compass className="w-5 h-5" />
             </div>
-            <span className="text-xl font-black tracking-tighter">TRIOO ADMIN</span>
+            <span className="text-xl font-black tracking-tighter">TRAVY ADMIN</span>
           </Link>
           <nav className="flex flex-col gap-2">
             {NAV_ITEMS.map((item) => {

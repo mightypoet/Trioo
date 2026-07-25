@@ -10,7 +10,7 @@ export default function Footer() {
             <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-[var(--color-secondary)] via-[var(--color-purple)] to-[var(--color-pink)] flex items-center justify-center text-white">
               <Compass className="w-5 h-5" />
             </div>
-            <span className="text-xl font-bold font-heading">Trioo</span>
+            <span className="text-xl font-bold font-heading">TRAVY</span>
           </Link>
           <p className="text-gray-500 mb-6 text-sm leading-relaxed">
             Travel Together. Travel Smarter. The modern marketplace for verified travel agencies and unforgettable experiences.
@@ -41,7 +41,7 @@ export default function Footer() {
         <div>
           <h4 className="font-bold mb-6 font-heading text-lg">Platform</h4>
           <ul className="space-y-4 text-sm text-gray-500">
-            <li><Link to="/wallet" className="hover:text-primary transition-colors">Trioo Wallet</Link></li>
+            <li><Link to="/wallet" className="hover:text-primary transition-colors">TRAVY Wallet</Link></li>
             <li><Link to="/creators" className="hover:text-primary transition-colors">Creator Rewards</Link></li>
             <li><Link to="/agencies" className="hover:text-primary transition-colors">For Agencies</Link></li>
             <li><Link to="/gift-cards" className="hover:text-primary transition-colors">Gift Cards</Link></li>
@@ -59,7 +59,7 @@ export default function Footer() {
         </div>
       </div>
       <div className="max-w-7xl mx-auto pt-8 border-t border-gray-100 flex flex-col md:flex-row items-center justify-between gap-4">
-        <p className="text-gray-400 text-sm">© 2026 Trioo. All rights reserved.</p>
+        <p className="text-gray-400 text-sm">© 2026 TRAVY. All rights reserved.</p>
         <div className="flex gap-4 text-sm text-gray-400">
           <span>USD ($)</span>
           <span>English (US)</span>

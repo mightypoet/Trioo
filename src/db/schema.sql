@@ -1,4 +1,4 @@
--- Supabase Database Schema Definition for Trioo Admin Dashboard
+-- Supabase Database Schema Definition for TRAVY Admin Dashboard
 
 -- Enable UUID extension if not already enabled
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";

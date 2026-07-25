@@ -31,7 +31,7 @@ export default function GlobalAuthModal() {
           </svg>
         </div>
         
-        <h2 className="text-2xl font-black text-gray-900 mb-2">Welcome to Trioo</h2>
+        <h2 className="text-2xl font-black text-gray-900 mb-2">Welcome to TRAVY</h2>
         <p className="text-gray-600 font-medium mb-8">
           Please sign in to continue and access exclusive travel deals, save your favorites, and manage your bookings.
         </p>

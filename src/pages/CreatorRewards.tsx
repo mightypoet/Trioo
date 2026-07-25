@@ -5,17 +5,17 @@ export default function CreatorRewards() {
     <div className="max-w-7xl mx-auto px-6 py-12">
       <div className="text-center max-w-3xl mx-auto mb-16">
         <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-pink/10 text-pink font-bold text-sm mb-6">
-          <PlayCircle className="w-4 h-4 fill-pink" /> Trioo Creator Program
+          <PlayCircle className="w-4 h-4 fill-pink" /> TRAVY Creator Program
         </div>
-        <h1 className="text-5xl font-bold mb-6">Share your journey.<br/>Earn free travel.</h1>
-        <p className="text-xl text-gray-500">Upload your travel reels, get verified by our team, and earn Trioo Wallet credits, cashback, and exclusive perks.</p>
+        <h1 className="text-4xl md:text-5xl font-bold mb-6">Share your journey.<br/>Earn free travel.</h1>
+        <p className="text-xl text-gray-500">Upload your travel reels, get verified by our team, and earn TRAVY Wallet credits, cashback, and exclusive perks.</p>
       </div>
 
       <div className="grid md:grid-cols-3 gap-8 mb-16">
         {[
-          { icon: Upload, title: '1. Upload Content', desc: 'Share your Instagram Reels, YouTube Shorts, or high-quality vlogs from your Trioo trips.' },
+          { icon: Upload, title: '1. Upload Content', desc: 'Share your Instagram Reels, YouTube Shorts, or high-quality vlogs from your TRAVY trips.' },
           { icon: CheckCircle, title: '2. Get Verified', desc: 'Our team reviews your content for quality and authenticity within 48 hours.' },
-          { icon: Award, title: '3. Earn Rewards', desc: 'Receive up to ₹5,000 in your Trioo Wallet per approved video.' },
+          { icon: Award, title: '3. Earn Rewards', desc: 'Receive up to ₹5,000 in your TRAVY Wallet per approved video.' },
         ].map((step, i) => {
           const Icon = step.icon;
           return (

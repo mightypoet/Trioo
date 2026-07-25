@@ -15,7 +15,7 @@ export default function Wallet() {
   return (
     <div className="max-w-7xl mx-auto px-6 py-12">
       <div className="mb-10">
-        <h1 className="text-4xl font-bold mb-2">My Trioo Wallet</h1>
+        <h1 className="text-3xl md:text-4xl font-bold mb-2">My TRAVY Wallet</h1>
         <p className="text-gray-500 text-lg">Manage your savings, track goals, and view rewards.</p>
       </div>
 
@@ -27,7 +27,7 @@ export default function Wallet() {
               <p className="text-gray-500 font-medium mb-1 flex items-center gap-2">
                 <WalletIcon className="w-4 h-4" /> Available Balance
               </p>
-              <h2 className="text-5xl font-bold tracking-tight text-gray-900">₹82,000</h2>
+              <h2 className="text-4xl md:text-5xl font-bold tracking-tight text-gray-900">₹82,000</h2>
             </div>
             <div className="flex gap-3 w-full md:w-auto">
               <button className="clay-btn-primary flex-1 md:flex-none px-6 py-3 flex items-center justify-center gap-2">
@@ -101,7 +101,7 @@ export default function Wallet() {
                     <span className="text-xl">🪙</span>
                   </div>
                   <div>
-                    <p className="text-xs text-gray-500">Trioo Coins</p>
+                    <p className="text-xs text-gray-500">TRAVY Coins</p>
                     <p className="font-bold">2,450</p>
                   </div>
                 </div>

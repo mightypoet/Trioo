@@ -76,15 +76,12 @@ export default function Home() {
               transition={{ duration: 0.8, ease: "easeOut" }}
               className="lg:w-1/2"
             >
-              <div className="inline-block px-4 py-2 rounded-full bg-white/60 backdrop-blur-md border border-white mb-6 shadow-sm">
-                <span className="text-sm font-semibold text-primary">✨ The Modern Travel Marketplace</span>
-              </div>
-              <h1 className="text-6xl lg:text-7xl font-bold mb-6 leading-[1.1] text-text-main">
+              <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold mb-6 leading-[1.1] text-text-main">
                 Travel Together.<br />
                 <span className="text-gradient">Travel Smarter.</span>
               </h1>
-              <p className="text-xl text-gray-500 mb-10 max-w-lg leading-relaxed">
-                Compare verified agency packages, save for your goals in the Trioo Wallet, and earn rewards for sharing your journey.
+              <p className="text-lg md:text-xl text-gray-500 mb-10 max-w-lg leading-relaxed">
+                Compare verified agency packages, save for your goals in the TRAVY Wallet, and earn rewards for sharing your journey.
               </p>
 
               {/* Search Box - Claymorphism style */}
@@ -177,7 +174,7 @@ export default function Home() {
         <div className="max-w-7xl mx-auto">
           <div className="flex items-end justify-between mb-12">
             <div>
-              <h2 className="text-4xl font-bold mb-4">Trending Destinations</h2>
+              <h2 className="text-3xl md:text-4xl font-bold mb-4">Trending Destinations</h2>
               <p className="text-gray-500 text-lg">Most searched places right now</p>
             </div>
             <Link to="/search" className="hidden sm:flex items-center gap-2 text-primary font-semibold hover:gap-3 transition-all">
@@ -216,7 +213,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Trioo Wallet Promo */}
+      {/* TRAVY Wallet Promo */}
       <section className="px-6 py-24 relative overflow-hidden">
         <div className="max-w-7xl mx-auto">
           <div className="clay-card bg-gradient-to-br from-[var(--color-secondary)] via-[var(--color-purple)] to-[var(--color-pink)] p-8 md:p-16 rounded-[3rem] text-white relative overflow-hidden">
@@ -228,11 +225,11 @@ export default function Home() {
               <div className="md:w-1/2">
                 <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/20 backdrop-blur-md border border-white/30 mb-6">
                   <Wallet className="w-4 h-4" />
-                  <span className="text-sm font-semibold">Trioo Wallet</span>
+                  <span className="text-sm font-semibold">TRAVY Wallet</span>
                 </div>
-                <h2 className="text-4xl md:text-5xl font-bold mb-6 leading-tight text-white">Save seamlessly.<br />Travel limitlessly.</h2>
+                <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-6 leading-tight text-white">Save seamlessly.<br />Travel limitlessly.</h2>
                 <p className="text-white/80 text-lg mb-8 max-w-md">
-                  Set auto-save goals for your dream trips. Unlock exclusive milestones, earn cashback, and get priority booking when you use your Trioo Wallet.
+                  Set auto-save goals for your dream trips. Unlock exclusive milestones, earn cashback, and get priority booking when you use your TRAVY Wallet.
                 </p>
                 <Link to="/wallet" className="clay-btn-white inline-flex items-center gap-2 px-8 py-4">
                   Start Saving <ArrowRight className="w-5 h-5" />
@@ -253,7 +250,7 @@ export default function Home() {
                     <span className="text-xs font-semibold bg-white/20 px-3 py-1 rounded-full">Pro</span>
                   </div>
                   <p className="text-white/70 text-sm mb-1">Total Balance</p>
-                  <p className="text-4xl font-bold mb-8 tracking-tight">₹82,000</p>
+                  <p className="text-3xl md:text-4xl font-bold mb-8 tracking-tight">₹82,000</p>
                   
                   <div className="space-y-4">
                     <div className="bg-white/20 rounded-2xl p-4">
@@ -295,12 +292,12 @@ export default function Home() {
             </div>
           </div>
           <div className="lg:w-1/2">
-            <h2 className="text-4xl font-bold mb-6">Upload Reels. Earn Rewards.</h2>
+            <h2 className="text-3xl md:text-4xl font-bold mb-6">Upload Reels. Earn Rewards.</h2>
             <p className="text-xl text-gray-500 mb-8 leading-relaxed">
-              Join the Trioo Creator Program. Upload your travel reels and stories, get them verified, and earn instant wallet cashback, travel coins, and exclusive discounts for your next trip.
+              Join the TRAVY Creator Program. Upload your travel reels and stories, get them verified, and earn instant wallet cashback, travel coins, and exclusive discounts for your next trip.
             </p>
             <ul className="space-y-4 mb-10">
-              {['Upload high-quality travel vlogs', 'Get verified by the Trioo team', 'Earn up to ₹5,000 in Wallet Credits per video', 'Unlock "Top Creator" badges'].map((item, i) => (
+              {['Upload high-quality travel vlogs', 'Get verified by the TRAVY team', 'Earn up to ₹5,000 in Wallet Credits per video', 'Unlock "Top Creator" badges'].map((item, i) => (
                 <li key={i} className="flex items-center gap-3">
                   <div className="w-6 h-6 rounded-full bg-pink/10 flex items-center justify-center shrink-0">
                     <Star className="w-3 h-3 text-pink fill-pink" />
