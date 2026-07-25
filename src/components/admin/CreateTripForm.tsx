@@ -13,8 +13,8 @@ interface ItineraryDay {
 export default function CreateTripForm() {
   const { role, agencyId } = useAuth();
   const [loading, setLoading] = useState(false);
-  const [imageFile, setImageFile] = useState<File | null>(null);
-  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [imageFiles, setImageFiles] = useState<File[]>([]);
+  const [imagePreviews, setImagePreviews] = useState<string[]>([]);
 
   const [formData, setFormData] = useState({
     agency_id: '',
@@ -63,26 +63,30 @@ export default function CreateTripForm() {
     setItineraries(newItineraries.map((it, i) => ({ ...it, day_number: i + 1 })));
   };
 
-  const uploadImage = async (): Promise<string> => {
-    if (!imageFile) throw new Error('Please select an image first.');
+  const uploadImages = async (): Promise<string[]> => {
+    if (imageFiles.length === 0) return formData.cover_image ? [formData.cover_image] : [];
 
-    const { data, error: uploadError } = await supabase.storage
-      .from('trioo-images')
-      .upload(`trips/${Date.now()}_${imageFile.name}`, imageFile, {
-        cacheControl: '3600',
-        upsert: false
-      });
+    const uploadPromises = imageFiles.map(async (file, index) => {
+      const { data, error: uploadError } = await supabase.storage
+        .from('trioo-images')
+        .upload(`trips/${Date.now()}_${index}_${file.name}`, file, {
+          cacheControl: '3600',
+          upsert: false
+        });
 
-    if (uploadError) {
-      console.error('Upload Error:', uploadError);
-      throw new Error('Failed to upload image.');
-    }
+      if (uploadError) {
+        console.error('Upload Error:', uploadError);
+        throw new Error(`Failed to upload image: ${file.name}`);
+      }
 
-    const { data: publicUrlData } = supabase.storage
-      .from('trioo-images')
-      .getPublicUrl(data.path);
+      const { data: publicUrlData } = supabase.storage
+        .from('trioo-images')
+        .getPublicUrl(data.path);
 
-    return publicUrlData.publicUrl;
+      return publicUrlData.publicUrl;
+    });
+
+    return Promise.all(uploadPromises);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -95,11 +99,13 @@ export default function CreateTripForm() {
         throw new Error('Please select an agency.');
       }
 
-      const coverUrl = await uploadImage();
+      const uploadedUrls = await uploadImages();
 
-      if (!coverUrl) {
-        throw new Error('Please provide a cover image or URL.');
+      if (uploadedUrls.length === 0) {
+        throw new Error('Please provide at least one cover image or URL.');
       }
+
+      const coverUrl = uploadedUrls[0];
 
       // 1. Insert Trip
       const { data: tripResult, error: tripError } = await supabase
@@ -110,6 +116,7 @@ export default function CreateTripForm() {
           destination: formData.destination,
           base_price: parseFloat(formData.base_price),
           cover_image: coverUrl,
+          images: uploadedUrls
         })
         .select()
         .single();
@@ -134,7 +141,8 @@ export default function CreateTripForm() {
       
       // Reset form (partial reset for demo)
       setFormData({ ...formData, title: '', destination: '', base_price: '', cover_image: '' });
-      setImageFile(null);
+      setImageFiles([]);
+      setImagePreviews([]);
       setItineraries([{ day_number: 1, title: '', detailed_description: '' }]);
       
     } catch (error: any) {
@@ -239,30 +247,33 @@ export default function CreateTripForm() {
                     <UploadCloud className="w-8 h-8 text-gray-400 mb-2" />
                     <p className="text-sm text-gray-500 font-medium">Click to upload image file</p>
                   </div>
-                  <input type="file" className="hidden" accept="image/*" onChange={(e) => {
-                    if (e.target.files && e.target.files[0]) {
-                      const file = e.target.files[0];
-                      setImageFile(file);
-                      setImagePreview(URL.createObjectURL(file));
+                  <input type="file" multiple className="hidden" accept="image/*" onChange={(e) => {
+                    if (e.target.files && e.target.files.length > 0) {
+                      const files = Array.from(e.target.files);
+                      setImageFiles(prev => [...prev, ...files]);
+                      setImagePreviews(prev => [...prev, ...files.map(f => URL.createObjectURL(f))]);
                     }
                   }} />
                 </label>
-                {imagePreview && (
-                  <div className="mt-4 relative">
-                    <img src={imagePreview} alt="Preview" className="w-full h-32 object-cover rounded-xl" />
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setImageFile(null);
-                        setImagePreview(null);
-                      }}
-                      className="absolute -top-2 -right-2 bg-red-500 text-white p-1 rounded-full shadow-md hover:bg-red-600 transition-colors"
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </button>
+                {imagePreviews.length > 0 && (
+                  <div className="mt-4 grid grid-cols-2 md:grid-cols-3 gap-2">
+                    {imagePreviews.map((preview, idx) => (
+                      <div key={idx} className="relative">
+                        <img src={preview} alt="Preview" className="w-full h-24 object-cover rounded-xl" />
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setImageFiles(prev => prev.filter((_, i) => i !== idx));
+                            setImagePreviews(prev => prev.filter((_, i) => i !== idx));
+                          }}
+                          className="absolute -top-2 -right-2 bg-red-500 text-white p-1 rounded-full shadow-md hover:bg-red-600 transition-colors"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </div>
+                    ))}
                   </div>
                 )}
-                {imageFile && !imagePreview && <p className="text-xs text-green-600 mt-2 font-medium">Selected: {imageFile.name}</p>}
               </div>
               <div className="flex flex-col justify-center">
                 <span className="text-center text-gray-400 text-sm font-bold mb-2">OR</span>
@@ -271,7 +282,7 @@ export default function CreateTripForm() {
                   name="cover_image"
                   value={formData.cover_image}
                   onChange={handleTripChange}
-                  disabled={!!imageFile}
+                  disabled={imageFiles.length > 0}
                   placeholder="Paste an external image URL"
                   className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 outline-none focus:border-[var(--color-primary)] focus:ring-2 focus:ring-[var(--color-primary)]/20 transition-all font-medium disabled:opacity-50"
                 />

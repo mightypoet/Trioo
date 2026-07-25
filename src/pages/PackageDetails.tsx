@@ -68,9 +68,23 @@ export default function PackageDetails() {
 
       {/* Gallery Grid */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4 h-[400px] md:h-[500px] mb-12 rounded-[2rem] overflow-hidden">
-        <div className="md:col-span-4 h-full">
+        <div className={`h-full ${trip.images && trip.images.length > 1 ? 'md:col-span-3' : 'md:col-span-4'}`}>
           <img src={trip.cover_image} alt="Main" className="w-full h-full object-cover hover:scale-105 transition-transform duration-700" />
         </div>
+        {trip.images && trip.images.length > 1 && (
+          <div className="hidden md:grid grid-rows-2 gap-4 h-full">
+            {trip.images.slice(1, 3).map((imgUrl: string, idx: number) => (
+              <div key={idx} className="h-full overflow-hidden rounded-2xl relative">
+                <img src={imgUrl} alt={`Gallery ${idx + 1}`} className="w-full h-full object-cover hover:scale-105 transition-transform duration-700" />
+                {idx === 1 && trip.images.length > 3 && (
+                  <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
+                    <span className="text-white font-bold text-xl">+{trip.images.length - 3}</span>
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        )}
       </div>
 
       <div className="flex flex-col lg:flex-row gap-12">
@@ -105,18 +119,28 @@ export default function PackageDetails() {
             <h2 className="text-2xl font-bold mb-6">Itinerary</h2>
             <div className="space-y-6">
               {trip.itineraries?.map((itinerary: any) => (
-                <div key={itinerary.id} className="flex gap-6">
-                  <div className="flex flex-col items-center">
-                    <div className="w-10 h-10 rounded-full bg-primary/10 text-primary font-bold flex items-center justify-center shrink-0">
-                      D{itinerary.day_number}
+                <details key={itinerary.id} className="group flex gap-6 cursor-pointer marker:content-['']">
+                  <summary className="flex gap-6 w-full items-start outline-none">
+                    <div className="flex flex-col items-center">
+                      <div className="w-10 h-10 rounded-full bg-primary/10 text-primary font-bold flex items-center justify-center shrink-0">
+                        D{itinerary.day_number}
+                      </div>
                     </div>
-                    {itinerary.day_number !== trip.itineraries.length && <div className="w-px h-full bg-gray-200 my-2" />}
+                    <div className="clay-card p-6 flex-1 shadow-sm border border-gray-100 group-open:rounded-b-none transition-all">
+                      <div className="flex justify-between items-center">
+                        <h4 className="font-bold text-lg">{itinerary.title}</h4>
+                        <div className="w-6 h-6 rounded-full bg-gray-100 flex items-center justify-center group-open:rotate-180 transition-transform">
+                          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+                        </div>
+                      </div>
+                    </div>
+                  </summary>
+                  <div className="pl-16">
+                    <div className="clay-card p-6 rounded-t-none border-t-0 border border-gray-100 shadow-sm mt-0 relative top-[-4px] bg-gray-50/50">
+                      <p className="text-gray-600 text-sm leading-relaxed">{itinerary.detailed_description}</p>
+                    </div>
                   </div>
-                  <div className="clay-card p-6 flex-1 mb-4 shadow-sm border border-gray-100">
-                    <h4 className="font-bold text-lg mb-2">{itinerary.title}</h4>
-                    <p className="text-gray-500 text-sm">{itinerary.detailed_description}</p>
-                  </div>
-                </div>
+                </details>
               ))}
               {(!trip.itineraries || trip.itineraries.length === 0) && (
                 <p className="text-gray-500">No itinerary details provided.</p>
@@ -126,7 +150,7 @@ export default function PackageDetails() {
         </div>
 
         {/* Sticky Booking Sidebar */}
-        <div className="lg:w-1/3">
+        <div className="lg:w-1/3 space-y-6">
           <div className="sticky top-32 clay-card p-8 border border-gray-100">
             {trip.packages && trip.packages.length > 0 && (
                <div className="mb-6 space-y-3">
@@ -152,6 +176,27 @@ export default function PackageDetails() {
               Book Now
             </button>
             <p className="text-center text-sm text-gray-500 font-medium">You won't be charged yet.</p>
+          </div>
+
+          <div className="clay-card p-8 border border-gray-100 mt-6 sticky top-[420px]">
+            <h3 className="text-lg font-bold mb-4">Hosted by</h3>
+            <div className="flex items-center gap-4 mb-4">
+              <div className="w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-xl uppercase">
+                {trip.agencies?.name?.charAt(0) || 'A'}
+              </div>
+              <div>
+                <h4 className="font-bold text-gray-900 flex items-center gap-1">
+                  {trip.agencies?.name}
+                  <Shield className="w-4 h-4 text-success" />
+                </h4>
+                <div className="flex items-center gap-1 text-sm text-gray-500 font-medium">
+                  <Star className="w-4 h-4 text-accent fill-accent" /> 4.9 Rating
+                </div>
+              </div>
+            </div>
+            <button className="w-full py-3 bg-gray-100 hover:bg-gray-200 rounded-xl font-bold text-gray-700 transition-colors">
+              Contact Agency
+            </button>
           </div>
         </div>
       </div>
