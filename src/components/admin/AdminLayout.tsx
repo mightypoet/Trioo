@@ -17,7 +17,7 @@ export default function AdminLayout() {
       <aside className="w-64 bg-white border-r border-gray-200 flex flex-col fixed inset-y-0 left-0 z-20">
         <div className="p-6">
           <Link to="/" className="flex items-center gap-2 mb-8">
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-[var(--color-secondary)] via-[var(--color-purple)] to-[var(--color-pink)] flex items-center justify-center text-white shadow-lg">
+            <div className="w-8 h-8 rounded-lg bg-[var(--color-primary)] text-[#0A0A0A] flex items-center justify-center text-white shadow-lg">
               <Compass className="w-5 h-5" />
             </div>
             <span className="text-xl font-black tracking-tighter">TRAVY ADMIN</span>

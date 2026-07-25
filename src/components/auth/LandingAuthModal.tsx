@@ -42,7 +42,7 @@ export default function LandingAuthModal() {
           <X className="w-5 h-5" />
         </button>
         
-        <div className="w-16 h-16 rounded-2xl bg-gradient-to-tr from-[var(--color-secondary)] via-[var(--color-purple)] to-[var(--color-pink)] flex items-center justify-center text-white shadow-lg mb-6">
+        <div className="w-16 h-16 rounded-2xl bg-[var(--color-primary)] text-[#0A0A0A] flex items-center justify-center text-white shadow-lg mb-6">
           <svg className="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
           </svg>

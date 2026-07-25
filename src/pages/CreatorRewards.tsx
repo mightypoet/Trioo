@@ -30,13 +30,13 @@ export default function CreatorRewards() {
         })}
       </div>
 
-      <div className="clay-card bg-gradient-to-br from-pink to-purple p-12 rounded-[3rem] text-white text-center relative overflow-hidden">
+      <div className="clay-card p-12 rounded-[3rem] text-[#0A0A0A] text-center relative overflow-hidden">
         <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl" />
         <div className="absolute bottom-0 left-0 w-64 h-64 bg-black/10 rounded-full blur-3xl" />
         
         <div className="relative z-10">
           <h2 className="text-4xl font-bold mb-6">Ready to become a Creator?</h2>
-          <p className="text-white/80 text-lg mb-8 max-w-2xl mx-auto">
+          <p className="text-[#0A0A0A]/80 text-lg mb-8 max-w-2xl mx-auto">
             Join thousands of travelers who are funding their next adventure by sharing their experiences.
           </p>
           <button className="clay-btn-white px-8 py-4 text-lg inline-flex items-center gap-2">

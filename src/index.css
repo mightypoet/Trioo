@@ -14,8 +14,8 @@
   --color-card: var(--card);
   --color-text-main: var(--text-main);
   --color-text-muted: var(--text-muted);
-  --font-heading: 'Outfit', sans-serif;
-  --font-sans: 'Plus Jakarta Sans', sans-serif;
+  --font-heading: 'Geist', sans-serif;
+  --font-sans: 'Geist', sans-serif;
   --animate-marquee: marquee var(--duration, 40s) linear infinite;
   
   @keyframes marquee {
@@ -26,31 +26,31 @@
 
 @layer base {
   :root {
-    --primary: #0C1838;
-    --primary-hover: #1A2B56;
-    --secondary: #0099FF;
-    --accent: #FF8E53;
-    --success: #43C581;
-    --pink: #FF4B82;
+    --primary: #E3A82C;
+    --primary-hover: #c99321;
+    --secondary: #2F4539;
+    --accent: #E3A82C;
+    --success: #10B981;
+    --pink: #DC446F;
     --purple: #8A2BE2;
-    --bg: #F8FAFC;
-    --card: #FFFFFF;
-    --text-main: #0C1838;
-    --text-muted: #64748B;
+    --bg: #FFFFFF;
+    --card: #d3ddcb;
+    --text-main: #0A0A0A;
+    --text-muted: #555555;
   }
 
   .dark {
-    --primary: #93C5FD;
-    --primary-hover: #60A5FA;
-    --secondary: #3B82F6;
-    --accent: #FF8E53;
+    --primary: #E3A82C;
+    --primary-hover: #c99321;
+    --secondary: #2F4539;
+    --accent: #E3A82C;
     --success: #10B981;
-    --pink: #FF4B82;
+    --pink: #DC446F;
     --purple: #8A2BE2;
-    --bg: #0F172A;
-    --card: #1E293B;
-    --text-main: #F8FAFC;
-    --text-muted: #94A3B8;
+    --bg: #2F4539;
+    --card: #FAF7F2;
+    --text-main: #FFFFFF;
+    --text-muted: #BBBBBB;
   }
 
   html, body {
@@ -58,47 +58,64 @@
   }
   
   h1, h2, h3 {
-    @apply font-heading tracking-tighter font-black;
+    @apply font-heading tracking-tighter font-bold;
   }
   h4, h5, h6 {
-    @apply font-heading tracking-tight font-bold;
+    @apply font-heading tracking-tight font-semibold;
   }
 }
 
 @layer utilities {
   .clay-card {
-    @apply bg-white/70 dark:bg-gray-800/70 backdrop-blur-2xl border border-white dark:border-gray-700 rounded-[40px];
-    box-shadow: 0 32px 64px -16px rgba(0,0,0,0.08);
+    @apply bg-[var(--color-card)] text-[#0A0A0A] border-4 border-[#0A0A0A] rounded-[32px];
+    box-shadow: 8px 8px 0px 0px rgba(10, 10, 10, 1);
   }
   
   .clay-card-interactive {
-    @apply bg-white/70 dark:bg-gray-800/70 backdrop-blur-2xl border border-white dark:border-gray-700 rounded-[40px] transition-all duration-300;
-    box-shadow: 0 32px 64px -16px rgba(0,0,0,0.08);
+    @apply bg-[var(--color-card)] text-[#0A0A0A] border-4 border-[#0A0A0A] rounded-[32px] transition-all duration-200;
+    box-shadow: 8px 8px 0px 0px rgba(10, 10, 10, 1);
   }
   
   .clay-card-interactive:hover {
-    box-shadow: 0 40px 80px -16px rgba(0,0,0,0.12);
-    transform: translateY(-2px);
+    box-shadow: 12px 12px 0px 0px rgba(10, 10, 10, 1);
+    transform: translate(-4px, -4px);
   }
 
   .clay-btn-primary {
-    @apply bg-[var(--color-text-main)] text-[var(--color-bg)] rounded-full font-bold transition-all duration-300 shadow-xl active:scale-95 hover:bg-[var(--color-primary)];
+    @apply bg-[var(--color-primary)] text-[#0A0A0A] border-4 border-[#0A0A0A] rounded-full font-bold transition-all duration-200;
+    box-shadow: 4px 4px 0px 0px rgba(10, 10, 10, 1);
+  }
+
+  .clay-btn-primary:hover {
+    @apply bg-[var(--color-primary-hover)];
+  }
+
+  .clay-btn-primary:active {
+    box-shadow: 0px 0px 0px 0px rgba(10, 10, 10, 1);
+    transform: translate(4px, 4px);
   }
 
   .clay-btn-white {
-    @apply bg-white/60 dark:bg-gray-800/60 backdrop-blur-xl border border-white/40 dark:border-gray-700/40 text-[var(--color-text-main)] rounded-full font-bold transition-all duration-300 shadow-sm active:scale-95;
+    @apply bg-white text-[#0A0A0A] border-4 border-[#0A0A0A] rounded-full font-bold transition-all duration-200;
+    box-shadow: 4px 4px 0px 0px rgba(10, 10, 10, 1);
   }
 
   .clay-btn-white:hover {
-    @apply bg-white/80 dark:bg-gray-800/80 border-white/60 dark:border-gray-700/60;
+    @apply bg-gray-100;
+  }
+
+  .clay-btn-white:active {
+    box-shadow: 0px 0px 0px 0px rgba(10, 10, 10, 1);
+    transform: translate(4px, 4px);
   }
 
   .glass-panel {
-    @apply bg-white/70 dark:bg-gray-800/70 backdrop-blur-xl border border-white/50 dark:border-gray-700/50 rounded-[32px];
-    box-shadow: 0 8px 32px rgba(17, 24, 39, 0.03);
+    @apply bg-[var(--color-card)] text-[#0A0A0A] border-4 border-[#0A0A0A] rounded-[32px];
+    box-shadow: 8px 8px 0px 0px rgba(10, 10, 10, 1);
   }
 
   .text-gradient {
-    @apply bg-clip-text text-transparent bg-gradient-to-r from-[var(--color-secondary)] via-[var(--color-purple)] to-[var(--color-pink)];
+    @apply bg-[var(--color-card)] text-[#0A0A0A] px-3 py-1 border-4 border-[#0A0A0A] inline-block -rotate-2;
+    box-shadow: 4px 4px 0px 0px rgba(10, 10, 10, 1);
   }
 }

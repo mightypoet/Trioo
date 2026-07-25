@@ -251,7 +251,7 @@ export default function CreateTripForm() {
                     if (e.target.files && e.target.files.length > 0) {
                       const files = Array.from(e.target.files);
                       setImageFiles(prev => [...prev, ...files]);
-                      setImagePreviews(prev => [...prev, ...files.map(f => URL.createObjectURL(f))]);
+                      setImagePreviews(prev => [...prev, ...files.map(f => URL.createObjectURL(f as File))]);
                     }
                   }} />
                 </label>
