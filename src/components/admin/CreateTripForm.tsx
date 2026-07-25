@@ -15,7 +15,7 @@ export default function CreateTripForm() {
   const [loading, setLoading] = useState(false);
   const [imageFile, setImageFile] = useState<File | null>(null);
 
-  const [tripData, setTripData] = useState({
+  const [formData, setFormData] = useState({
     agency_id: '',
     title: '',
     destination: '',
@@ -30,19 +30,17 @@ export default function CreateTripForm() {
   const [agencies, setAgencies] = useState<{id: string, name: string}[]>([]);
 
   useEffect(() => {
-    if (role === 'admin') {
-      const fetchAgencies = async () => {
-        const { data } = await supabase.from('agencies').select('id, name');
-        if (data) {
-          setAgencies(data);
-        }
-      };
-      fetchAgencies();
-    }
-  }, [role]);
+    const fetchAgencies = async () => {
+      const { data } = await supabase.from('agencies').select('id, name');
+      if (data) {
+        setAgencies(data);
+      }
+    };
+    fetchAgencies();
+  }, []);
 
   const handleTripChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    setTripData({ ...tripData, [e.target.name]: e.target.value });
+    setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
   const handleImageFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -71,7 +69,7 @@ export default function CreateTripForm() {
   };
 
   const uploadImage = async (): Promise<string> => {
-    if (!imageFile) return tripData.cover_image;
+    if (!imageFile) return formData.cover_image;
 
     const fileExt = imageFile.name.split('.').pop();
     const fileName = `${Date.now()}_${Math.random().toString(36).substring(2, 9)}.${fileExt}`;
@@ -98,7 +96,7 @@ export default function CreateTripForm() {
     setLoading(true);
 
     try {
-      const finalAgencyId = role === 'agency' ? agencyId : tripData.agency_id;
+      const finalAgencyId = formData.agency_id;
       if (!finalAgencyId) {
         throw new Error('Please select an agency.');
       }
@@ -114,9 +112,9 @@ export default function CreateTripForm() {
         .from('trips')
         .insert({
           agency_id: finalAgencyId,
-          title: tripData.title,
-          destination: tripData.destination,
-          base_price: parseFloat(tripData.base_price),
+          title: formData.title,
+          destination: formData.destination,
+          base_price: parseFloat(formData.base_price),
           cover_image: coverUrl,
         })
         .select()
@@ -141,7 +139,7 @@ export default function CreateTripForm() {
       alert('Trip created successfully!');
       
       // Reset form (partial reset for demo)
-      setTripData({ ...tripData, title: '', destination: '', base_price: '', cover_image: '' });
+      setFormData({ ...formData, title: '', destination: '', base_price: '', cover_image: '' });
       setImageFile(null);
       setItineraries([{ day_number: 1, title: '', detailed_description: '' }]);
       
@@ -176,30 +174,36 @@ export default function CreateTripForm() {
           Basic Information
         </h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {role === 'admin' && (
-            <div>
-              <label className="block text-sm font-bold text-gray-700 mb-2">Agency</label>
-              <select
-                name="agency_id"
-                value={tripData.agency_id}
-                onChange={handleTripChange}
-                required
-                className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 outline-none focus:border-[var(--color-primary)] focus:ring-2 focus:ring-[var(--color-primary)]/20 transition-all font-medium"
-              >
-                <option value="">Select an Agency</option>
-                {agencies.map((agency) => (
-                  <option key={agency.id} value={agency.id}>{agency.name}</option>
-                ))}
-              </select>
-            </div>
-          )}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Select Travel Agency <span className="text-red-500">*</span>
+            </label>
+            <select
+              value={formData.agency_id || ''}
+              onChange={(e) => setFormData({ ...formData, agency_id: e.target.value })}
+              className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent bg-white text-gray-900 shadow-sm"
+              required
+            >
+              <option value="">-- Select an Agency --</option>
+              {agencies.map((agency) => (
+                <option key={agency.id} value={agency.id}>
+                  {agency.name}
+                </option>
+              ))}
+            </select>
+            {agencies.length === 0 && (
+              <p className="text-xs text-amber-600 mt-1">
+                ⚠️ No agencies found. Please add an agency under the Agencies tab first.
+              </p>
+            )}
+          </div>
           
-          <div className={role === 'admin' ? '' : 'md:col-span-2'}>
+          <div className="md:col-span-1">
             <label className="block text-sm font-bold text-gray-700 mb-2">Trip Title</label>
             <input
               type="text"
               name="title"
-              value={tripData.title}
+              value={formData.title}
               onChange={handleTripChange}
               placeholder="e.g., Magical Bali Retreat"
               required
@@ -211,7 +215,7 @@ export default function CreateTripForm() {
             <input
               type="text"
               name="destination"
-              value={tripData.destination}
+              value={formData.destination}
               onChange={handleTripChange}
               placeholder="e.g., Bali, Indonesia"
               required
@@ -223,7 +227,7 @@ export default function CreateTripForm() {
             <input
               type="number"
               name="base_price"
-              value={tripData.base_price}
+              value={formData.base_price}
               onChange={handleTripChange}
               placeholder="e.g., 45000"
               required
@@ -250,7 +254,7 @@ export default function CreateTripForm() {
                 <input
                   type="url"
                   name="cover_image"
-                  value={tripData.cover_image}
+                  value={formData.cover_image}
                   onChange={handleTripChange}
                   disabled={!!imageFile}
                   placeholder="Paste an external image URL"
