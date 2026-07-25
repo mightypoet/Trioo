@@ -16,8 +16,8 @@ import CreatorRewards from './pages/CreatorRewards';
 
 import AdminLayout from './components/admin/AdminLayout';
 import CreateTrip from './pages/admin/CreateTrip';
-
 import Agencies from './pages/admin/Agencies';
+import AdminProtectedRoute from './components/auth/AdminProtectedRoute';
 
 export default function App() {
   return (
@@ -35,7 +35,14 @@ export default function App() {
         </Route>
         
         {/* Admin Routes */}
-        <Route path="/admin" element={<AdminLayout />}>
+        <Route 
+          path="/admin" 
+          element={
+            <AdminProtectedRoute>
+              <AdminLayout />
+            </AdminProtectedRoute>
+          }
+        >
           <Route index element={<div className="p-4 bg-white rounded-xl shadow-sm border border-gray-100"><h2 className="text-xl font-bold">Dashboard Overview</h2><p className="text-gray-500 mt-2">Welcome to the Trioo Admin Dashboard.</p></div>} />
           <Route path="agencies" element={<Agencies />} />
           <Route path="trips" element={<div><h2 className="text-2xl font-bold mb-4">Trips Management</h2><CreateTrip /></div>} />

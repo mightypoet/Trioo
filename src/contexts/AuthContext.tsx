@@ -12,6 +12,7 @@ interface AuthContextType {
   signInWithGoogle: () => Promise<void>;
   signOut: () => Promise<void>;
   loading: boolean;
+  isLoading: boolean;
   isAuthModalOpen: boolean;
   setAuthModalOpen: (isOpen: boolean) => void;
   requireAuth: (action: () => void) => void;
@@ -107,6 +108,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       signInWithGoogle, 
       signOut, 
       loading,
+      isLoading: loading,
       isAuthModalOpen,
       setAuthModalOpen,
       requireAuth
