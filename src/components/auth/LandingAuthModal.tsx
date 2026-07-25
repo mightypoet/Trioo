@@ -42,10 +42,8 @@ export default function LandingAuthModal() {
           <X className="w-5 h-5" />
         </button>
         
-        <div className="w-16 h-16 rounded-2xl bg-[var(--color-primary)] text-[#0A0A0A] flex items-center justify-center text-white shadow-lg mb-6">
-          <svg className="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
-          </svg>
+        <div className="mb-6 flex justify-center">
+          <img src="https://omtm2jfmtp1jadq4.public.blob.vercel-storage.com/ChatGPT%20Image%20Jul%2026%2C%202026%2C%2002_44_00%20AM.png" alt="Travy Logo" className="h-16 w-auto object-contain" />
         </div>
         
         <h2 className="text-2xl font-black text-gray-900 mb-2">Welcome to TRAVY ✈️</h2>

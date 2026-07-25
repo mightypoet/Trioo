@@ -5,33 +5,15 @@ import { useState, useEffect } from 'react';
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
-  const [isDark, setIsDark] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   useEffect(() => {
-    // Check initial theme
-    if (document.documentElement.classList.contains('dark')) {
-      setIsDark(true);
-    }
-    
     const handleScroll = () => {
       setScrolled(window.scrollY > 20);
     };
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
-
-  const toggleTheme = () => {
-    if (isDark) {
-      document.documentElement.classList.remove('dark');
-      setIsDark(false);
-      localStorage.setItem('theme', 'light');
-    } else {
-      document.documentElement.classList.add('dark');
-      setIsDark(true);
-      localStorage.setItem('theme', 'dark');
-    }
-  };
 
   return (
     <header 
@@ -52,14 +34,6 @@ export default function Navbar() {
         </nav>
 
         <div className="flex items-center gap-3 md:gap-4">
-          <button 
-            onClick={toggleTheme}
-            className="w-10 h-10 rounded-full bg-white border-4 border-[#0A0A0A] flex items-center justify-center transition-all hover:-translate-y-1 hover:translate-x-1"
-            style={{ boxShadow: '4px 4px 0px 0px rgba(10, 10, 10, 1)' }}
-            aria-label="Toggle Dark Mode"
-          >
-            {isDark ? <Sun className="w-5 h-5 text-yellow-400" /> : <Moon className="w-5 h-5 text-slate-700" />}
-          </button>
           <Link to="/wallet" className="hidden sm:flex items-center gap-2 px-4 py-2 bg-white border-4 border-[#0A0A0A] rounded-full transition-all hover:-translate-y-1 hover:translate-x-1" style={{ boxShadow: '4px 4px 0px 0px rgba(10, 10, 10, 1)' }}>
             <Wallet className="w-4 h-4 text-[#0A0A0A]" />
             <span className="font-semibold text-sm text-[#0A0A0A]">₹82,000</span>
