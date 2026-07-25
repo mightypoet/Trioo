@@ -46,7 +46,6 @@ export default function Home() {
             name: `${trip.destination}`,
             image: trip.cover_image || 'https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?q=80&w=800&auto=format&fit=crop',
             price: `₹${minPrice.toLocaleString()}`,
-            flag: '🌍',
             themeColor: '210 100% 60%',
             stats: `Packages from ₹${minPrice.toLocaleString()}`
           };
@@ -206,7 +205,6 @@ export default function Home() {
                   <DestinationCard
                     imageUrl={dest.image}
                     location={dest.name}
-                    flag={dest.flag}
                     stats={dest.stats}
                     href={`/package/${dest.id}`}
                     themeColor={dest.themeColor}

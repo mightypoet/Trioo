@@ -10,14 +10,13 @@ function cn(...inputs: ClassValue[]) {
 export interface DestinationCardProps extends React.HTMLAttributes<HTMLDivElement> {
   imageUrl: string;
   location: string;
-  flag: string;
   stats: string;
   href: string;
   themeColor: string; 
 }
 
 const DestinationCard = React.forwardRef<HTMLDivElement, DestinationCardProps>(
-  ({ className, imageUrl, location, flag, stats, href, themeColor, ...props }, ref) => {
+  ({ className, imageUrl, location, stats, href, themeColor, ...props }, ref) => {
     return (
       <div
         ref={ref}
@@ -40,7 +39,7 @@ const DestinationCard = React.forwardRef<HTMLDivElement, DestinationCardProps>(
           />
           <div className="relative flex flex-col justify-end h-full p-8 text-white">
             <h3 className="text-3xl font-bold tracking-tight mb-1">
-              {location} <span className="text-2xl ml-2">{flag}</span>
+              {location}
             </h3>
             <p className="text-base text-white/90 font-medium mb-6">{stats}</p>
             <div className="flex items-center justify-between bg-white/10 backdrop-blur-md border border-white/20 rounded-xl px-5 py-4 transition-all duration-300 group-hover:bg-white/20 group-hover:border-white/40">
