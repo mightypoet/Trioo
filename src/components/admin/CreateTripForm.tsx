@@ -69,15 +69,14 @@ export default function CreateTripForm() {
   };
 
   const uploadImage = async (): Promise<string> => {
-    if (!imageFile) return formData.cover_image;
+    if (!imageFile) throw new Error('Please select an image first.');
 
-    const fileExt = imageFile.name.split('.').pop();
-    const fileName = `${Date.now()}_${Math.random().toString(36).substring(2, 9)}.${fileExt}`;
-    const filePath = `trips/${fileName}`;
-
-    const { error: uploadError, data } = await supabase.storage
+    const { data, error: uploadError } = await supabase.storage
       .from('trioo-images')
-      .upload(filePath, imageFile);
+      .upload(`trips/${Date.now()}_${imageFile.name}`, imageFile, {
+        cacheControl: '3600',
+        upsert: false
+      });
 
     if (uploadError) {
       console.error('Upload Error:', uploadError);
@@ -86,7 +85,7 @@ export default function CreateTripForm() {
 
     const { data: publicUrlData } = supabase.storage
       .from('trioo-images')
-      .getPublicUrl(filePath);
+      .getPublicUrl(data.path);
 
     return publicUrlData.publicUrl;
   };
