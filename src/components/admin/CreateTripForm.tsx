@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Plus, Trash2, ArrowRight, Save, Image as ImageIcon, UploadCloud } from 'lucide-react';
 import { cn } from '../../lib/utils';
 import { useAuth } from '../../contexts/AuthContext';
@@ -26,6 +26,20 @@ export default function CreateTripForm() {
   const [itineraries, setItineraries] = useState<ItineraryDay[]>([
     { day_number: 1, title: '', detailed_description: '' }
   ]);
+
+  const [agencies, setAgencies] = useState<{id: string, name: string}[]>([]);
+
+  useEffect(() => {
+    if (role === 'admin') {
+      const fetchAgencies = async () => {
+        const { data } = await supabase.from('agencies').select('id, name');
+        if (data) {
+          setAgencies(data);
+        }
+      };
+      fetchAgencies();
+    }
+  }, [role]);
 
   const handleTripChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     setTripData({ ...tripData, [e.target.name]: e.target.value });
@@ -173,8 +187,9 @@ export default function CreateTripForm() {
                 className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 outline-none focus:border-[var(--color-primary)] focus:ring-2 focus:ring-[var(--color-primary)]/20 transition-all font-medium"
               >
                 <option value="">Select an Agency</option>
-                <option value="fake-uuid-1">Wanderlust Travels</option>
-                <option value="fake-uuid-2">Global Explorers</option>
+                {agencies.map((agency) => (
+                  <option key={agency.id} value={agency.id}>{agency.name}</option>
+                ))}
               </select>
             </div>
           )}
