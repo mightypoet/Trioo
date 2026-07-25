@@ -14,6 +14,7 @@ export default function CreateTripForm() {
   const { role, agencyId } = useAuth();
   const [loading, setLoading] = useState(false);
   const [imageFile, setImageFile] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
 
   const [formData, setFormData] = useState({
     agency_id: '',
@@ -41,12 +42,6 @@ export default function CreateTripForm() {
 
   const handleTripChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
-
-  const handleImageFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files.length > 0) {
-      setImageFile(e.target.files[0]);
-    }
   };
 
   const handleItineraryChange = (index: number, field: keyof ItineraryDay, value: string) => {
@@ -244,9 +239,30 @@ export default function CreateTripForm() {
                     <UploadCloud className="w-8 h-8 text-gray-400 mb-2" />
                     <p className="text-sm text-gray-500 font-medium">Click to upload image file</p>
                   </div>
-                  <input type="file" className="hidden" accept="image/*" onChange={handleImageFileChange} />
+                  <input type="file" className="hidden" accept="image/*" onChange={(e) => {
+                    if (e.target.files && e.target.files[0]) {
+                      const file = e.target.files[0];
+                      setImageFile(file);
+                      setImagePreview(URL.createObjectURL(file));
+                    }
+                  }} />
                 </label>
-                {imageFile && <p className="text-xs text-green-600 mt-2 font-medium">Selected: {imageFile.name}</p>}
+                {imagePreview && (
+                  <div className="mt-4 relative">
+                    <img src={imagePreview} alt="Preview" className="w-full h-32 object-cover rounded-xl" />
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setImageFile(null);
+                        setImagePreview(null);
+                      }}
+                      className="absolute -top-2 -right-2 bg-red-500 text-white p-1 rounded-full shadow-md hover:bg-red-600 transition-colors"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  </div>
+                )}
+                {imageFile && !imagePreview && <p className="text-xs text-green-600 mt-2 font-medium">Selected: {imageFile.name}</p>}
               </div>
               <div className="flex flex-col justify-center">
                 <span className="text-center text-gray-400 text-sm font-bold mb-2">OR</span>

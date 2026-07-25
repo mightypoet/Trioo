@@ -4,6 +4,7 @@ import { cn } from '../../lib/utils';
 export interface MarqueeProps extends React.HTMLAttributes<HTMLDivElement> {
   items: { id: string; name: string; logo_url: string }[];
   pauseOnHover?: boolean;
+  className?: string;
 }
 
 export function Marquee({ items, pauseOnHover = true, className, ...props }: MarqueeProps) {
