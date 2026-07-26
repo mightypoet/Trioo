@@ -150,20 +150,36 @@ export default function PackageDetails() {
 
                       {/* Card */}
                       <div className={`w-full pl-28 md:pl-0 md:w-1/2 ${isEven ? 'md:pr-16 text-left' : 'md:pl-16 md:text-right'}`}>
-                        <div className="bg-white p-6 border-4 border-[#0A0A0A] rounded-2xl relative group hover:-translate-y-2 hover:translate-x-2 transition-all duration-300" style={{ boxShadow: '8px 8px 0px 0px rgba(10,10,10,1)' }}>
-                           {/* 3D Asset Placeholder (Decorative) */}
+                        <div className="bg-white p-6 md:p-8 border-4 border-[#0A0A0A] rounded-2xl relative group hover:-translate-y-2 hover:translate-x-2 transition-all duration-300" style={{ boxShadow: '8px 8px 0px 0px rgba(10,10,10,1)' }}>
+                           {/* 3D Asset Placeholder */}
                            {isEven ? (
-                             <div className="absolute -top-10 -right-6 w-20 h-20 bg-[var(--color-pink)] border-4 border-[#0A0A0A] rounded-xl rotate-12 flex flex-col items-center justify-center shadow-[4px_4px_0px_0px_rgba(10,10,10,1)] text-white font-black text-xs text-center p-2 hidden md:flex">
-                               <span>🗺️</span>
-                               <span>Map Pin</span>
+                             <div className="absolute -top-12 -left-6 md:-left-12 w-24 h-24 md:w-32 md:h-32 rotate-[-15deg] transition-transform group-hover:rotate-0 group-hover:scale-110 z-10 hidden md:block">
+                               <img 
+                                 src="https://placehold.co/400x400/FF90E8/0A0A0A.png?text=3D+Map+Pin&font=montserrat" 
+                                 alt="3D isometric map pin"
+                                 className="w-full h-full object-cover rounded-xl border-4 border-[#0A0A0A] shadow-[4px_4px_0px_0px_rgba(10,10,10,1)]"
+                               />
                              </div>
                            ) : (
-                             <div className="absolute -top-10 -left-6 w-20 h-20 bg-[var(--color-accent)] border-4 border-[#0A0A0A] rounded-full -rotate-12 flex flex-col items-center justify-center shadow-[4px_4px_0px_0px_rgba(10,10,10,1)] text-[#0A0A0A] font-black text-xs text-center p-2 hidden md:flex">
-                               <span>🧭</span>
-                               <span>Compass</span>
+                             <div className="absolute -top-12 -right-6 md:-right-12 w-24 h-24 md:w-32 md:h-32 rotate-[15deg] transition-transform group-hover:rotate-0 group-hover:scale-110 z-10 hidden md:block">
+                               <img 
+                                 src="https://placehold.co/400x400/F4D03F/0A0A0A.png?text=3D+Compass&font=montserrat" 
+                                 alt="3D isometric compass"
+                                 className="w-full h-full object-cover rounded-full border-4 border-[#0A0A0A] shadow-[4px_4px_0px_0px_rgba(10,10,10,1)]"
+                               />
                              </div>
                            )}
-                           <h4 className="font-black text-xl mb-3 leading-tight">{itinerary.title}</h4>
+                           
+                           {/* Mobile Asset */}
+                           <div className="md:hidden w-16 h-16 mb-4 rounded-xl border-4 border-[#0A0A0A] shadow-[4px_4px_0px_0px_rgba(10,10,10,1)] overflow-hidden">
+                             <img 
+                               src={isEven ? "https://placehold.co/400x400/FF90E8/0A0A0A.png?text=3D+Pin" : "https://placehold.co/400x400/F4D03F/0A0A0A.png?text=3D+Compass"} 
+                               alt="3D Asset"
+                               className="w-full h-full object-cover"
+                             />
+                           </div>
+
+                           <h4 className="font-black text-xl md:text-2xl mb-3 leading-tight text-gray-900">{itinerary.title}</h4>
                            <p className="text-gray-700 font-medium leading-relaxed">{itinerary.detailed_description}</p>
                         </div>
                       </div>
@@ -175,8 +191,12 @@ export default function PackageDetails() {
                 {/* X marks the spot */}
                 {trip.itineraries && trip.itineraries.length > 0 && (
                   <div className="relative flex items-center justify-center mt-20 md:mt-24">
-                     <div className="w-24 h-24 bg-[var(--color-success)] border-4 border-[#0A0A0A] rotate-12 flex items-center justify-center shadow-[8px_8px_0px_0px_rgba(10,10,10,1)] rounded-2xl hover:scale-110 transition-transform cursor-pointer">
-                        <span className="text-[#0A0A0A] text-6xl font-black mb-2">X</span>
+                     <div className="w-24 h-24 md:w-32 md:h-32 rotate-6 hover:rotate-0 hover:scale-110 transition-transform cursor-pointer z-20">
+                        <img 
+                          src="https://placehold.co/400x400/4ADE80/0A0A0A.png?text=3D+Treasure+Chest&font=montserrat" 
+                          alt="3D isometric treasure chest"
+                          className="w-full h-full object-cover rounded-2xl border-4 border-[#0A0A0A] shadow-[8px_8px_0px_0px_rgba(10,10,10,1)]"
+                        />
                      </div>
                   </div>
                 )}
