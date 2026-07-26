@@ -200,6 +200,7 @@ export default function Home() {
                   className="h-[400px]"
                 >
                   <DestinationCard
+                    tripId={dest.id}
                     imageUrl={dest.image}
                     location={dest.name}
                     stats={dest.stats}

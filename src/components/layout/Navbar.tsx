@@ -1,11 +1,14 @@
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Compass, Wallet, User, Moon, Sun, Menu, X } from 'lucide-react';
 import { cn } from '../../lib/utils';
 import { useState, useEffect } from 'react';
+import { useAuth } from '../../contexts/AuthContext';
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const { user, requireAuth } = useAuth();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -38,8 +41,16 @@ export default function Navbar() {
             <Wallet className="w-4 h-4 text-[#0A0A0A]" />
             <span className="font-semibold text-sm text-[#0A0A0A]">₹82,000</span>
           </Link>
-          <button className="w-10 h-10 rounded-full bg-white border-4 border-[#0A0A0A] flex items-center justify-center transition-all hover:-translate-y-1 hover:translate-x-1" style={{ boxShadow: '4px 4px 0px 0px rgba(10, 10, 10, 1)' }}>
-            <User className="w-5 h-5 text-gray-800" />
+          <button 
+            onClick={() => requireAuth(() => navigate('/profile'))}
+            className="w-10 h-10 rounded-full bg-white border-4 border-[#0A0A0A] overflow-hidden flex items-center justify-center transition-all hover:-translate-y-1 hover:translate-x-1 cursor-pointer" 
+            style={{ boxShadow: '4px 4px 0px 0px rgba(10, 10, 10, 1)' }}
+          >
+            {user?.user_metadata?.avatar_url ? (
+              <img src={user.user_metadata.avatar_url} alt="User" className="w-full h-full object-cover" />
+            ) : (
+              <User className="w-5 h-5 text-gray-800" />
+            )}
           </button>
           
           <button 

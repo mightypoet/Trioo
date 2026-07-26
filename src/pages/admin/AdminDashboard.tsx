@@ -14,7 +14,21 @@ export default function AdminDashboard() {
   
   const [trips, setTrips] = useState<any[]>([]);
   const [footprints, setFootprints] = useState<any[]>([]);
+  const [agencyPerformance, setAgencyPerformance] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+
+  const handleDeleteTrip = async (tripId: string) => {
+    if (!confirm('Are you sure? This will delete the trip and all associated bookings.')) return;
+    try {
+      const { error } = await supabase.from('trips').delete().eq('id', tripId);
+      if (error) throw error;
+      setTrips(prev => prev.filter(t => t.id !== tripId));
+      alert('Trip deleted successfully.');
+    } catch (err) {
+      console.error('Delete error:', err);
+      alert('Failed to delete: Make sure no active bookings are preventing deletion.');
+    }
+  };
 
   useEffect(() => {
     const fetchDashboardData = async () => {
@@ -22,7 +36,7 @@ export default function AdminDashboard() {
         // Fetch stats
         const { count: tripsCount } = await supabase.from('trips').select('*', { count: 'exact', head: true });
         const { count: agenciesCount } = await supabase.from('agencies').select('*', { count: 'exact', head: true });
-        const { data: bookingsData } = await supabase.from('bookings').select('total_price');
+        const { data: bookingsData } = await supabase.from('bookings').select('total_price, trip_id');
         
         const totalRevenue = bookingsData?.reduce((acc, curr) => acc + (curr.total_price || 0), 0) || 0;
         const bookingsCount = bookingsData?.length || 0;
@@ -43,6 +57,34 @@ export default function AdminDashboard() {
           .limit(5);
         
         if (tripsData) setTrips(tripsData);
+
+        // Fetch agency performance
+        const { data: allTrips } = await supabase.from('trips').select('id, agency_id, agencies(name)');
+        if (allTrips && bookingsData) {
+          const agencyStats: Record<string, { name: string; revenue: number; bookings: number }> = {};
+          
+          allTrips.forEach(trip => {
+            if (!trip.agency_id) return;
+            if (!agencyStats[trip.agency_id]) {
+              agencyStats[trip.agency_id] = { 
+                name: trip.agencies?.name || 'Unknown', 
+                revenue: 0, 
+                bookings: 0 
+              };
+            }
+          });
+
+          bookingsData.forEach(booking => {
+            const trip = allTrips.find(t => t.id === booking.trip_id);
+            if (trip && trip.agency_id && agencyStats[trip.agency_id]) {
+              agencyStats[trip.agency_id].revenue += (booking.total_price || 0);
+              agencyStats[trip.agency_id].bookings += 1;
+            }
+          });
+
+          const performanceArray = Object.values(agencyStats).sort((a, b) => b.revenue - a.revenue).slice(0, 5);
+          setAgencyPerformance(performanceArray);
+        }
 
         // Fetch user footprints (mock data fallback if table missing)
         const { data: fpData, error: fpError } = await supabase
@@ -155,7 +197,7 @@ export default function AdminDashboard() {
                       <button className="p-2 text-blue-500 hover:bg-blue-50 rounded-lg transition-colors">
                         <Edit className="w-4 h-4" />
                       </button>
-                      <button className="p-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors">
+                      <button onClick={() => handleDeleteTrip(trip.id)} className="p-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors">
                         <Trash2 className="w-4 h-4" />
                       </button>
                     </td>
@@ -171,24 +213,30 @@ export default function AdminDashboard() {
           </div>
         </div>
 
-        {/* User Footprints */}
+        {/* Agency Performance */}
         <div className="bg-white rounded-3xl p-8 shadow-sm border border-gray-100">
-          <h3 className="text-lg font-bold mb-6">Live User Footprints</h3>
+          <h3 className="text-lg font-bold mb-6">Top Agencies</h3>
           <div className="space-y-6">
-            {footprints.map((fp, idx) => (
-              <div key={idx} className="flex gap-4 relative">
-                {idx !== footprints.length - 1 && (
-                  <div className="absolute left-[11px] top-8 bottom-[-24px] w-px bg-gray-100" />
-                )}
-                <div className="w-6 h-6 rounded-full bg-primary/10 border border-primary/20 flex-shrink-0 mt-1" />
-                <div>
-                  <p className="text-sm font-bold text-gray-900 truncate max-w-[200px]">{fp.page_url}</p>
-                  <p className="text-xs text-gray-500 font-medium mt-1">
-                    {new Date(fp.created_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})} • {fp.user_agent?.split('/')[0]}
-                  </p>
+            {agencyPerformance.length === 0 ? (
+              <p className="text-sm text-gray-500 font-medium">No agency data available.</p>
+            ) : (
+              agencyPerformance.map((agency, idx) => (
+                <div key={idx} className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold">
+                      {agency.name.charAt(0)}
+                    </div>
+                    <div>
+                      <p className="font-bold text-gray-900 truncate max-w-[120px]">{agency.name}</p>
+                      <p className="text-xs text-gray-500 font-medium">{agency.bookings} Bookings</p>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <p className="font-bold text-gray-900">₹{agency.revenue.toLocaleString()}</p>
+                  </div>
                 </div>
-              </div>
-            ))}
+              ))
+            )}
           </div>
         </div>
       </div>

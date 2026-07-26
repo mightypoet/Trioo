@@ -13,6 +13,7 @@ import PackageDetails from './pages/PackageDetails';
 import BookingFlow from './pages/BookingFlow';
 import Wallet from './pages/Wallet';
 import CreatorRewards from './pages/CreatorRewards';
+import UserProfile from './pages/UserProfile';
 
 import AdminLayout from './components/admin/AdminLayout';
 import AdminDashboard from './pages/admin/AdminDashboard';
@@ -33,6 +34,7 @@ export default function App() {
           <Route path="book/:id" element={<BookingFlow />} />
           <Route path="wallet" element={<Wallet />} />
           <Route path="creators" element={<CreatorRewards />} />
+          <Route path="profile" element={<UserProfile />} />
         </Route>
         
         {/* Admin Routes */}

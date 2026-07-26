@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Search as SearchIcon, Filter, MapPin, Star, Clock } from 'lucide-react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
+import WishlistButton from '../components/ui/WishlistButton';
 
 export default function Search() {
   const [searchParams] = useSearchParams();
@@ -120,31 +121,36 @@ export default function Search() {
               <p className="text-gray-500 col-span-full">No trips found for "{query}".</p>
             ) : (
               trips.map((pkg) => (
-                <Link to={`/package/${pkg.id}`} key={pkg.id} className="clay-card-interactive group flex flex-col overflow-hidden">
-                  <div className="relative h-56 overflow-hidden">
-                    <img src={pkg.image} alt={pkg.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
-                    <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm px-2.5 py-1 rounded-full text-xs font-bold flex items-center gap-1 shadow-sm">
-                      <Star className="w-3 h-3 text-accent fill-accent" /> {pkg.rating}
-                    </div>
+                <div key={pkg.id} className="relative group block h-full">
+                  <div className="absolute top-4 left-4 z-20 group-hover:-translate-y-1 group-hover:-translate-x-1 transition-all duration-200">
+                    <WishlistButton tripId={pkg.id} />
                   </div>
-                  <div className="p-5 flex flex-col flex-1">
-                    <div className="flex items-center gap-1 text-xs text-primary font-bold uppercase tracking-wider mb-2">
-                      <MapPin className="w-3 h-3" /> {pkg.agency}
-                    </div>
-                    <h3 className="font-bold text-lg leading-tight mb-2 group-hover:text-primary transition-colors line-clamp-2">
-                      {pkg.title}
-                    </h3>
-                    <div className="flex items-center gap-4 text-sm text-gray-500 mb-4 mt-auto pt-4">
-                      <span className="flex items-center gap-1"><Clock className="w-4 h-4" /> {pkg.duration}</span>
-                    </div>
-                    <div className="flex items-center justify-between pt-4 border-t border-gray-100">
-                      <div>
-                        <p className="text-xs text-gray-400">Starting from</p>
-                        <p className="font-bold text-xl">₹{pkg.price.toLocaleString()}</p>
+                  <Link to={`/package/${pkg.id}`} className="clay-card-interactive group-card flex flex-col overflow-hidden h-full">
+                    <div className="relative h-56 overflow-hidden">
+                      <img src={pkg.image} alt={pkg.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
+                      <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm px-2.5 py-1 rounded-full text-xs font-bold flex items-center gap-1 shadow-sm border-2 border-[#0A0A0A]">
+                        <Star className="w-3 h-3 text-[var(--color-primary)] fill-[var(--color-primary)]" /> {pkg.rating}
                       </div>
                     </div>
-                  </div>
-                </Link>
+                    <div className="p-5 flex flex-col flex-1 bg-white">
+                      <div className="flex items-center gap-1 text-xs text-[var(--color-primary)] font-bold uppercase tracking-wider mb-2">
+                        <MapPin className="w-3 h-3" /> {pkg.agency}
+                      </div>
+                      <h3 className="font-bold text-lg leading-tight mb-2 group-hover:text-[var(--color-primary)] transition-colors line-clamp-2">
+                        {pkg.title}
+                      </h3>
+                      <div className="flex items-center gap-4 text-sm text-gray-500 mb-4 mt-auto pt-4">
+                        <span className="flex items-center gap-1 font-bold text-[#0A0A0A]/70"><Clock className="w-4 h-4" /> {pkg.duration}</span>
+                      </div>
+                      <div className="flex items-center justify-between pt-4 border-t-2 border-dashed border-gray-200">
+                        <div>
+                          <p className="text-xs text-gray-500 font-bold uppercase">Starting from</p>
+                          <p className="font-black text-xl text-[#0A0A0A]">₹{pkg.price.toLocaleString()}</p>
+                        </div>
+                      </div>
+                    </div>
+                  </Link>
+                </div>
               ))
             )}
           </div>

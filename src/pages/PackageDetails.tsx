@@ -116,70 +116,111 @@ export default function PackageDetails() {
           )}
 
           <section>
-            <h2 className="text-2xl font-bold mb-6">Itinerary</h2>
-            <div className="space-y-6">
-              {trip.itineraries?.map((itinerary: any) => (
-                <details key={itinerary.id} className="group flex gap-6 cursor-pointer marker:content-['']">
-                  <summary className="flex gap-6 w-full items-start outline-none">
-                    <div className="flex flex-col items-center">
-                      <div className="w-10 h-10 rounded-full bg-primary/10 text-primary font-bold flex items-center justify-center shrink-0">
-                        D{itinerary.day_number}
+            <h2 className="text-3xl font-black mb-8 flex items-center gap-3">
+              <span className="bg-[var(--color-primary)] text-[#0A0A0A] px-3 py-1 border-4 border-[#0A0A0A] rounded-lg shadow-[4px_4px_0px_0px_rgba(10,10,10,1)] -rotate-3">The</span>
+              Journey Map
+            </h2>
+            <div className="relative py-12 px-4 md:px-12 bg-[#F9F5EE] border-4 border-[#0A0A0A] rounded-[3rem] overflow-hidden" style={{ boxShadow: '8px 8px 0px 0px rgba(10,10,10,1)' }}>
+              
+              {/* Map Background grid */}
+              <div className="absolute inset-0 opacity-20" style={{ backgroundImage: 'radial-gradient(#0A0A0A 2px, transparent 2px)', backgroundSize: '30px 30px' }}></div>
+              
+              {/* Prompt instruction for user */}
+              <div className="absolute top-4 right-4 bg-white/80 backdrop-blur-md p-3 border-4 border-[#0A0A0A] rounded-xl text-xs font-bold shadow-[4px_4px_0px_0px_rgba(10,10,10,1)] max-w-[200px] z-30 hidden lg:block">
+                🎨 <span className="text-[var(--color-pink)]">Image Prompts:</span><br/>
+                Generate these assets with: "3D isometric [map pin / compass / treasure chest], bright colors, bold black outlines, neo-brutalist style, solid background"
+              </div>
+
+              <div className="relative z-10 pt-8 pb-12">
+                {/* Dotted path connecting the days */}
+                <div className="absolute left-12 md:left-1/2 top-0 bottom-0 w-1 md:w-2 border-l-4 md:border-l-8 border-dashed border-[#0A0A0A] -translate-x-1/2 opacity-30"></div>
+                
+                {trip.itineraries?.map((itinerary: any, index: number) => {
+                  const isEven = index % 2 === 0;
+                  return (
+                    <div key={itinerary.id} className={`relative flex items-center mb-16 md:mb-24 ${isEven ? 'md:flex-row' : 'md:flex-row-reverse'} flex-row`}>
+                      
+                      {/* Timeline Node */}
+                      <div className="absolute left-12 md:left-1/2 -translate-x-1/2 flex items-center justify-center z-20">
+                         <div className="w-16 h-16 rounded-full bg-[var(--color-primary)] border-4 border-[#0A0A0A] flex flex-col items-center justify-center rotate-3 transition-transform hover:scale-110" style={{ boxShadow: '4px 4px 0px 0px rgba(10,10,10,1)' }}>
+                            <span className="text-xs font-black uppercase leading-none">Day</span>
+                            <span className="text-2xl font-black leading-none">{itinerary.day_number}</span>
+                         </div>
                       </div>
-                    </div>
-                    <div className="clay-card p-6 flex-1 shadow-sm border border-gray-100 group-open:rounded-b-none transition-all">
-                      <div className="flex justify-between items-center">
-                        <h4 className="font-bold text-lg">{itinerary.title}</h4>
-                        <div className="w-6 h-6 rounded-full bg-gray-100 flex items-center justify-center group-open:rotate-180 transition-transform">
-                          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+
+                      {/* Card */}
+                      <div className={`w-full pl-28 md:pl-0 md:w-1/2 ${isEven ? 'md:pr-16 text-left' : 'md:pl-16 md:text-right'}`}>
+                        <div className="bg-white p-6 border-4 border-[#0A0A0A] rounded-2xl relative group hover:-translate-y-2 hover:translate-x-2 transition-all duration-300" style={{ boxShadow: '8px 8px 0px 0px rgba(10,10,10,1)' }}>
+                           {/* 3D Asset Placeholder (Decorative) */}
+                           {isEven ? (
+                             <div className="absolute -top-10 -right-6 w-20 h-20 bg-[var(--color-pink)] border-4 border-[#0A0A0A] rounded-xl rotate-12 flex flex-col items-center justify-center shadow-[4px_4px_0px_0px_rgba(10,10,10,1)] text-white font-black text-xs text-center p-2 hidden md:flex">
+                               <span>🗺️</span>
+                               <span>Map Pin</span>
+                             </div>
+                           ) : (
+                             <div className="absolute -top-10 -left-6 w-20 h-20 bg-[var(--color-accent)] border-4 border-[#0A0A0A] rounded-full -rotate-12 flex flex-col items-center justify-center shadow-[4px_4px_0px_0px_rgba(10,10,10,1)] text-[#0A0A0A] font-black text-xs text-center p-2 hidden md:flex">
+                               <span>🧭</span>
+                               <span>Compass</span>
+                             </div>
+                           )}
+                           <h4 className="font-black text-xl mb-3 leading-tight">{itinerary.title}</h4>
+                           <p className="text-gray-700 font-medium leading-relaxed">{itinerary.detailed_description}</p>
                         </div>
                       </div>
+                      
                     </div>
-                  </summary>
-                  <div className="pl-16">
-                    <div className="clay-card p-6 rounded-t-none border-t-0 border border-gray-100 shadow-sm mt-0 relative top-[-4px] bg-gray-50/50">
-                      <p className="text-gray-600 text-sm leading-relaxed">{itinerary.detailed_description}</p>
-                    </div>
+                  );
+                })}
+
+                {/* X marks the spot */}
+                {trip.itineraries && trip.itineraries.length > 0 && (
+                  <div className="relative flex items-center justify-center mt-20 md:mt-24">
+                     <div className="w-24 h-24 bg-[var(--color-success)] border-4 border-[#0A0A0A] rotate-12 flex items-center justify-center shadow-[8px_8px_0px_0px_rgba(10,10,10,1)] rounded-2xl hover:scale-110 transition-transform cursor-pointer">
+                        <span className="text-[#0A0A0A] text-6xl font-black mb-2">X</span>
+                     </div>
                   </div>
-                </details>
-              ))}
-              {(!trip.itineraries || trip.itineraries.length === 0) && (
-                <p className="text-gray-500">No itinerary details provided.</p>
-              )}
+                )}
+
+                {(!trip.itineraries || trip.itineraries.length === 0) && (
+                  <p className="text-gray-500 font-bold text-center mt-12">No treasure map details provided yet.</p>
+                )}
+              </div>
             </div>
           </section>
         </div>
 
         {/* Sticky Booking Sidebar */}
-        <div className="lg:w-1/3 space-y-6">
-          <div className="sticky top-32 clay-card p-8 border border-gray-100">
-            {trip.packages && trip.packages.length > 0 && (
-               <div className="mb-6 space-y-3">
-                  <label className="text-sm font-bold text-gray-700">Select Package Tier</label>
-                  <select 
-                    className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 font-medium outline-none"
-                    value={selectedPackage?.id || ''}
-                    onChange={(e) => setSelectedPackage(trip.packages.find((p: any) => p.id === e.target.value))}
-                  >
-                    {trip.packages.map((pkg: any) => (
-                      <option key={pkg.id} value={pkg.id}>{pkg.tier_name}</option>
-                    ))}
-                  </select>
-               </div>
-            )}
+        <div className="lg:w-1/3">
+          <div className="sticky top-32 space-y-6">
+            <div className="clay-card p-8 border border-gray-100">
+              {trip.packages && trip.packages.length > 0 && (
+                 <div className="mb-6 space-y-3">
+                    <label className="text-sm font-bold text-gray-700">Select Package Tier</label>
+                    <select 
+                      className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 font-medium outline-none"
+                      value={selectedPackage?.id || ''}
+                      onChange={(e) => setSelectedPackage(trip.packages.find((p: any) => p.id === e.target.value))}
+                    >
+                      {trip.packages.map((pkg: any) => (
+                        <option key={pkg.id} value={pkg.id}>{pkg.tier_name}</option>
+                      ))}
+                    </select>
+                 </div>
+              )}
 
-            <div className="mb-6 flex items-end gap-3">
-              <span className="text-4xl font-bold text-gray-900">₹{selectedPackage ? selectedPackage.price.toLocaleString() : trip.base_price.toLocaleString()}</span>
-              <span className="text-gray-400 text-sm font-bold mb-1">per person</span>
+              <div className="mb-6 flex items-end gap-3">
+                <span className="text-4xl font-bold text-gray-900">₹{selectedPackage ? selectedPackage.price.toLocaleString() : trip.base_price.toLocaleString()}</span>
+                <span className="text-gray-400 text-sm font-bold mb-1">per person</span>
+              </div>
+              
+              <button onClick={handleBook} disabled={!selectedPackage} className="clay-btn-primary w-full py-4 text-lg mb-4 disabled:opacity-50">
+                Book Now
+              </button>
+              <p className="text-center text-sm text-gray-500 font-medium">You won't be charged yet.</p>
             </div>
-            
-            <button onClick={handleBook} disabled={!selectedPackage} className="clay-btn-primary w-full py-4 text-lg mb-4 disabled:opacity-50">
-              Book Now
-            </button>
-            <p className="text-center text-sm text-gray-500 font-medium">You won't be charged yet.</p>
-          </div>
 
-          <div className="clay-card p-8 border border-gray-100 mt-6 sticky top-[420px]">
-            <h3 className="text-lg font-bold mb-4">Hosted by</h3>
+            <div className="clay-card p-8 border border-gray-100">
+              <h3 className="text-lg font-bold mb-4">Hosted by</h3>
             <div className="flex items-center gap-4 mb-4">
               <div className="w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-xl uppercase">
                 {trip.agencies?.name?.charAt(0) || 'A'}
@@ -197,6 +238,7 @@ export default function PackageDetails() {
             <button className="w-full py-3 bg-gray-100 hover:bg-gray-200 rounded-xl font-bold text-gray-700 transition-colors">
               Contact Agency
             </button>
+          </div>
           </div>
         </div>
       </div>

@@ -2,12 +2,14 @@ import * as React from "react";
 import { ArrowRight } from "lucide-react";
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
+import WishlistButton from "./WishlistButton";
 
 function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
 export interface DestinationCardProps extends React.HTMLAttributes<HTMLDivElement> {
+  tripId: string;
   imageUrl: string;
   location: string;
   stats: string;
@@ -16,14 +18,17 @@ export interface DestinationCardProps extends React.HTMLAttributes<HTMLDivElemen
 }
 
 const DestinationCard = React.forwardRef<HTMLDivElement, DestinationCardProps>(
-  ({ className, imageUrl, location, stats, href, themeColor, ...props }, ref) => {
+  ({ className, tripId, imageUrl, location, stats, href, themeColor, ...props }, ref) => {
     return (
       <div
         ref={ref}
         style={{ "--theme-color": themeColor } as React.CSSProperties}
-        className={cn("group w-full h-full min-h-[400px]", className)}
+        className={cn("group relative w-full h-full min-h-[400px]", className)}
         {...props}
       >
+        <div className="absolute top-6 right-6 z-20 group-hover:-translate-y-2 group-hover:translate-x-2 transition-all duration-200">
+          <WishlistButton tripId={tripId} />
+        </div>
         <a
           href={href}
           className="relative block w-full h-full rounded-[32px] overflow-hidden border-4 border-[#0A0A0A] bg-white transition-all duration-200 hover:-translate-y-2 hover:translate-x-2"
