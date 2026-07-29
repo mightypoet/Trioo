@@ -7,6 +7,7 @@ import { Marquee } from '../components/ui/Marquee';
 import { supabase } from '../lib/supabase';
 import LandingAuthModal from '../components/auth/LandingAuthModal';
 import heroImage1 from '../assets/images/regenerated_image_1785007937394.png';
+import { getTripImageUrl } from '../lib/utils';
 
 export default function Home() {
   const navigate = useNavigate();
@@ -45,7 +46,7 @@ export default function Home() {
           return {
             id: trip.id,
             name: `${trip.destination}`,
-            image: trip.cover_image || 'https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?q=80&w=800&auto=format&fit=crop',
+            image: getTripImageUrl(trip),
             price: `₹${minPrice.toLocaleString()}`,
             themeColor: '210 100% 60%',
             stats: `Packages from ₹${minPrice.toLocaleString()}`
@@ -64,7 +65,7 @@ export default function Home() {
   };
 
   return (
-    <div className="w-full">
+    <div className="w-full overflow-x-hidden">
       <LandingAuthModal />
       {/* Hero Section */}
       <section className="relative px-6 pt-12 pb-32 z-10">
@@ -279,7 +280,7 @@ export default function Home() {
       <section className="px-6 py-20 relative z-10 mt-20 border-t-4 border-[#0A0A0A] bg-white">
         <div className="max-w-7xl mx-auto flex flex-col lg:flex-row items-center gap-16">
           <div className="lg:w-1/2">
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-4 pt-8">
                 <img src="https://images.unsplash.com/photo-1518173946687-a4c8892bbd9f?q=80&w=600&auto=format&fit=crop" className="rounded-3xl object-cover h-64 w-full border-4 border-[#0A0A0A]" style={{ boxShadow: '4px 4px 0px 0px rgba(10,10,10,1)' }} alt="Creator" />
                 <img src="https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?q=80&w=600&auto=format&fit=crop" className="rounded-3xl object-cover h-48 w-full border-4 border-[#0A0A0A]" style={{ boxShadow: '4px 4px 0px 0px rgba(10,10,10,1)' }} alt="Creator" />

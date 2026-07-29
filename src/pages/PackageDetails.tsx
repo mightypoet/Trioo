@@ -3,6 +3,7 @@ import { useParams, Link, useNavigate } from 'react-router-dom';
 import { MapPin, Star, Clock, CheckCircle2, Shield, Calendar, Users, ChevronLeft } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { supabase } from '../lib/supabase';
+import { getTripImageUrl } from '../lib/utils';
 
 export default function PackageDetails() {
   const { id } = useParams();
@@ -66,25 +67,34 @@ export default function PackageDetails() {
         </div>
       </div>
 
-      {/* Gallery Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 h-[400px] md:h-[500px] mb-12 rounded-[2rem] overflow-hidden">
-        <div className={`h-full ${trip.images && trip.images.length > 1 ? 'md:col-span-3' : 'md:col-span-4'}`}>
-          <img src={trip.cover_image} alt="Main" className="w-full h-full object-cover hover:scale-105 transition-transform duration-700" />
-        </div>
-        {trip.images && trip.images.length > 1 && (
-          <div className="hidden md:grid grid-rows-2 gap-4 h-full">
-            {trip.images.slice(1, 3).map((imgUrl: string, idx: number) => (
-              <div key={idx} className="h-full overflow-hidden rounded-2xl relative">
-                <img src={imgUrl} alt={`Gallery ${idx + 1}`} className="w-full h-full object-cover hover:scale-105 transition-transform duration-700" />
-                {idx === 1 && trip.images.length > 3 && (
-                  <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
-                    <span className="text-white font-bold text-xl">+{trip.images.length - 3}</span>
-                  </div>
-                )}
+      {/* Swipeable Photo Album */}
+      <div className="mb-12 relative group">
+        <div 
+          className="flex overflow-x-auto snap-x snap-mandatory gap-4 scroll-smooth w-full [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
+        >
+          {trip.images && trip.images.length > 0 ? (
+            trip.images.map((imgUrl: string, idx: number) => (
+              <div key={idx} className="flex-none w-full sm:w-[85%] snap-center relative">
+                <img 
+                  src={getTripImageUrl(imgUrl)} 
+                  alt={`Trip image ${idx + 1}`} 
+                  className="w-full h-64 md:h-96 object-cover rounded-2xl border-4 border-[#0A0A0A]" 
+                />
+                <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-bold border-2 border-[#0A0A0A] shadow-[2px_2px_0px_0px_rgba(10,10,10,1)]">
+                  {idx + 1} / {trip.images.length}
+                </div>
               </div>
-            ))}
-          </div>
-        )}
+            ))
+          ) : (
+            <div className="flex-none w-full sm:w-[85%] snap-center relative">
+              <img 
+                src={getTripImageUrl(trip)} 
+                alt="Main" 
+                className="w-full h-64 md:h-96 object-cover rounded-2xl border-4 border-[#0A0A0A]" 
+              />
+            </div>
+          )}
+        </div>
       </div>
 
       <div className="flex flex-col lg:flex-row gap-12">

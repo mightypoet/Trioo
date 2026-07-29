@@ -3,7 +3,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { supabase } from '../lib/supabase';
 import { Link, useNavigate } from 'react-router-dom';
 import { MapPin, Star, Clock, User, LogOut } from 'lucide-react';
-import { cn } from '../lib/utils';
+import { cn, getTripImageUrl } from '../lib/utils';
 
 import WishlistButton from '../components/ui/WishlistButton';
 
@@ -87,7 +87,7 @@ export default function UserProfile() {
       duration: 'Flexible',
       rating: 4.9,
       price: minPrice,
-      image: trip.cover_image || 'https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?q=80&w=800&auto=format&fit=crop',
+      image: getTripImageUrl(trip),
     };
   };
 
@@ -129,7 +129,7 @@ export default function UserProfile() {
             </div>
             <Link to={`/package/${pkg.id}`} className="clay-card-interactive group-card flex flex-col overflow-hidden h-full">
               <div className="relative h-56 overflow-hidden">
-                <img src={pkg.image} alt={pkg.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
+                <img src={pkg.image} alt={pkg.title} className="w-full h-full object-cover block group-hover:scale-105 transition-transform duration-700" />
                 <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm px-2.5 py-1 rounded-full text-xs font-bold flex items-center gap-1 border-2 border-[#0A0A0A]">
                   <Star className="w-3 h-3 text-[var(--color-primary)] fill-[var(--color-primary)]" /> {pkg.rating}
                 </div>
@@ -163,7 +163,7 @@ export default function UserProfile() {
   return (
     <div className="max-w-7xl mx-auto px-6 py-12">
       {/* Profile Header */}
-      <div className="clay-card p-8 mb-12 flex flex-col md:flex-row items-center gap-8 relative overflow-hidden">
+      <div className="clay-card p-4 md:p-8 mb-12 flex flex-col md:flex-row items-center gap-8 relative overflow-hidden">
         <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-[#0A0A0A] shrink-0" style={{ boxShadow: '4px 4px 0px 0px rgba(10, 10, 10, 1)' }}>
           {avatarUrl ? (
             <img src={avatarUrl} alt={fullName} className="w-full h-full object-cover" />

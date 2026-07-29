@@ -34,9 +34,10 @@ const DestinationCard = React.forwardRef<HTMLDivElement, DestinationCardProps>(
           className="relative block w-full h-full rounded-[32px] overflow-hidden border-4 border-[#0A0A0A] bg-white transition-all duration-200 hover:-translate-y-2 hover:translate-x-2"
           style={{ boxShadow: '8px 8px 0px 0px rgba(10,10,10,1)' }}
         >
-          <div
-            className="absolute inset-0 bg-cover bg-center transition-transform duration-700 ease-in-out group-hover:scale-110"
-            style={{ backgroundImage: `url(${imageUrl})` }}
+          <img
+            src={imageUrl}
+            alt={location}
+            className="absolute inset-0 w-full h-full object-cover block transition-transform duration-700 ease-in-out group-hover:scale-110"
           />
           <div
             className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent"

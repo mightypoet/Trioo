@@ -21,7 +21,7 @@ export default function Wallet() {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12">
         {/* Main Balance Card */}
-        <div className="lg:col-span-2 clay-card p-8 bg-gradient-to-br from-primary/5 to-purple/5 border border-primary/10">
+        <div className="lg:col-span-2 clay-card p-4 sm:p-6 md:p-8 bg-gradient-to-br from-primary/5 to-purple/5 border border-primary/10">
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-8">
             <div>
               <p className="text-gray-500 font-medium mb-1 flex items-center gap-2">
@@ -63,7 +63,7 @@ export default function Wallet() {
         {/* Side Panel: Goals & Rewards */}
         <div className="space-y-8">
           {/* Active Goal */}
-          <div className="clay-card p-6">
+          <div className="clay-card p-4 md:p-6">
             <div className="flex items-center justify-between mb-6">
               <h3 className="font-bold text-lg flex items-center gap-2">
                 <Target className="w-5 h-5 text-accent" /> Active Goal
@@ -90,7 +90,7 @@ export default function Wallet() {
           </div>
 
           {/* Rewards */}
-          <div className="clay-card p-6">
+          <div className="clay-card p-4 md:p-6">
             <h3 className="font-bold text-lg flex items-center gap-2 mb-6">
               <Award className="w-5 h-5 text-pink" /> Rewards Hub
             </h3>

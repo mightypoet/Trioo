@@ -3,6 +3,7 @@ import { Search as SearchIcon, Filter, MapPin, Star, Clock } from 'lucide-react'
 import { Link, useSearchParams } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import WishlistButton from '../components/ui/WishlistButton';
+import { getTripImageUrl } from '../lib/utils';
 
 export default function Search() {
   const [searchParams] = useSearchParams();
@@ -37,7 +38,7 @@ export default function Search() {
             duration: 'Flexible',
             rating: 4.9,
             price: minPrice,
-            image: trip.cover_image || 'https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?q=80&w=800&auto=format&fit=crop',
+            image: getTripImageUrl(trip),
           };
         });
         setTrips(formatted);
@@ -127,7 +128,7 @@ export default function Search() {
                   </div>
                   <Link to={`/package/${pkg.id}`} className="clay-card-interactive group-card flex flex-col overflow-hidden h-full">
                     <div className="relative h-56 overflow-hidden">
-                      <img src={pkg.image} alt={pkg.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
+                      <img src={pkg.image} alt={pkg.title} className="w-full h-full object-cover block group-hover:scale-105 transition-transform duration-700" />
                       <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm px-2.5 py-1 rounded-full text-xs font-bold flex items-center gap-1 shadow-sm border-2 border-[#0A0A0A]">
                         <Star className="w-3 h-3 text-[var(--color-primary)] fill-[var(--color-primary)]" /> {pkg.rating}
                       </div>

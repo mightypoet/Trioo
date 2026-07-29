@@ -14,6 +14,7 @@ import BookingFlow from './pages/BookingFlow';
 import Wallet from './pages/Wallet';
 import CreatorRewards from './pages/CreatorRewards';
 import UserProfile from './pages/UserProfile';
+import Feed from './pages/Feed';
 
 import AdminLayout from './components/admin/AdminLayout';
 import AdminDashboard from './pages/admin/AdminDashboard';
@@ -30,6 +31,7 @@ export default function App() {
         <Route path="/" element={<Layout />}>
           <Route index element={<Home />} />
           <Route path="search" element={<Search />} />
+          <Route path="feed" element={<Feed />} />
           <Route path="package/:id" element={<PackageDetails />} />
           <Route path="book/:id" element={<BookingFlow />} />
           <Route path="wallet" element={<Wallet />} />
