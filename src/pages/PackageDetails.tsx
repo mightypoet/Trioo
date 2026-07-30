@@ -37,12 +37,12 @@ export default function PackageDetails() {
     if (id) fetchTrip();
   }, [id]);
 
-  const handleBook = () => {
-    if (!selectedPackage) return;
-    requireAuth(() => {
-      // Pass the selected package ID via URL params
-      navigate(`/book/${selectedPackage.id}`, { state: { tripId: id } });
-    });
+  const handleWhatsAppBooking = () => {
+    if (!trip) return;
+    const message = `Hello! I am interested in booking the trip: *${trip.title}* hosted by *${trip.agencies?.name || 'TRAVY Partner'}*. Could you provide more details?`;
+    const encodedMessage = encodeURIComponent(message);
+    const whatsappUrl = `https://wa.me/918961339702?text=${encodedMessage}`;
+    window.open(whatsappUrl, '_blank');
   };
 
   if (loading) return <div className="p-8 text-center text-gray-500 font-bold">Loading Trip Details...</div>;
@@ -135,12 +135,6 @@ export default function PackageDetails() {
               {/* Map Background grid */}
               <div className="absolute inset-0 opacity-20" style={{ backgroundImage: 'radial-gradient(#0A0A0A 2px, transparent 2px)', backgroundSize: '30px 30px' }}></div>
               
-              {/* Prompt instruction for user */}
-              <div className="absolute top-4 right-4 bg-white/80 backdrop-blur-md p-3 border-4 border-[#0A0A0A] rounded-xl text-xs font-bold shadow-[4px_4px_0px_0px_rgba(10,10,10,1)] max-w-[200px] z-30 hidden lg:block">
-                🎨 <span className="text-[var(--color-pink)]">Image Prompts:</span><br/>
-                Generate these assets with: "3D isometric [map pin / compass / treasure chest], bright colors, bold black outlines, neo-brutalist style, solid background"
-              </div>
-
               <div className="relative z-10 pt-8 pb-12">
                 {/* Dotted path connecting the days */}
                 <div className="absolute left-12 md:left-1/2 top-0 bottom-0 w-1 md:w-2 border-l-4 md:border-l-8 border-dashed border-[#0A0A0A] -translate-x-1/2 opacity-30"></div>
@@ -243,7 +237,7 @@ export default function PackageDetails() {
                 <span className="text-gray-400 text-sm font-bold mb-1">per person</span>
               </div>
               
-              <button onClick={handleBook} disabled={!selectedPackage} className="clay-btn-primary w-full py-4 text-lg mb-4 disabled:opacity-50">
+              <button onClick={handleWhatsAppBooking} className="clay-btn-primary w-full py-4 text-lg mb-4 disabled:opacity-50">
                 Book Now
               </button>
               <p className="text-center text-sm text-gray-500 font-medium">You won't be charged yet.</p>
