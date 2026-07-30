@@ -41,17 +41,17 @@ export default function Navbar() {
             <Wallet className="w-4 h-4 text-[#0A0A0A]" />
             {user && <span className="font-semibold text-sm text-[#0A0A0A]">₹500</span>}
           </Link>
-          <button 
-            onClick={() => requireAuth(() => navigate('/profile'))}
+          <Link 
+            to="/profile"
             className="w-10 h-10 rounded-full bg-white border-4 border-[#0A0A0A] overflow-hidden flex items-center justify-center transition-all hover:-translate-y-1 hover:translate-x-1 cursor-pointer" 
             style={{ boxShadow: '4px 4px 0px 0px rgba(10, 10, 10, 1)' }}
           >
             {user?.user_metadata?.avatar_url ? (
               <img src={user.user_metadata.avatar_url} alt="User" className="w-full h-full object-cover" />
             ) : (
-              <User className="w-5 h-5 text-gray-800" />
+              <User className="w-5 h-5 text-[#0A0A0A]" />
             )}
-          </button>
+          </Link>
           
           <button 
             className="md:hidden w-10 h-10 rounded-full bg-white border-4 border-[#0A0A0A] flex items-center justify-center transition-all hover:-translate-y-1 hover:translate-x-1" style={{ boxShadow: '4px 4px 0px 0px rgba(10, 10, 10, 1)' }}

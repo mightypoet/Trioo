@@ -1,15 +1,18 @@
-import { Home, Search, Flame, Wallet } from 'lucide-react';
+import { Home, Search, Flame, Wallet, User } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 import { cn } from '../../lib/utils';
+import { useAuth } from '../../contexts/AuthContext';
 
 export default function BottomNav() {
   const location = useLocation();
+  const { user } = useAuth();
 
   const navItems = [
     { name: 'Home', icon: Home, path: '/' },
     { name: 'Search', icon: Search, path: '/search' },
     { name: 'Feed', icon: Flame, path: '/feed' },
     { name: 'Wallet', icon: Wallet, path: '/wallet' },
+    { name: 'Profile', isProfile: true, path: '/profile' },
   ];
 
   return (
@@ -26,7 +29,20 @@ export default function BottomNav() {
                 isActive ? "text-[var(--color-primary)]" : "text-gray-500 hover:text-gray-900"
               )}
             >
-              <item.icon className={cn("w-6 h-6 mb-1", isActive && "fill-current")} strokeWidth={isActive ? 2.5 : 2} />
+              {item.isProfile ? (
+                <div className={cn(
+                  "w-8 h-8 mb-1 rounded-full border-2 border-[#0A0A0A] overflow-hidden flex items-center justify-center bg-gray-100",
+                  isActive && "border-[var(--color-primary)]"
+                )}>
+                  {user?.user_metadata?.avatar_url ? (
+                    <img src={user.user_metadata.avatar_url} alt="Profile" className="w-full h-full object-cover" />
+                  ) : (
+                    <User className="w-5 h-5 text-[#0A0A0A]" strokeWidth={isActive ? 2.5 : 2} />
+                  )}
+                </div>
+              ) : (
+                item.icon && <item.icon className={cn("w-6 h-6 mb-1", isActive && "fill-current")} strokeWidth={isActive ? 2.5 : 2} />
+              )}
               <span className="text-[10px] font-bold">{item.name}</span>
             </Link>
           );
