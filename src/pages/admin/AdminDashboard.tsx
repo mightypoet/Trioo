@@ -67,7 +67,7 @@ export default function AdminDashboard() {
             if (!trip.agency_id) return;
             if (!agencyStats[trip.agency_id]) {
               agencyStats[trip.agency_id] = { 
-                name: trip.agencies?.name || 'Unknown', 
+                name: (trip.agencies as any)?.name || 'Unknown', 
                 revenue: 0, 
                 bookings: 0 
               };

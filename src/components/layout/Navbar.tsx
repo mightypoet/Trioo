@@ -39,7 +39,7 @@ export default function Navbar() {
         <div className="flex items-center gap-3 md:gap-4">
           <Link to="/wallet" className="hidden sm:flex items-center gap-2 px-4 py-2 bg-white border-4 border-[#0A0A0A] rounded-full transition-all hover:-translate-y-1 hover:translate-x-1" style={{ boxShadow: '4px 4px 0px 0px rgba(10, 10, 10, 1)' }}>
             <Wallet className="w-4 h-4 text-[#0A0A0A]" />
-            <span className="font-semibold text-sm text-[#0A0A0A]">₹82,000</span>
+            {user && <span className="font-semibold text-sm text-[#0A0A0A]">₹500</span>}
           </Link>
           <button 
             onClick={() => requireAuth(() => navigate('/profile'))}
@@ -69,7 +69,7 @@ export default function Navbar() {
           <Link to="/search?type=packages" onClick={() => setMobileMenuOpen(false)} className="text-text-main font-medium py-2 border-b border-gray-100 dark:border-slate-800">Packages</Link>
           <Link to="/creators" onClick={() => setMobileMenuOpen(false)} className="text-text-main font-medium py-2 border-b border-gray-100 dark:border-slate-800">Creator Rewards</Link>
           <Link to="/wallet" onClick={() => setMobileMenuOpen(false)} className="text-text-main font-medium py-2 flex items-center gap-2">
-            <Wallet className="w-4 h-4 text-primary" /> Wallet (₹82,000)
+            <Wallet className="w-4 h-4 text-primary" /> Wallet {user && "(₹500)"}
           </Link>
         </div>
       )}
