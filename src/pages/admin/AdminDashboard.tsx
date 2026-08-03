@@ -22,12 +22,26 @@ export default function AdminDashboard() {
   const [isSaving, setIsSaving] = useState(false);
 
   
+  
+  const handleEditClick = async (item: any, type: 'trip' | 'agency') => {
+    try {
+      const { data, error } = await supabase.from(type === 'trip' ? 'trips' : 'agencies').select('*').eq('id', item.id).single();
+      if (error) throw error;
+      setEditingItem(data);
+      setEditType(type);
+      setIsEditModalOpen(true);
+    } catch (err) {
+      console.error('Error fetching details:', err);
+      alert('Failed to fetch details');
+    }
+  };
+
   const handleSaveChanges = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!editingItem || !editType) return;
     setIsSaving(true);
     try {
-      const { id, ...updateData } = editingItem;
+      const { id, created_at, updated_at, ...updateData } = editingItem;
       const { error } = await supabase.from(editType === 'trip' ? 'trips' : 'agencies').update(updateData).eq('id', id);
       if (error) throw error;
       
@@ -47,6 +61,7 @@ export default function AdminDashboard() {
       setIsSaving(false);
     }
   };
+
 
   const handleDeleteTrip = async (tripId: string) => {
     if (!confirm('Are you sure? This will delete the trip and all associated bookings.')) return;
@@ -226,7 +241,7 @@ export default function AdminDashboard() {
                     <td className="py-4 font-medium text-gray-500">{trip.agencies?.name || 'Unknown'}</td>
                     <td className="py-4 font-bold text-gray-900">₹{trip.base_price?.toLocaleString()}</td>
                     <td className="py-4 flex items-center justify-end gap-2">
-                      <button onClick={() => { setEditingItem(trip); setEditType('trip'); setIsEditModalOpen(true); }} className="p-2 text-blue-500 hover:bg-blue-50 rounded-lg transition-colors">
+                      <button onClick={() => handleEditClick(trip, 'trip')} className="p-2 text-blue-500 hover:bg-blue-50 rounded-lg transition-colors">
                         <Edit className="w-4 h-4" />
                       </button>
                       <button onClick={() => handleDeleteTrip(trip.id)} className="p-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors">
@@ -265,7 +280,7 @@ export default function AdminDashboard() {
                   </div>
                   <div className="text-right flex items-center gap-4">
                     <p className="font-bold text-gray-900">₹{agency.revenue.toLocaleString()}</p>
-                    <button onClick={() => { setEditingItem(agency); setEditType('agency'); setIsEditModalOpen(true); }} className="p-2 text-blue-500 hover:bg-blue-50 rounded-lg transition-colors"><Edit className="w-4 h-4" /></button>
+                    <button onClick={() => handleEditClick(agency, 'agency')} className="p-2 text-blue-500 hover:bg-blue-50 rounded-lg transition-colors"><Edit className="w-4 h-4" /></button>
                   </div>
                 </div>
               ))
