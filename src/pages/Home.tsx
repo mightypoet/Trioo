@@ -14,6 +14,7 @@ export default function Home() {
   const [agencies, setAgencies] = useState<any[]>([]);
   const [destinations, setDestinations] = useState<any[]>([]);
   const [loadingTrips, setLoadingTrips] = useState(true);
+  const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
     const fetchAgencies = async () => {
@@ -61,7 +62,11 @@ export default function Home() {
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    navigate('/search');
+    if (searchQuery.trim()) {
+      navigate('/ai-planner?prompt=' + encodeURIComponent(searchQuery));
+    } else {
+      navigate('/ai-planner');
+    }
   };
 
   return (
@@ -89,7 +94,7 @@ export default function Home() {
           <div className="flex flex-col items-center gap-6 w-full max-w-2xl mx-auto mt-8">
             <form onSubmit={handleSearch} className="bg-white border-4 border-[#0A0A0A] rounded-[32px] p-2 pl-6 flex flex-col md:flex-row gap-2 w-full relative z-10" style={{ boxShadow: '8px 8px 0px 0px rgba(10, 10, 10, 1)' }}>
               <div className="flex-1 flex items-center gap-3 py-2">
-                <input type="text" placeholder='"Plan a 5-day Meghalaya trip under ₹25,000"' className="w-full bg-transparent border-none outline-none text-base md:text-lg font-bold placeholder:font-semibold placeholder:text-gray-400 text-[#0A0A0A]" />
+                <input type="text" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder="e.g., Plan a 5-day Meghalaya trip under ₹25,000..." className="w-full bg-transparent border-none outline-none text-base md:text-lg font-bold placeholder:font-semibold placeholder:text-gray-400 text-[#0A0A0A]" />
               </div>
               <button type="submit" className="bg-[var(--color-primary)] text-[#0A0A0A] font-black border-4 border-[#0A0A0A] rounded-[24px] px-8 py-4 shadow-[4px_4px_0px_0px_rgba(10,10,10,1)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_rgba(10,10,10,1)] transition-all whitespace-nowrap">
                 Start Planning Free

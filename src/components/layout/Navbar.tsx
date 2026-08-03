@@ -32,6 +32,7 @@ export default function Navbar() {
         
         <nav className="hidden md:flex items-center gap-8 font-bold text-lg">
           <Link to="/search" className="text-[#0A0A0A] hover:-translate-y-1 hover:text-[var(--color-primary)] transition-all">Destinations</Link>
+          <Link to="/ai-planner" className="text-[#0A0A0A] hover:-translate-y-1 hover:text-[var(--color-primary)] transition-all">AI Planner</Link>
           <Link to="/search?type=packages" className="text-[#0A0A0A] hover:-translate-y-1 hover:text-[var(--color-primary)] transition-all">Packages</Link>
           <Link to="/creators" className="text-[#0A0A0A] hover:-translate-y-1 hover:text-[var(--color-primary)] transition-all">Creator Rewards</Link>
         </nav>
@@ -66,6 +67,7 @@ export default function Navbar() {
       {mobileMenuOpen && (
         <div className="md:hidden absolute top-full left-0 right-0 bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl border-b border-gray-200 dark:border-slate-800 shadow-lg py-4 px-6 flex flex-col gap-4">
           <Link to="/search" onClick={() => setMobileMenuOpen(false)} className="text-text-main font-medium py-2 border-b border-gray-100 dark:border-slate-800">Destinations</Link>
+          <Link to="/ai-planner" onClick={() => setMobileMenuOpen(false)} className="text-text-main font-medium py-2 border-b border-gray-100 dark:border-slate-800">AI Planner</Link>
           <Link to="/search?type=packages" onClick={() => setMobileMenuOpen(false)} className="text-text-main font-medium py-2 border-b border-gray-100 dark:border-slate-800">Packages</Link>
           <Link to="/creators" onClick={() => setMobileMenuOpen(false)} className="text-text-main font-medium py-2 border-b border-gray-100 dark:border-slate-800">Creator Rewards</Link>
           <Link to="/wallet" onClick={() => setMobileMenuOpen(false)} className="text-text-main font-medium py-2 flex items-center gap-2">

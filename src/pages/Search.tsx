@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Search as SearchIcon, ArrowRight, Frown, MapPin } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { supabase } from '../lib/supabase';
 
 const MOCK_TRIPS = [
   {
@@ -46,26 +47,46 @@ export default function Search() {
   const [isSearching, setIsSearching] = useState(false);
   const [hasSearched, setHasSearched] = useState(false);
 
-  const handleSearch = (queryToUse?: string) => {
-    const q = (typeof queryToUse === 'string' ? queryToUse : searchQuery).trim();
-    if (!q && typeof queryToUse !== 'string') return; // if it's an event
+  const handleSearch = async (e?: React.FormEvent | string) => {
+    if (e && typeof e !== 'string' && 'preventDefault' in e) {
+      e.preventDefault();
+    }
+    
+    const queryToUse = typeof e === 'string' ? e : searchQuery;
+    const cleanQuery = queryToUse.trim();
+    if (!cleanQuery) return;
+
+    if (typeof e === 'string') {
+      setSearchQuery(e);
+    }
 
     setIsSearching(true);
     setHasSearched(true);
-    setSearchQuery(q); // update input if clicked from pill
 
-    setTimeout(() => {
-      const lowerQuery = q.toLowerCase();
-      const isUnder10k = lowerQuery.includes('under 10') || lowerQuery.includes('under ₹10');
+    try {
+      const { data, error } = await supabase
+        .from('trips')
+        .select('*')
+        .or(`title.ilike.%${cleanQuery}%,destination.ilike.%${cleanQuery}%`);
+      
+      if (error) throw error;
+      
+      const mapped = (data || []).map((t: any) => ({
+        id: t.id,
+        title: t.title,
+        destination: t.destination,
+        price: t.base_price || 0,
+        image: t.cover_image || 'https://images.unsplash.com/photo-1593693397690-362bb9a11866?q=80&w=1000&auto=format&fit=crop'
+      }));
 
-      const filtered = MOCK_TRIPS.filter(trip => {
-        const matchesText = trip.title.toLowerCase().includes(lowerQuery) || trip.destination.toLowerCase().includes(lowerQuery);
-        if (isUnder10k && trip.price <= 10000) return true;
-        return matchesText;
-      });
-      setResults(filtered);
+      setResults(mapped as any);
+
+    } catch (error) {
+      console.error("Search failed:", error);
+      setResults([]);
+    } finally {
       setIsSearching(false);
-    }, 800);
+    }
   };
 
   const handleTrendingClick = (tag: string) => {
@@ -84,7 +105,7 @@ export default function Search() {
 
         {/* Big Search Form */}
         <form 
-          onSubmit={(e) => { e.preventDefault(); handleSearch(); }}
+          onSubmit={handleSearch}
           className="bg-white border-4 border-[#0A0A0A] rounded-[2rem] p-3 flex flex-col md:flex-row gap-3 shadow-[8px_8px_0px_0px_rgba(10,10,10,1)] relative z-10 mx-auto max-w-3xl mb-12"
         >
           <div className="flex-1 flex items-center gap-3 px-4 py-2">

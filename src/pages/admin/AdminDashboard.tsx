@@ -107,7 +107,7 @@ export default function AdminDashboard() {
         // Fetch agency performance
         const { data: allTrips } = await supabase.from('trips').select('id, agency_id, agencies(name)');
         if (allTrips && bookingsData) {
-          const agencyStats: Record<string, { name: string; revenue: number; bookings: number }> = {};
+          const agencyStats: Record<string, { id: string; name: string; revenue: number; bookings: number }> = {};
           
           allTrips.forEach(trip => {
             if (!trip.agency_id) return;
