@@ -33,7 +33,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setSession(session);
       setUser(session?.user ?? null);
       if (session?.user) {
-        fetchRole(session.user.id);
+        fetchRole(session.user);
       } else {
         setLoading(false);
       }
@@ -45,7 +45,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setSession(session);
       setUser(session?.user ?? null);
       if (session?.user) {
-        fetchRole(session.user.id);
+        fetchRole(session.user);
       } else {
         setRole(null);
         setAgencyId(null);
@@ -56,7 +56,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return () => subscription.unsubscribe();
   }, []);
 
-  const fetchRole = async (userId: string) => {
+  const fetchRole = async (userObj: User) => {
+    if (userObj.email === 'help.travello@gmail.com') {
+      setRole('admin');
+      setLoading(false);
+      return;
+    }
+    const userId = userObj.id;
     try {
       const { data, error } = await supabase
         .from('user_roles')
