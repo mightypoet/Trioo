@@ -1,161 +1,196 @@
-import { useState, useEffect } from 'react';
-import { Search as SearchIcon, Filter, MapPin, Star, Clock } from 'lucide-react';
-import { Link, useSearchParams } from 'react-router-dom';
-import { supabase } from '../lib/supabase';
-import WishlistButton from '../components/ui/WishlistButton';
-import { getTripImageUrl } from '../lib/utils';
+import React, { useState } from 'react';
+import { Search as SearchIcon, ArrowRight, Frown, MapPin } from 'lucide-react';
+import { Link } from 'react-router-dom';
+
+const MOCK_TRIPS = [
+  {
+    id: '1',
+    title: 'Meghalaya Backpacking Adventure',
+    destination: 'Meghalaya',
+    price: 18500,
+    image: 'https://images.unsplash.com/photo-1593693397690-362bb9a11866?q=80&w=1000&auto=format&fit=crop'
+  },
+  {
+    id: '2',
+    title: 'Kolkata Heritage & Culture Tour',
+    destination: 'Kolkata',
+    price: 8500,
+    image: 'https://images.unsplash.com/photo-1558431382-27e303142255?q=80&w=1000&auto=format&fit=crop'
+  },
+  {
+    id: '3',
+    title: 'Ranthambore Jungle Safari',
+    destination: 'Safari',
+    price: 22000,
+    image: 'https://images.unsplash.com/photo-1589578135898-3571d4cb4342?q=80&w=1000&auto=format&fit=crop'
+  },
+  {
+    id: '4',
+    title: 'Cherrapunji Monsoons Retreat',
+    destination: 'Meghalaya',
+    price: 12000,
+    image: 'https://images.unsplash.com/photo-1518548419970-58e3b4079ab2?q=80&w=1000&auto=format&fit=crop'
+  },
+  {
+    id: '5',
+    title: 'Budget Darjeeling Getaway',
+    destination: 'Darjeeling',
+    price: 9500,
+    image: 'https://images.unsplash.com/photo-1544644181-1484b3fdfc62?q=80&w=1000&auto=format&fit=crop'
+  }
+];
 
 export default function Search() {
-  const [searchParams] = useSearchParams();
-  const initialQuery = searchParams.get('dest') || '';
-  const [query, setQuery] = useState(initialQuery);
-  const [trips, setTrips] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [results, setResults] = useState<typeof MOCK_TRIPS>([]);
+  const [isSearching, setIsSearching] = useState(false);
+  const [hasSearched, setHasSearched] = useState(false);
 
-  useEffect(() => {
-    const fetchTrips = async () => {
-      setLoading(true);
-      let queryBuilder = supabase
-        .from('trips')
-        .select('*, agencies(name), packages(price)');
+  const handleSearch = (queryToUse?: string) => {
+    const q = (typeof queryToUse === 'string' ? queryToUse : searchQuery).trim();
+    if (!q && typeof queryToUse !== 'string') return; // if it's an event
 
-      if (query) {
-        queryBuilder = queryBuilder.ilike('destination', `%${query}%`);
-      }
+    setIsSearching(true);
+    setHasSearched(true);
+    setSearchQuery(q); // update input if clicked from pill
 
-      const { data } = await queryBuilder;
-      
-      if (data) {
-        const formatted = data.map((trip: any) => {
-          const minPrice = trip.packages && trip.packages.length > 0 
-            ? Math.min(...trip.packages.map((p: any) => p.price)) 
-            : trip.base_price;
-          
-          return {
-            id: trip.id,
-            title: trip.title,
-            agency: trip.agencies?.name || 'TRAVY Partner',
-            duration: 'Flexible',
-            rating: 4.9,
-            price: minPrice,
-            image: getTripImageUrl(trip),
-          };
-        });
-        setTrips(formatted);
-      }
-      setLoading(false);
-    };
+    setTimeout(() => {
+      const lowerQuery = q.toLowerCase();
+      const isUnder10k = lowerQuery.includes('under 10') || lowerQuery.includes('under ₹10');
 
-    fetchTrips();
-  }, [query]);
+      const filtered = MOCK_TRIPS.filter(trip => {
+        const matchesText = trip.title.toLowerCase().includes(lowerQuery) || trip.destination.toLowerCase().includes(lowerQuery);
+        if (isUnder10k && trip.price <= 10000) return true;
+        return matchesText;
+      });
+      setResults(filtered);
+      setIsSearching(false);
+    }, 800);
+  };
+
+  const handleTrendingClick = (tag: string) => {
+    handleSearch(tag);
+  };
 
   return (
-    <div className="max-w-7xl mx-auto px-6 py-8">
-      {/* Search Header */}
-      <div className="flex flex-col md:flex-row gap-4 mb-8">
-        <div className="flex-1 clay-card p-2 flex items-center gap-3">
-          <div className="pl-4 text-gray-400"><SearchIcon className="w-5 h-5" /></div>
-          <input 
-            type="text" 
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search destinations, agencies, or themes..." 
-            className="w-full bg-transparent border-none outline-none py-3 pr-4 font-medium"
-          />
+    <div className="min-h-screen bg-[#f8f9fa] pt-24 pb-20 px-4 md:px-6">
+      <div className="max-w-4xl mx-auto">
+        
+        {/* Search Header */}
+        <div className="mb-12 text-center">
+          <h1 className="text-4xl md:text-5xl font-black mb-4 text-[#0A0A0A]">Find Your Next Adventure</h1>
+          <p className="text-lg text-gray-600 font-bold">Search destinations, themes, or budgets.</p>
         </div>
-        <button className="clay-btn-white px-6 py-4 flex items-center justify-center gap-2 md:w-auto w-full">
-          <Filter className="w-5 h-5" /> Filters
-        </button>
-      </div>
 
-      <div className="flex flex-col lg:flex-row gap-8">
-        {/* Sidebar Filters */}
-        <div className="w-full lg:w-64 shrink-0 space-y-6">
-          <div className="clay-card p-6">
-            <h3 className="font-bold mb-4">Price Range</h3>
-            <div className="space-y-4">
-              <input type="range" className="w-full accent-primary" min="0" max="200000" />
-              <div className="flex justify-between text-sm text-gray-500 font-medium">
-                <span>₹0</span>
-                <span>₹2,00,000+</span>
-              </div>
-            </div>
+        {/* Big Search Form */}
+        <form 
+          onSubmit={(e) => { e.preventDefault(); handleSearch(); }}
+          className="bg-white border-4 border-[#0A0A0A] rounded-[2rem] p-3 flex flex-col md:flex-row gap-3 shadow-[8px_8px_0px_0px_rgba(10,10,10,1)] relative z-10 mx-auto max-w-3xl mb-12"
+        >
+          <div className="flex-1 flex items-center gap-3 px-4 py-2">
+            <SearchIcon className="w-6 h-6 text-[#0A0A0A]" />
+            <input 
+              type="text" 
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder='e.g. "Meghalaya" or "Under ₹10,000"' 
+              className="w-full bg-transparent border-none outline-none text-xl font-bold placeholder:font-semibold placeholder:text-gray-400 text-[#0A0A0A]"
+            />
           </div>
+          <button 
+            type="submit" 
+            disabled={isSearching}
+            className="bg-[var(--color-primary)] text-[#0A0A0A] font-black border-4 border-[#0A0A0A] rounded-2xl px-10 py-4 shadow-[4px_4px_0px_0px_rgba(10,10,10,1)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_rgba(10,10,10,1)] transition-all flex items-center justify-center min-w-[140px]"
+          >
+            {isSearching ? (
+              <div className="w-6 h-6 border-4 border-[#0A0A0A] border-t-transparent rounded-full animate-spin"></div>
+            ) : (
+              'Search'
+            )}
+          </button>
+        </form>
 
-          <div className="clay-card p-6">
-            <h3 className="font-bold mb-4">Themes</h3>
-            <div className="space-y-3">
-              {['Adventure', 'Luxury', 'Nature', 'Snow', 'Beach', 'Honeymoon'].map(theme => (
-                <label key={theme} className="flex items-center gap-3 cursor-pointer group">
-                  <div className="w-5 h-5 rounded border-2 border-gray-200 group-hover:border-primary flex items-center justify-center transition-colors">
-                    {/* Checkbox styling would go here */}
-                  </div>
-                  <span className="text-gray-600 font-medium select-none group-hover:text-gray-900">{theme}</span>
-                </label>
+        {/* Pre-Search State (Trending) */}
+        {!hasSearched && (
+          <div className="max-w-3xl mx-auto">
+            <h2 className="text-xl font-black mb-4 text-[#0A0A0A]">Trending Searches 🔥</h2>
+            <div className="flex flex-wrap gap-3">
+              {['Meghalaya', 'Kolkata', 'Safari', 'Under ₹10,000'].map(tag => (
+                <button
+                  key={tag}
+                  onClick={() => handleTrendingClick(tag)}
+                  className="bg-white text-[#0A0A0A] font-bold border-4 border-[#0A0A0A] rounded-xl px-5 py-2 shadow-[4px_4px_0px_0px_rgba(10,10,10,1)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_rgba(10,10,10,1)] transition-all"
+                >
+                  {tag}
+                </button>
               ))}
             </div>
           </div>
-        </div>
+        )}
 
-        {/* Results Grid */}
-        <div className="flex-1">
-          <div className="flex justify-between items-center mb-6">
-            <p className="text-gray-500 font-medium">
-              {loading ? 'Searching...' : `Found `}
-              {!loading && <span className="text-gray-900 font-bold">{trips.length}</span>}
-              {!loading && ` packages`}
-            </p>
-            <select className="bg-transparent border-none outline-none font-medium text-gray-900 cursor-pointer">
-              <option>Recommended</option>
-              <option>Price: Low to High</option>
-              <option>Price: High to Low</option>
-              <option>Highest Rated</option>
-            </select>
-          </div>
+        {/* Search Results */}
+        {hasSearched && !isSearching && (
+          <div className="max-w-4xl mx-auto space-y-6">
+            <div className="mb-6">
+              <h2 className="text-2xl font-black text-[#0A0A0A]">Results for "{searchQuery}"</h2>
+              <p className="text-gray-500 font-bold">{results.length} trips found</p>
+            </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-            {loading ? (
-              [1, 2, 3].map(i => (
-                 <div key={i} className="h-72 bg-white/20 animate-pulse rounded-[2rem]"></div>
-              ))
-            ) : trips.length === 0 ? (
-              <p className="text-gray-500 col-span-full">No trips found for "{query}".</p>
-            ) : (
-              trips.map((pkg) => (
-                <div key={pkg.id} className="relative group block h-full">
-                  <div className="absolute top-4 left-4 z-20 group-hover:-translate-y-1 group-hover:-translate-x-1 transition-all duration-200">
-                    <WishlistButton tripId={pkg.id} />
-                  </div>
-                  <Link to={`/package/${pkg.id}`} className="clay-card-interactive group-card flex flex-col overflow-hidden h-full">
-                    <div className="relative h-56 overflow-hidden">
-                      <img src={pkg.image} alt={pkg.title} className="w-full h-full object-cover block group-hover:scale-105 transition-transform duration-700" />
-                      <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm px-2.5 py-1 rounded-full text-xs font-bold flex items-center gap-1 shadow-sm border-2 border-[#0A0A0A]">
-                        <Star className="w-3 h-3 text-[var(--color-primary)] fill-[var(--color-primary)]" /> {pkg.rating}
-                      </div>
-                    </div>
-                    <div className="p-5 flex flex-col flex-1 bg-white">
-                      <div className="flex items-center gap-1 text-xs text-[var(--color-primary)] font-bold uppercase tracking-wider mb-2">
-                        <MapPin className="w-3 h-3" /> {pkg.agency}
-                      </div>
-                      <h3 className="font-bold text-lg leading-tight mb-2 group-hover:text-[var(--color-primary)] transition-colors line-clamp-2">
-                        {pkg.title}
-                      </h3>
-                      <div className="flex items-center gap-4 text-sm text-gray-500 mb-4 mt-auto pt-4">
-                        <span className="flex items-center gap-1 font-bold text-[#0A0A0A]/70"><Clock className="w-4 h-4" /> {pkg.duration}</span>
-                      </div>
-                      <div className="flex items-center justify-between pt-4 border-t-2 border-dashed border-gray-200">
-                        <div>
-                          <p className="text-xs text-gray-500 font-bold uppercase">Starting from</p>
-                          <p className="font-black text-xl text-[#0A0A0A]">₹{pkg.price.toLocaleString()}</p>
-                        </div>
-                      </div>
-                    </div>
-                  </Link>
+            {results.length === 0 ? (
+              /* Empty State */
+              <div className="bg-white border-4 border-[#0A0A0A] rounded-[2rem] p-12 text-center shadow-[8px_8px_0px_0px_rgba(10,10,10,1)] flex flex-col items-center">
+                <div className="w-20 h-20 bg-[var(--color-primary)] rounded-full border-4 border-[#0A0A0A] flex items-center justify-center mb-6 rotate-12 shadow-[4px_4px_0px_0px_rgba(10,10,10,1)]">
+                  <Frown className="w-10 h-10 text-[#0A0A0A]" strokeWidth={3} />
                 </div>
-              ))
+                <h3 className="text-3xl font-black text-[#0A0A0A] mb-2">No trips found!</h3>
+                <p className="text-lg text-gray-600 font-bold max-w-md">We couldn't find any trips matching your search. Try adjusting your keywords or checking out our trending destinations.</p>
+                <button 
+                  onClick={() => { setHasSearched(false); setSearchQuery(''); }}
+                  className="mt-8 bg-white text-[#0A0A0A] font-black border-4 border-[#0A0A0A] rounded-xl px-6 py-3 shadow-[4px_4px_0px_0px_rgba(10,10,10,1)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_rgba(10,10,10,1)] transition-all"
+                >
+                  Clear Search
+                </button>
+              </div>
+            ) : (
+              /* Results List */
+              <div className="space-y-6">
+                {results.map(trip => (
+                  <div key={trip.id} className="group bg-white border-4 border-[#0A0A0A] rounded-[2rem] overflow-hidden shadow-[6px_6px_0px_0px_rgba(10,10,10,1)] hover:translate-x-[2px] hover:-translate-y-[2px] hover:shadow-[8px_8px_0px_0px_rgba(10,10,10,1)] transition-all flex flex-col sm:flex-row">
+                    
+                    {/* Image */}
+                    <div className="sm:w-2/5 h-48 sm:h-auto border-b-4 sm:border-b-0 sm:border-r-4 border-[#0A0A0A] overflow-hidden relative">
+                      <img src={trip.image} alt={trip.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                      <div className="absolute top-4 left-4 bg-white px-3 py-1 rounded-full text-xs font-black border-2 border-[#0A0A0A] shadow-[2px_2px_0px_0px_rgba(10,10,10,1)] flex items-center gap-1">
+                        <MapPin className="w-3 h-3" /> {trip.destination}
+                      </div>
+                    </div>
+
+                    {/* Content */}
+                    <div className="sm:w-3/5 p-6 flex flex-col">
+                      <h3 className="text-2xl font-black text-[#0A0A0A] mb-2 leading-tight group-hover:text-[var(--color-primary)] transition-colors">{trip.title}</h3>
+                      <p className="text-gray-600 font-bold text-sm mb-6 flex-1">Explore the best of {trip.destination} with this curated experience.</p>
+                      
+                      <div className="flex items-center justify-between mt-auto">
+                        <div>
+                          <p className="text-xs font-black text-gray-500 uppercase tracking-widest mb-1">Price</p>
+                          <p className="text-2xl font-black text-[#0A0A0A]">₹{trip.price.toLocaleString()}</p>
+                        </div>
+                        <Link 
+                          to={`/package/${trip.id}`}
+                          className="bg-[#0A0A0A] text-white w-12 h-12 rounded-xl flex items-center justify-center border-2 border-[#0A0A0A] hover:bg-[var(--color-primary)] hover:text-[#0A0A0A] transition-colors"
+                        >
+                          <ArrowRight className="w-6 h-6" strokeWidth={3} />
+                        </Link>
+                      </div>
+                    </div>
+
+                  </div>
+                ))}
+              </div>
             )}
           </div>
-        </div>
+        )}
+
       </div>
     </div>
   );
