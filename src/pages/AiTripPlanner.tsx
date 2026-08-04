@@ -23,8 +23,8 @@ export default function AiTripPlanner() {
   const hasTriggeredRef = useRef(false);
 
   
-  const executePlan = async (queryToUse: string) => {
-    if (!queryToUse.trim()) return;
+  const generatePlan = async (queryText: string) => {
+    if (!queryText.trim()) return;
 
     setLoading(true);
     setPlan(null);
@@ -40,7 +40,7 @@ export default function AiTripPlanner() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          userRequest: queryToUse,
+          userRequest: queryText,
           availableTrips: trips,
         }),
       });
@@ -74,7 +74,7 @@ export default function AiTripPlanner() {
 
   const handleGenerate = async (e: React.FormEvent) => {
     e.preventDefault();
-    executePlan(prompt);
+    generatePlan(prompt);
   };
 
   useEffect(() => {
@@ -82,7 +82,7 @@ export default function AiTripPlanner() {
     if (promptParam && !hasTriggeredRef.current) {
       hasTriggeredRef.current = true;
       setPrompt(promptParam);
-      executePlan(promptParam);
+      generatePlan(promptParam);
     }
   }, [searchParams]);
 
