@@ -68,6 +68,46 @@ OUTPUT FORMAT: You must return strictly valid JSON in this format:
     }
   });
 
+  app.post("/api/extract-trip-data", async (req, res) => {
+    try {
+      const { rawDescription } = req.body;
+      if (!rawDescription) {
+        return res.status(400).json({ error: "Missing rawDescription" });
+      }
+
+      const prompt = `You are an expert travel data structurer for Travy. Read the raw trip description provided by the agency. Extract and format the data into this EXACT JSON structure:
+{
+  "food_included": boolean (true if meals are mentioned),
+  "transit_included": boolean (true if flights/trains are mentioned),
+  "key_features": ["Feature 1", "Feature 2", "Feature 3"] (Exactly 3 short, punchy highlights),
+  "itinerary": [
+    { "day": 1, "title": "Day title", "description": "Short description" }
+  ]
+}
+Return ONLY valid, parseable JSON.
+
+RAW TRIP DESCRIPTION:
+${rawDescription}`;
+
+      const response = await ai.models.generateContent({
+        model: "gemini-2.5-flash",
+        contents: prompt,
+        config: {
+          responseMimeType: "application/json",
+        },
+      });
+
+      if (!response.text) {
+        throw new Error("No text returned from Gemini");
+      }
+
+      res.json(JSON.parse(response.text));
+    } catch (error) {
+      console.error("Error extracting trip data:", error);
+      res.status(500).json({ error: "Failed to extract trip data" });
+    }
+  });
+
   if (process.env.NODE_ENV !== "production") {
     const vite = await createViteServer({
       server: { middlewareMode: true },

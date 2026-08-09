@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { supabase } from '../lib/supabase';
-import { Bot, Send, MapPin, Map, Navigation } from 'lucide-react';
+import { Send, MapPin, Map, Navigation } from 'lucide-react';
 import { Link, useSearchParams } from 'react-router-dom';
+import { PinkDevilBot } from './PinkDevilBot';
 
 interface GeneratedPlan {
   recommended_trip_id: string;
@@ -93,9 +94,7 @@ export default function AiTripPlanner() {
         
         {/* Header */}
         <div className="text-center space-y-4">
-          <div className="w-16 h-16 bg-[#0A0A0A] rounded-2xl mx-auto flex items-center justify-center rotate-3 shadow-[4px_4px_0px_0px_rgba(200,200,200,1)]">
-            <Bot className="w-8 h-8 text-white" />
-          </div>
+          <PinkDevilBot isThinking={loading} />
           <h1 className="text-4xl md:text-5xl font-black text-[#0A0A0A]">Travy AI Planner</h1>
           <p className="text-lg text-gray-600 font-bold max-w-2xl mx-auto">
             Describe your dream trip. Our AI will match you with the perfect package, craft a custom day-by-day itinerary, and find transportation options.
@@ -169,7 +168,7 @@ export default function AiTripPlanner() {
                   Custom Itinerary
                 </h3>
                 <div className="space-y-6">
-                  {plan.itinerary.map((day, idx) => (
+                  {plan?.itinerary?.map((day, idx) => (
                     <div key={idx} className="relative pl-8 before:content-[''] before:absolute before:left-[11px] before:top-2 before:bottom-[-24px] last:before:bottom-0 before:w-1 before:bg-gray-200">
                       <div className="absolute left-0 top-1 w-6 h-6 bg-[var(--color-primary)] border-2 border-[#0A0A0A] rounded-full flex items-center justify-center font-black text-xs">
                         {day.day}
@@ -190,22 +189,22 @@ export default function AiTripPlanner() {
                   Transport
                 </h3>
                 <div className="space-y-4">
-                  {plan.transportation.train_link && (
-                    <a href={plan.transportation.train_link} target="_blank" rel="noopener noreferrer" className="block p-4 border-2 border-[#0A0A0A] rounded-xl font-bold text-[#0A0A0A] hover:bg-gray-50 transition-colors flex justify-between items-center group">
+                  {plan?.transportation?.train_link && (
+                    <a href={plan?.transportation?.train_link} target="_blank" rel="noopener noreferrer" className="block p-4 border-2 border-[#0A0A0A] rounded-xl font-bold text-[#0A0A0A] hover:bg-gray-50 transition-colors flex justify-between items-center group">
                       Train Options <ArrowRight className="w-4 h-4 opacity-50 group-hover:opacity-100 group-hover:translate-x-1 transition-all" />
                     </a>
                   )}
-                  {plan.transportation.flight_link && (
-                    <a href={plan.transportation.flight_link} target="_blank" rel="noopener noreferrer" className="block p-4 border-2 border-[#0A0A0A] rounded-xl font-bold text-[#0A0A0A] hover:bg-gray-50 transition-colors flex justify-between items-center group">
+                  {plan?.transportation?.flight_link && (
+                    <a href={plan?.transportation?.flight_link} target="_blank" rel="noopener noreferrer" className="block p-4 border-2 border-[#0A0A0A] rounded-xl font-bold text-[#0A0A0A] hover:bg-gray-50 transition-colors flex justify-between items-center group">
                       Flight Options <ArrowRight className="w-4 h-4 opacity-50 group-hover:opacity-100 group-hover:translate-x-1 transition-all" />
                     </a>
                   )}
-                  {plan.transportation.irctc_portal && (
-                    <a href={plan.transportation.irctc_portal} target="_blank" rel="noopener noreferrer" className="block p-4 border-2 border-[#0A0A0A] rounded-xl font-bold text-[#0A0A0A] hover:bg-gray-50 transition-colors flex justify-between items-center group">
+                  {plan?.transportation?.irctc_portal && (
+                    <a href={plan?.transportation?.irctc_portal} target="_blank" rel="noopener noreferrer" className="block p-4 border-2 border-[#0A0A0A] rounded-xl font-bold text-[#0A0A0A] hover:bg-gray-50 transition-colors flex justify-between items-center group">
                       IRCTC Portal <ArrowRight className="w-4 h-4 opacity-50 group-hover:opacity-100 group-hover:translate-x-1 transition-all" />
                     </a>
                   )}
-                  {!plan.transportation.train_link && !plan.transportation.flight_link && !plan.transportation.irctc_portal && (
+                  {!plan?.transportation?.train_link && !plan?.transportation?.flight_link && !plan?.transportation?.irctc_portal && (
                     <p className="text-gray-500 font-medium italic">No transport links generated.</p>
                   )}
                 </div>

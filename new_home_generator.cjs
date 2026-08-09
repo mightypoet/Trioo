@@ -1,142 +1,18 @@
-import React, { useState, useEffect } from 'react';
-import { motion } from 'motion/react';
-import { Search, MapPin, Calendar, Users, ArrowRight, Star, Wallet, PlayCircle, Zap, Map, ShieldCheck, Quote } from 'lucide-react';
-import { Link, useNavigate } from 'react-router-dom';
-import { DestinationCard } from '../components/ui/card-21';
-import { Marquee } from '../components/ui/Marquee';
-import { supabase } from '../lib/supabase';
-import LandingAuthModal from '../components/auth/LandingAuthModal';
-import heroImage1 from '../assets/images/regenerated_image_1785007937394.png';
-import { getTripImageUrl } from '../lib/utils';
+const fs = require('fs');
 
-export default function Home() {
-  const navigate = useNavigate();
-  const [agencies, setAgencies] = useState<any[]>([]);
-  const [destinations, setDestinations] = useState<any[]>([]);
-  const [loadingTrips, setLoadingTrips] = useState(true);
-  const [searchQuery, setSearchQuery] = useState('');
+const current = fs.readFileSync('src/pages/Home.tsx', 'utf8');
 
-  useEffect(() => {
-    const fetchAgencies = async () => {
-      const { data } = await supabase
-        .from('agencies')
-        .select('id, name, logo_url')
-        .eq('verification_status', 'verified');
-      if (data) {
-        setAgencies(data);
-      }
-    };
-    fetchAgencies();
-  }, []);
+const importsToReplace = `import { Search, MapPin, Calendar, Users, ArrowRight, Star, Wallet, PlayCircle } from 'lucide-react';`;
+const newImports = `import { Search, MapPin, Calendar, Users, ArrowRight, Star, Wallet, PlayCircle, Zap, Map, ShieldCheck, Quote } from 'lucide-react';`;
 
-  useEffect(() => {
-    const fetchTrips = async () => {
-      setLoadingTrips(true);
-      const { data } = await supabase
-        .from('trips')
-        .select('*, agencies(name), packages(price)')
-        .order('created_at', { ascending: false })
-        .limit(4);
+let newCode = current.replace(importsToReplace, newImports);
 
-      if (data) {
-        const formatted = data.map((trip: any) => {
-          const minPrice = trip.packages && trip.packages.length > 0 
-            ? Math.min(...trip.packages.map((p: any) => p.price)) 
-            : trip.base_price;
-          
-          return {
-            id: trip.id,
-            name: `${trip.destination}`,
-            image: getTripImageUrl(trip),
-            price: `₹${minPrice.toLocaleString()}`,
-            themeColor: '210 100% 60%',
-            stats: `Packages from ₹${minPrice.toLocaleString()}`
-          };
-        });
-        setDestinations(formatted);
-      }
-      setLoadingTrips(false);
-    };
-    fetchTrips();
-  }, []);
+// We want to slice the code up to Featured Destinations section.
+const parts = newCode.split("{/* Featured Destinations */}");
+let topPart = parts[0];
+let restPart = parts[1];
 
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (searchQuery.trim()) {
-      navigate('/ai-planner?prompt=' + encodeURIComponent(searchQuery));
-    } else {
-      navigate('/ai-planner');
-    }
-  };
-
-  return (
-    <div className="w-full overflow-x-hidden">
-      <LandingAuthModal />
-      {/* Hero Section */}
-      <section className="relative px-6 pt-20 pb-32 z-10 flex flex-col items-center justify-center text-center w-full max-w-4xl mx-auto">
-        <motion.div 
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, ease: "easeOut" }}
-          className="w-full flex flex-col items-center justify-center"
-        >
-          <div className="inline-block bg-[#0A0A0A] text-[var(--color-primary)] px-4 py-1.5 border-4 border-[#0A0A0A] rounded-full text-xs font-black tracking-widest uppercase mb-6" style={{ boxShadow: '4px 4px 0px 0px rgba(10, 10, 10, 1)' }}>
-            AI-POWERED TRAVEL PLANNING
-          </div>
-          <h1 className="text-5xl md:text-6xl lg:text-7xl font-black mb-6 leading-[1.1] text-[#0A0A0A] text-center">
-            Just tell us where.<br />
-            <span className="text-gradient">We'll handle everything else.</span>
-          </h1>
-          <p className="text-lg md:text-xl text-[#0A0A0A]/80 font-bold mb-10 max-w-2xl leading-relaxed text-center mx-auto">
-            Travy's AI plans your itinerary, compares hotels and homestays, books adventures, and manages tickets - from one conversation.
-          </p>
-
-          <div className="flex flex-col items-center gap-6 w-full max-w-2xl mx-auto mt-8">
-            <form onSubmit={handleSearch} className="bg-white border-4 border-[#0A0A0A] rounded-[32px] p-2 pl-6 flex flex-col md:flex-row gap-2 w-full relative z-10" style={{ boxShadow: '8px 8px 0px 0px rgba(10, 10, 10, 1)' }}>
-              <div className="flex-1 flex items-center gap-3 py-2">
-                <input type="text" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder="e.g., Plan a 5-day Meghalaya trip under ₹25,000..." className="w-full bg-transparent border-none outline-none text-base md:text-lg font-bold placeholder:font-semibold placeholder:text-gray-400 text-[#0A0A0A]" />
-              </div>
-              <button type="submit" className="bg-[var(--color-primary)] text-[#0A0A0A] font-black border-4 border-[#0A0A0A] rounded-[24px] px-8 py-4 shadow-[4px_4px_0px_0px_rgba(10,10,10,1)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_rgba(10,10,10,1)] transition-all whitespace-nowrap">
-                Start Planning Free
-              </button>
-            </form>
-            
-            <div className="flex items-center gap-4 justify-center">
-              <button type="button" className="bg-white text-[#0A0A0A] font-black border-4 border-[#0A0A0A] rounded-2xl px-6 py-3 shadow-[4px_4px_0px_0px_rgba(10,10,10,1)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_rgba(10,10,10,1)] transition-all flex items-center gap-2">
-                 <PlayCircle className="w-5 h-5" strokeWidth={2.5} /> See How It Works
-              </button>
-            </div>
-
-            <div className="mt-6 flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-sm font-black text-[#0A0A0A]/70 w-full">
-              <span>2.5B+ trips planned yearly in India</span>
-              <span className="hidden md:inline text-xl leading-none -mt-1">·</span>
-              <span>10,000+ verified stays & operators</span>
-              <span className="hidden md:inline text-xl leading-none -mt-1">·</span>
-              <span>AI that never sleeps</span>
-            </div>
-          </div>
-        </motion.div>
-      </section>
-
-      {/* Trusted Travel Partners */}
-      <section className="py-12 bg-[var(--color-card)] border-y-4 border-[#0A0A0A] relative z-10 overflow-hidden">
-        <div className="max-w-7xl mx-auto px-6 mb-8 text-center">
-          <p className="text-sm font-black text-[#0A0A0A] uppercase tracking-widest">Trusted Travel Partners</p>
-        </div>
-        {agencies.length > 0 ? (
-          <Marquee items={agencies} />
-        ) : (
-          <div className="flex justify-center">
-            <div className="animate-pulse flex gap-6">
-              {[1, 2, 3, 4].map(i => (
-                <div key={i} className="h-12 w-48 bg-gray-200 rounded-full border-4 border-[#0A0A0A]"></div>
-              ))}
-            </div>
-          </div>
-        )}
-      </section>
-
-      
+const featuresSection = `
       {/* What can you do with Travy AI? */}
       <section className="px-6 py-24 relative bg-white">
         <div className="max-w-7xl mx-auto">
@@ -185,52 +61,12 @@ export default function Home() {
       </section>
 
       {/* Featured Destinations */}
+`;
 
-      <section className="px-6 py-20 relative z-10">
-        <div className="max-w-7xl mx-auto">
-          <div className="flex flex-col sm:flex-row items-start sm:items-end justify-between mb-12 gap-6">
-            <div>
-              <h2 className="text-4xl md:text-5xl font-black mb-4 text-[#0A0A0A]" style={{ textShadow: '2px 2px 0px var(--color-card)' }}>Trending Destinations</h2>
-              <p className="text-[#0A0A0A] font-bold text-lg bg-white inline-block px-3 py-1 border-2 border-[#0A0A0A] transform -rotate-1" style={{ boxShadow: '2px 2px 0px 0px rgba(10,10,10,1)' }}>Most searched places right now</p>
-            </div>
-            <Link to="/search" className="inline-flex items-center gap-2 text-[#0A0A0A] font-black bg-white px-6 py-3 border-4 border-[#0A0A0A] rounded-full hover:-translate-y-1 hover:translate-x-1 transition-transform" style={{ boxShadow: '4px 4px 0px 0px rgba(10, 10, 10, 1)' }}>
-              See all <ArrowRight className="w-5 h-5" strokeWidth={3} />
-            </Link>
-          </div>
+let restParts = restPart.split("{/* TRAVY Wallet Promo */}");
+let destinationsPart = restParts[0];
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {loadingTrips ? (
-              [1, 2, 3, 4].map(i => (
-                <div key={i} className="h-[400px] bg-white/20 animate-pulse rounded-[2rem]"></div>
-              ))
-            ) : destinations.length === 0 ? (
-              <p className="text-gray-500 col-span-full text-center">No trips available right now.</p>
-            ) : (
-              destinations.map((dest, i) => (
-                <motion.div 
-                  key={dest.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: i * 0.1 }}
-                  className="h-[400px]"
-                >
-                  <DestinationCard
-                    tripId={dest.id}
-                    imageUrl={dest.image}
-                    location={dest.name}
-                    stats={dest.stats}
-                    href={`/package/${dest.id}`}
-                    themeColor={dest.themeColor}
-                  />
-                </motion.div>
-              ))
-            )}
-          </div>
-        </div>
-      </section>
-
-      
+const bottomSections = `
       {/* Impact Metrics Bar */}
       <section className="py-12 bg-cyan-400 border-y-4 border-[#0A0A0A] relative overflow-hidden">
         <div className="max-w-7xl mx-auto px-6 relative z-10">
@@ -377,3 +213,9 @@ export default function Home() {
     </div>
   );
 }
+`;
+
+const finalCode = topPart + featuresSection + destinationsPart + bottomSections;
+
+fs.writeFileSync('src/pages/Home.tsx', finalCode);
+

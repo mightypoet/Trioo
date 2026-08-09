@@ -100,12 +100,42 @@ export default function PackageDetails() {
       <div className="flex flex-col lg:flex-row gap-12">
         {/* Main Content */}
         <div className="lg:w-2/3 space-y-12">
-          <section>
-            <h2 className="text-2xl font-bold mb-4">About this trip</h2>
-            <p className="text-gray-600 leading-relaxed text-lg">
-              Enjoy this premium travel experience to {trip.destination}. Managed by {trip.agencies?.name}, ensuring high quality and comfort.
-            </p>
+          
+          <section className="bg-white border-4 border-black rounded-2xl p-6 md:p-8 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
+            <h2 className="text-2xl font-black mb-6 uppercase">Agency Specs</h2>
+            
+            <div className="flex flex-col md:flex-row gap-6">
+              {/* Key Features */}
+              <div className="flex-1">
+                <h3 className="font-bold text-lg mb-3">Highlights</h3>
+                {(trip.key_features && trip.key_features.length > 0) ? (
+                  <ul className="space-y-2">
+                    {trip.key_features.map((feature: string, idx: number) => (
+                      feature ? (
+                        <li key={idx} className="flex items-start gap-2 font-bold text-gray-800">
+                          <span className="mt-1.5 w-2 h-2 rounded-full bg-black shrink-0"></span>
+                          <span>{feature}</span>
+                        </li>
+                      ) : null
+                    ))}
+                  </ul>
+                ) : (
+                  <p className="text-gray-500 font-bold">Standard features included. Ask the agency for more details.</p>
+                )}
+              </div>
+
+              {/* Badges */}
+              <div className="flex flex-col gap-3 justify-center md:min-w-[200px]">
+                <div className={`px-4 py-3 border-4 border-black font-black uppercase text-sm text-center shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] rounded-xl ${trip.food_included ? 'bg-green-400' : 'bg-gray-200 text-gray-500'}`}>
+                  {trip.food_included ? '✓ Meals Included' : '✕ Meals Not Included'}
+                </div>
+                <div className={`px-4 py-3 border-4 border-black font-black uppercase text-sm text-center shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] rounded-xl ${trip.transit_included ? 'bg-green-400' : 'bg-gray-200 text-gray-500'}`}>
+                  {trip.transit_included ? '✓ Transit Included' : '✕ Transit Not Included'}
+                </div>
+              </div>
+            </div>
           </section>
+
 
           {selectedPackage && selectedPackage.inclusions && (
             <div className="grid md:grid-cols-2 gap-8">
@@ -125,78 +155,92 @@ export default function PackageDetails() {
             </div>
           )}
 
+          
           <section>
             <h2 className="text-3xl font-black mb-8 flex items-center gap-3">
               <span className="bg-[var(--color-primary)] text-[#0A0A0A] px-3 py-1 border-4 border-[#0A0A0A] rounded-lg shadow-[4px_4px_0px_0px_rgba(10,10,10,1)] -rotate-3">The</span>
               Journey Map
             </h2>
-            <div className="relative py-12 px-4 md:px-12 bg-[#F9F5EE] border-4 border-[#0A0A0A] rounded-[3rem] overflow-hidden" style={{ boxShadow: '8px 8px 0px 0px rgba(10,10,10,1)' }}>
+            
+            <div className="relative py-12 px-4 md:px-10 bg-[#F9F5EE] border-4 border-[#0A0A0A] rounded-[3rem] overflow-hidden" style={{ boxShadow: '8px 8px 0px 0px rgba(10,10,10,1)' }}>
               
               {/* Map Background grid */}
               <div className="absolute inset-0 opacity-20" style={{ backgroundImage: 'radial-gradient(#0A0A0A 2px, transparent 2px)', backgroundSize: '30px 30px' }}></div>
               
-              <div className="relative z-10 pt-8 pb-12">
-                {/* Dotted path connecting the days */}
-                <div className="absolute left-6 md:left-1/2 top-0 bottom-0 w-1 md:w-2 border-l-4 md:border-l-8 border-dashed border-[#0A0A0A] -translate-x-1/2 opacity-30"></div>
-                
-                {trip.itineraries?.map((itinerary: any, index: number) => {
-                  const isEven = index % 2 === 0;
-                  const emojis = ['🎒', '📸', '🗺️', '⛰️', '✈️', '🌴', '🍹', '🚕', '🎟️', '🛌'];
-                  const emoji = emojis[index % emojis.length];
-
-                  return (
-                    <div key={itinerary.id} className={`relative flex items-center mb-16 md:mb-24 ${isEven ? 'md:flex-row' : 'md:flex-row-reverse'} flex-row`}>
-                      
-                      {/* Timeline Node */}
-                      <div className="absolute left-6 md:left-1/2 -translate-x-1/2 flex items-center justify-center z-20">
-                         <div className="w-12 h-12 md:w-16 md:h-16 rounded-full bg-[var(--color-primary)] border-4 border-[#0A0A0A] flex flex-col items-center justify-center rotate-3 transition-transform hover:scale-110" style={{ boxShadow: '4px 4px 0px 0px rgba(10,10,10,1)' }}>
-                            <span className="text-[10px] md:text-xs font-black uppercase leading-none">Day</span>
-                            <span className="text-xl md:text-2xl font-black leading-none">{itinerary.day_number}</span>
-                         </div>
-                      </div>
-
-                      {/* Card */}
-                      <div className={`w-[calc(100%-4rem)] ml-16 md:ml-0 md:w-1/2 ${isEven ? 'md:pr-16 md:text-left' : 'md:pl-16 md:text-right'}`}>
-                        <div className="bg-white p-5 md:p-8 border-4 border-[#0A0A0A] rounded-2xl relative group hover:-translate-y-2 hover:translate-x-2 transition-all duration-300" style={{ boxShadow: '8px 8px 0px 0px rgba(10,10,10,1)' }}>
-                           
-                           {/* Desktop Emoji Badge */}
-                           <div className={`absolute -top-6 md:-top-10 ${isEven ? '-left-6 md:-left-10' : '-right-6 md:-right-10'} w-16 h-16 md:w-24 md:h-24 bg-[var(--color-secondary)] border-4 border-[#0A0A0A] shadow-[4px_4px_0px_0px_rgba(10,10,10,1)] rounded-2xl hidden md:flex items-center justify-center text-4xl md:text-5xl ${isEven ? 'rotate-[-10deg]' : 'rotate-[10deg]'} transition-transform group-hover:rotate-0 group-hover:scale-110 z-10`}>
-                             {emoji}
-                           </div>
-                           
-                           {/* Mobile Emoji Badge */}
-                           <div className="md:hidden w-12 h-12 mb-3 bg-[var(--color-secondary)] rounded-xl border-4 border-[#0A0A0A] shadow-[4px_4px_0px_0px_rgba(10,10,10,1)] flex items-center justify-center text-2xl -rotate-3">
-                             {emoji}
-                           </div>
-
-                           <h4 className="font-black text-lg md:text-2xl mb-2 md:mb-3 leading-tight text-gray-900">{itinerary.title}</h4>
-                           <p className="text-sm md:text-base text-gray-700 font-medium leading-relaxed">{itinerary.detailed_description}</p>
+              <div className="relative z-10">
+                {(() => {
+                  const parsedItinerary = typeof trip.itinerary === 'string' ? JSON.parse(trip.itinerary) : (trip.itinerary || trip.itineraries);
+                  const safeItinerary = Array.isArray(parsedItinerary) ? parsedItinerary : [];
+                  
+                  if (safeItinerary.length === 0) {
+                    return (
+                      <div className="flex justify-center items-center py-10">
+                        <div className="bg-yellow-200 border-4 border-black rounded-xl p-8 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] aspect-square max-w-sm flex flex-col items-center justify-center rotate-3 relative">
+                          <div className="absolute -top-3 left-1/2 -translate-x-1/2 w-8 h-4 bg-black/80 rotate-[-5deg]"></div>
+                          <h3 className="text-2xl font-black text-black mb-2 text-center">:(</h3>
+                          <p className="text-lg font-bold text-center">Details coming soon</p>
                         </div>
                       </div>
-                      
+                    );
+                  }
+
+                  const colors = ['bg-yellow-200', 'bg-pink-200', 'bg-cyan-200', 'bg-green-200'];
+                  
+                  return (
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-6 md:gap-10">
+                      {safeItinerary.map((stop: any, index: number) => {
+                        const dayNumber = stop.day || stop.day_number || (index + 1);
+                        const title = stop.title || stop.name || '';
+                        const description = stop.description || stop.detailed_description || '';
+                        const color = colors[index % colors.length];
+                        
+                        // Random rotation between -3 and 3 degrees
+                        // Using a deterministic approach based on index so it doesn't jump on re-renders
+                        const rotClasses = ['-rotate-2', 'rotate-3', '-rotate-1', 'rotate-2', '-rotate-3', 'rotate-1'];
+                        const rotationClass = rotClasses[index % rotClasses.length];
+                        
+                        return (
+                          <div 
+                            key={dayNumber} 
+                            className={`${color} border-4 border-black p-6 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:shadow-[10px_10px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-2 hover:rotate-0 transition-all duration-300 relative aspect-square flex flex-col justify-between group ${rotationClass}`}
+                          >
+                            {/* Pushpin / Tape */}
+                            <div className="absolute -top-3 left-1/2 -translate-x-1/2 w-10 h-4 bg-black/80 rotate-[-3deg] shadow-[2px_2px_0px_0px_rgba(0,0,0,0.3)]"></div>
+                            
+                            <div>
+                              <div className="flex justify-between items-start mb-4">
+                                <span className="font-black text-2xl uppercase tracking-wider border-b-4 border-black pb-1">Day {dayNumber}</span>
+                              </div>
+                              <h3 className="text-xl md:text-2xl font-black leading-tight uppercase mb-3 break-words group-hover:text-black/80 transition-colors">
+                                {title}
+                              </h3>
+                            </div>
+                            
+                            <p className="text-black/80 font-bold text-sm md:text-base leading-relaxed overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+                              {description}
+                            </p>
+
+                            {/* Google Maps Link */}
+                            {stop.googleMapsLink && (
+                              <a 
+                                href={stop.googleMapsLink}
+                                target="_blank" 
+                                rel="noopener noreferrer"
+                                className="mt-4 self-start inline-block bg-white text-black border-2 border-black font-black px-4 py-2 text-xs uppercase shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:bg-black hover:text-white transition-colors"
+                              >
+                                Maps
+                              </a>
+                            )}
+                          </div>
+                        );
+                      })}
                     </div>
                   );
-                })}
-
-                {/* X marks the spot */}
-                {trip.itineraries && trip.itineraries.length > 0 && (
-                  <div className="relative flex items-center justify-center mt-20 md:mt-24">
-                     <div className="w-24 h-24 md:w-32 md:h-32 rotate-6 hover:rotate-0 hover:scale-110 transition-transform cursor-pointer z-20">
-                        <img 
-                          src="https://placehold.co/400x400/4ADE80/0A0A0A.png?text=3D+Treasure+Chest&font=montserrat" 
-                          alt="3D isometric treasure chest"
-                          className="w-full h-full object-cover rounded-2xl border-4 border-[#0A0A0A] shadow-[8px_8px_0px_0px_rgba(10,10,10,1)]"
-                        />
-                     </div>
-                  </div>
-                )}
-
-                {(!trip.itineraries || trip.itineraries.length === 0) && (
-                  <p className="text-gray-500 font-bold text-center mt-12">No treasure map details provided yet.</p>
-                )}
+                })()}
               </div>
             </div>
           </section>
+
         </div>
 
         {/* Sticky Booking Sidebar */}
