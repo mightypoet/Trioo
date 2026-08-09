@@ -29,7 +29,13 @@ YOUR TASK:
 1. Select the best matching trip from the AVAILABLE DATABASE TRIPS.
 2. Generate a custom, engaging day-by-day itinerary based on that trip.
 3. Generate search links for transportation based on the user's origin.
-OUTPUT FORMAT: You must return strictly valid JSON in this format:
+
+Based on the user's origin city and the package's destination city, you must generate real, clickable search URLs for transportation. Replace spaces with '+' in city names.
+- For flights: Use Google Flights. Format: https://www.google.com/travel/flights?q=Flights+from+[ORIGIN]+to+[DESTINATION]
+- For trains: Use MakeMyTrip. Format: https://www.makemytrip.com/railways/
+- For IRCTC: Just return https://www.irctc.co.in/nget/train-search
+
+OUTPUT FORMAT: You must return strictly valid JSON in this format. Ensure these three links are always populated in the transportation object:
 {
   "recommended_trip_id": "uuid-of-the-trip",
   "agency_name": "Name of the agency",
@@ -37,9 +43,9 @@ OUTPUT FORMAT: You must return strictly valid JSON in this format:
     { "day": 1, "title": "Arrival", "description": "..." }
   ],
   "transportation": {
-    "train_link": "https://www.makemytrip.com/railways/kolkata-siliguri-train-tickets.html",
-    "flight_link": "https://www.google.com/travel/flights?q=Kolkata+to+Bagdogra",
-    "irctc_portal": "https://www.irctc.co.in/"
+    "train_link": "https://www.makemytrip.com/railways/",
+    "flight_link": "https://www.google.com/travel/flights?q=...",
+    "irctc_portal": "https://www.irctc.co.in/nget/train-search"
   }
 }`;
 

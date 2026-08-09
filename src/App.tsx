@@ -22,6 +22,7 @@ import AdminDashboard from './pages/admin/AdminDashboard';
 import CreateTrip from './pages/admin/CreateTrip';
 import Agencies from './pages/admin/Agencies';
 import AdminProtectedRoute from './components/auth/AdminProtectedRoute';
+import AgencyDashboard from './pages/AgencyDashboard';
 
 export default function App() {
   return (
@@ -39,6 +40,7 @@ export default function App() {
           <Route path="wallet" element={<Wallet />} />
           <Route path="creators" element={<CreatorRewards />} />
           <Route path="profile" element={<UserProfile />} />
+          <Route path="agency-dashboard" element={<AgencyDashboard />} />
         </Route>
         
         {/* Admin Routes */}
