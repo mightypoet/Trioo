@@ -16,12 +16,12 @@ export default function Footer() {
             <button className="w-10 h-10 rounded-full bg-white border-2 border-[#0A0A0A] flex items-center justify-center text-[#0A0A0A] hover:-translate-y-1 hover:translate-x-1 transition-transform" style={{ boxShadow: '2px 2px 0px 0px rgba(10, 10, 10, 1)' }}>
               <Twitter className="w-5 h-5" />
             </button>
-            <button className="w-10 h-10 rounded-full bg-white border-2 border-[#0A0A0A] flex items-center justify-center text-[#0A0A0A] hover:-translate-y-1 hover:translate-x-1 transition-transform" style={{ boxShadow: '2px 2px 0px 0px rgba(10, 10, 10, 1)' }}>
+            <a href="https://www.instagram.com/travy.in/" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-white border-2 border-[#0A0A0A] flex items-center justify-center text-[#0A0A0A] hover:-translate-y-1 hover:translate-x-1 transition-transform" style={{ boxShadow: '2px 2px 0px 0px rgba(10, 10, 10, 1)' }}>
               <Instagram className="w-5 h-5" />
-            </button>
-            <button className="w-10 h-10 rounded-full bg-white border-2 border-[#0A0A0A] flex items-center justify-center text-[#0A0A0A] hover:-translate-y-1 hover:translate-x-1 transition-transform" style={{ boxShadow: '2px 2px 0px 0px rgba(10, 10, 10, 1)' }}>
+            </a>
+            <a href="https://www.facebook.com/profile.php?id=61592240734926" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-white border-2 border-[#0A0A0A] flex items-center justify-center text-[#0A0A0A] hover:-translate-y-1 hover:translate-x-1 transition-transform" style={{ boxShadow: '2px 2px 0px 0px rgba(10, 10, 10, 1)' }}>
               <Facebook className="w-5 h-5" />
-            </button>
+            </a>
           </div>
         </div>
         

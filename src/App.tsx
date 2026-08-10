@@ -9,7 +9,6 @@ import GlobalAuthModal from './components/layout/GlobalAuthModal';
 import Layout from './components/layout/Layout';
 import Home from './pages/Home';
 import Search from './pages/Search';
-import AiTripPlanner from './pages/AiTripPlanner';
 import PackageDetails from './pages/PackageDetails';
 import BookingFlow from './pages/BookingFlow';
 import Wallet from './pages/Wallet';
@@ -33,8 +32,7 @@ export default function App() {
         <Route path="/" element={<Layout />}>
           <Route index element={<Home />} />
           <Route path="search" element={<Search />} />
-          <Route path="ai-planner" element={<AiTripPlanner />} />
-          <Route path="feed" element={<Feed />} />
+                    <Route path="feed" element={<Feed />} />
           <Route path="package/:id" element={<PackageDetails />} />
           <Route path="book/:id" element={<BookingFlow />} />
           <Route path="wallet" element={<Wallet />} />
