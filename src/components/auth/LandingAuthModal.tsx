@@ -34,10 +34,10 @@ export default function LandingAuthModal() {
       />
       
       {/* Modal Content */}
-      <div className="relative w-full max-w-md bg-white/80 backdrop-blur-2xl border border-white/60 shadow-2xl rounded-[32px] p-8 flex flex-col items-center text-center animate-in fade-in zoom-in-95 duration-200">
+      <div className="relative w-full max-w-md bg-white border-4 border-black rounded-2xl shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] p-6 flex flex-col items-center text-center animate-in fade-in zoom-in-95 duration-200">
         <button 
           onClick={handleDismiss}
-          className="absolute top-5 right-5 p-2 text-gray-500 hover:text-gray-900 bg-white/50 hover:bg-white rounded-full transition-colors shadow-sm"
+          className="absolute top-4 right-4 p-2 text-black hover:text-white bg-white border-2 border-black rounded-full hover:bg-black transition-colors shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
         >
           <X className="w-5 h-5" />
         </button>
@@ -53,7 +53,7 @@ export default function LandingAuthModal() {
         
         <button 
           onClick={signInWithGoogle}
-          className="w-full flex items-center justify-center gap-3 bg-white hover:bg-gray-50 text-gray-900 border border-gray-200 rounded-xl px-6 py-4 font-bold text-lg transition-all shadow-sm hover:shadow-md mb-4"
+          className="w-full flex items-center justify-center gap-3 bg-yellow-400 hover:bg-yellow-300 text-black border-4 border-black rounded-xl px-6 py-4 font-black text-lg transition-all hover:translate-x-1 hover:-translate-y-1 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] mb-4"
         >
           <svg className="w-6 h-6" viewBox="0 0 24 24">
             <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>

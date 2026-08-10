@@ -1,11 +1,12 @@
 import { Home, Search, Flame, Wallet, User } from 'lucide-react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { cn } from '../../lib/utils';
 import { useAuth } from '../../contexts/AuthContext';
 
 export default function BottomNav() {
   const location = useLocation();
-  const { user } = useAuth();
+  const { user, requireAuth } = useAuth();
+  const navigate = useNavigate();
 
   const navItems = [
     { name: 'Home', icon: Home, path: '/' },
@@ -24,6 +25,12 @@ export default function BottomNav() {
             <Link 
               key={item.name}
               to={item.path} 
+              onClick={(e) => {
+                if (item.isProfile) {
+                  e.preventDefault();
+                  requireAuth(() => navigate(item.path));
+                }
+              }} 
               className={cn(
                 "flex flex-col items-center justify-center w-full h-full transition-all duration-200",
                 isActive ? "text-[var(--color-primary)]" : "text-gray-500 hover:text-gray-900"

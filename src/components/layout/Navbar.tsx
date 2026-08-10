@@ -42,6 +42,10 @@ export default function Navbar() {
           </Link>
           <Link 
             to="/profile"
+            onClick={(e) => {
+              e.preventDefault();
+              requireAuth(() => navigate('/profile'));
+            }}
             className="w-10 h-10 rounded-full bg-white border-4 border-[#0A0A0A] overflow-hidden flex items-center justify-center transition-all hover:-translate-y-1 hover:translate-x-1 cursor-pointer" 
             style={{ boxShadow: '4px 4px 0px 0px rgba(10, 10, 10, 1)' }}
           >
