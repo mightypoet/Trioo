@@ -7,11 +7,25 @@ import { Navigation } from 'lucide-react';
 import { DestinationCard } from '../components/ui/card-21';
 import { Marquee } from '../components/ui/Marquee';
 import { supabase } from '../lib/supabase';
-import LandingAuthModal from '../components/auth/LandingAuthModal';
+import AuthModal from '../components/auth/AuthModal';
+import { useAuth } from '../contexts/AuthContext';
 import heroImage1 from '../assets/images/regenerated_image_1785007937394.png';
 import { getTripImageUrl } from '../lib/utils';
 
 export default function Home() {
+  const [isWelcomeModalOpen, setIsWelcomeModalOpen] = useState(false);
+  const { user } = useAuth();
+
+  useEffect(() => {
+    if (!user && !localStorage.getItem('travy_has_visited')) {
+      const timer = setTimeout(() => {
+        setIsWelcomeModalOpen(true);
+        localStorage.setItem('travy_has_visited', 'true');
+      }, 1500);
+      return () => clearTimeout(timer);
+    }
+  }, [user]);
+
   const navigate = useNavigate();
   const [agencies, setAgencies] = useState<any[]>([]);
   const [destinations, setDestinations] = useState<any[]>([]);
@@ -129,7 +143,7 @@ export default function Home() {
 
   return (
     <div className="w-full overflow-x-hidden">
-      <LandingAuthModal />
+      <AuthModal isOpen={isWelcomeModalOpen} onClose={() => setIsWelcomeModalOpen(false)} />
       {/* Hero Section */}
       <section className="relative px-6 pt-20 pb-32 z-10 flex flex-col items-center justify-center text-center w-full max-w-4xl mx-auto">
         <motion.div 

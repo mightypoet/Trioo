@@ -1,52 +1,33 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { X } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 
-export default function LandingAuthModal() {
-  const { user, signInWithGoogle, loading } = useAuth();
-  const [isOpen, setIsOpen] = useState(false);
+interface AuthModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+}
 
-  useEffect(() => {
-    if (loading) return;
-
-    const isDismissed = sessionStorage.getItem('travy_welcome_dismissed') === 'true';
-    if (!user && !isDismissed) {
-      const timer = setTimeout(() => {
-        setIsOpen(true);
-      }, 1500);
-      return () => clearTimeout(timer);
-    }
-  }, [user, loading]);
+export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
+  const { signInWithGoogle } = useAuth();
 
   if (!isOpen) return null;
 
-  const handleDismiss = () => {
-    sessionStorage.setItem('travy_welcome_dismissed', 'true');
-    setIsOpen(false);
-  };
-
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-      {/* Backdrop overlay */}
       <div 
         className="absolute inset-0 bg-black/40 backdrop-blur-sm"
-        onClick={handleDismiss}
+        onClick={onClose}
       />
       
-      {/* Modal Content */}
-      <div className="relative w-full max-w-md bg-white border-4 border-black rounded-2xl shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] p-6 flex flex-col items-center text-center animate-in fade-in zoom-in-95 duration-200">
+      <div className="relative w-full max-w-md bg-white border-4 border-black rounded-2xl shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] p-6 flex flex-col items-center text-center animate-in fade-in zoom-in-95 duration-200 z-10">
         <button 
-          onClick={handleDismiss}
+          onClick={onClose}
           className="absolute top-4 right-4 p-2 text-black hover:text-white bg-white border-2 border-black rounded-full hover:bg-black transition-colors shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
         >
           <X className="w-5 h-5" />
         </button>
         
-        <div className="mb-6 flex justify-center">
-          <img src="https://omtm2jfmtp1jadq4.public.blob.vercel-storage.com/ChatGPT%20Image%20Jul%2026%2C%202026%2C%2002_44_00%20AM.png" alt="Travy Logo" className="h-16 w-auto object-contain" />
-        </div>
-        
-        <h2 className="text-2xl font-black text-gray-900 mb-2">Welcome to TRAVY ✈️</h2>
+        <h2 className="text-3xl font-black text-black mb-2 uppercase tracking-wide">Sign In</h2>
         <p className="text-gray-600 font-medium mb-8">
           Sign in with Google to unlock exclusive agency packages, save favorite trips, and earn creator rewards.
         </p>
@@ -62,13 +43,6 @@ export default function LandingAuthModal() {
             <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
           </svg>
           Continue with Google
-        </button>
-
-        <button 
-          onClick={handleDismiss}
-          className="text-gray-500 hover:text-gray-900 font-bold text-sm transition-colors"
-        >
-          Explore as Guest
         </button>
       </div>
     </div>
