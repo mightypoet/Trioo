@@ -17,8 +17,8 @@ export default function BottomNav() {
   ];
 
   return (
-    <nav className="md:hidden fixed bottom-6 left-4 right-4 z-50 bg-[#121212] rounded-full p-2 shadow-xl border border-white/10">
-      <div className="flex justify-around items-center w-full h-14">
+    <nav className="md:hidden fixed bottom-8 left-1/2 -translate-x-1/2 z-50 w-[95%] max-w-[400px] bg-[#121212]/95 backdrop-blur-xl rounded-[2rem] p-2 shadow-2xl border border-white/10">
+      <div className="flex justify-between items-center w-full h-14 px-2">
         {navItems.map((item) => {
           const isActive = location.pathname === item.path;
           return (
@@ -31,10 +31,10 @@ export default function BottomNav() {
                   requireAuth(() => navigate(item.path));
                 }
               }}
-              className="relative flex flex-col items-center justify-center w-16 h-12 rounded-full"
+              className="relative flex flex-col items-center justify-center w-14 h-12 rounded-full group"
             >
               {isActive && (
-                <div className="absolute inset-0 bg-[#2A2A2A] rounded-full transition-all duration-300" />
+                <div className="absolute inset-0 bg-white/10 rounded-full transition-all duration-300" />
               )}
               
               <div className="relative z-10 flex items-center justify-center">
@@ -42,7 +42,7 @@ export default function BottomNav() {
                   <div className="relative">
                     <div className={cn(
                       "w-8 h-8 rounded-full overflow-hidden flex items-center justify-center bg-gray-200 transition-all",
-                      isActive && "border-2 border-white"
+                      isActive ? "border-2 border-white scale-110" : "scale-100 group-hover:scale-105"
                     )}>
                       {user?.user_metadata?.avatar_url ? (
                         <img src={user.user_metadata.avatar_url} alt="Profile" className="w-full h-full object-cover" />
@@ -50,11 +50,14 @@ export default function BottomNav() {
                         <User className="w-5 h-5 text-[#121212]" strokeWidth={2} />
                       )}
                     </div>
-                    {/* Fake notification dot for Instagram look */}
-                    <div className="absolute -bottom-1 -right-1 w-3 h-3 bg-red-500 rounded-full border-2 border-[#121212]" />
+                    {/* Notification dot */}
+                    <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-red-500 rounded-full border-2 border-[#121212]" />
                   </div>
                 ) : (
-                  item.icon && <item.icon className={cn("w-6 h-6 transition-all text-white", isActive && "fill-white")} strokeWidth={isActive ? 2.5 : 2} />
+                  item.icon && <item.icon className={cn(
+                    "w-6 h-6 transition-all text-white", 
+                    isActive ? "fill-white scale-110" : "scale-100 group-hover:scale-110 opacity-70 group-hover:opacity-100"
+                  )} strokeWidth={isActive ? 2.5 : 2} />
                 )}
               </div>
             </Link>
