@@ -77,7 +77,7 @@ OUTPUT FORMAT: You must return strictly valid JSON in this format. Ensure these 
 }`;
 
       const response = await ai.models.generateContent({
-        model: "gemini-2.5-flash",
+        model: "gemini-3.6-flash",
         contents: prompt,
         config: {
           responseMimeType: "application/json",
@@ -117,7 +117,7 @@ RAW TRIP DESCRIPTION:
 ${rawDescription}`;
 
       const response = await ai.models.generateContent({
-        model: "gemini-2.5-flash",
+        model: "gemini-3.6-flash",
         contents: prompt,
         config: {
           responseMimeType: "application/json",
