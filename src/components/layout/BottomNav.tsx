@@ -1,4 +1,4 @@
-import { Home, Search, Flame, Wallet, User } from 'lucide-react';
+import { Home, Search, Flame, Wallet, User, Plane } from 'lucide-react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { cn } from '../../lib/utils';
 import { useAuth } from '../../contexts/AuthContext';
@@ -12,7 +12,7 @@ export default function BottomNav() {
     { name: 'Home', icon: Home, path: '/' },
     { name: 'Search', icon: Search, path: '/search' },
     { name: 'Feed', icon: Flame, path: '/feed' },
-    { name: 'Wallet', icon: Wallet, path: '/wallet' },
+    { name: 'Go Solo', icon: Plane, path: '/go-solo' },
     { name: 'Profile', isProfile: true, path: '/profile' },
   ];
 

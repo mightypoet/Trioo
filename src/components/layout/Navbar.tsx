@@ -1,5 +1,5 @@
 import { Link, useNavigate } from 'react-router-dom';
-import { Compass, Wallet, User, Moon, Sun, Menu, X, MapPin, Loader2 } from 'lucide-react';
+import { Compass, Wallet, User, Moon, Sun, Menu, X, MapPin, Loader2, Plane } from 'lucide-react';
 import { cn } from '../../lib/utils';
 import { useState, useEffect } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
@@ -60,9 +60,9 @@ export default function Navbar() {
               <MapPin className="w-4 h-4 text-[#0A0A0A]" />
             )}
           </button>
-          <Link to="/wallet" className="hidden sm:flex items-center gap-2 px-4 py-2 bg-white border-4 border-[#0A0A0A] rounded-full transition-all hover:-translate-y-1 hover:translate-x-1" style={{ boxShadow: '4px 4px 0px 0px rgba(10, 10, 10, 1)' }}>
-            <Wallet className="w-4 h-4 text-[#0A0A0A]" />
-            {user && <span className="font-semibold text-sm text-[#0A0A0A]">₹500</span>}
+          <Link to="/go-solo" className="hidden sm:flex items-center gap-2 px-4 py-2 bg-yellow-300 border-4 border-[#0A0A0A] rounded-full transition-all hover:-translate-y-1 hover:translate-x-1" style={{ boxShadow: '4px 4px 0px 0px rgba(10, 10, 10, 1)' }}>
+            <Plane className="w-4 h-4 text-[#0A0A0A]" />
+            <span className="font-bold text-sm text-[#0A0A0A]">Go Solo</span>
           </Link>
           <Link 
             to="/profile"
@@ -94,8 +94,8 @@ export default function Navbar() {
         <div className="md:hidden absolute top-full left-0 right-0 bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl border-b border-gray-200 dark:border-slate-800 shadow-lg py-4 px-6 flex flex-col gap-4">
           <Link to="/search" onClick={() => setMobileMenuOpen(false)} className="text-text-main font-medium py-2 border-b border-gray-100 dark:border-slate-800">Destinations</Link>
           <Link to="/creators" onClick={() => setMobileMenuOpen(false)} className="text-text-main font-medium py-2 border-b border-gray-100 dark:border-slate-800">Creator Rewards</Link>
-          <Link to="/wallet" onClick={() => setMobileMenuOpen(false)} className="text-text-main font-medium py-2 flex items-center gap-2">
-            <Wallet className="w-4 h-4 text-primary" /> Wallet {user && "(₹500)"}
+          <Link to="/go-solo" onClick={() => setMobileMenuOpen(false)} className="text-text-main font-medium py-2 flex items-center gap-2">
+            <Plane className="w-4 h-4 text-primary" /> Go Solo
           </Link>
         </div>
       )}

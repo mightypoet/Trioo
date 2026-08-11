@@ -15,6 +15,7 @@ import BookingFlow from './pages/BookingFlow';
 import Wallet from './pages/Wallet';
 import CreatorRewards from './pages/CreatorRewards';
 import UserProfile from './pages/UserProfile';
+import GoSolo from './pages/GoSolo';
 import Feed from './pages/Feed';
 
 import AdminLayout from './components/admin/AdminLayout';
@@ -38,6 +39,7 @@ export default function App() {
           <Route path="package/:id" element={<PackageDetails />} />
           <Route path="book/:id" element={<BookingFlow />} />
           <Route path="wallet" element={<Wallet />} />
+          <Route path="go-solo" element={<GoSolo />} />
           <Route path="creators" element={<CreatorRewards />} />
           <Route path="profile" element={<UserProfile />} />
           <Route path="agency-dashboard" element={<AgencyDashboard />} />
