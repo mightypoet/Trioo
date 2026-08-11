@@ -58,7 +58,7 @@ export function LocationProvider({ children }: { children: ReactNode }) {
         },
         (error) => {
           clearTimeout(timeoutId);
-          console.error('Error getting location from browser:', error.message || error);
+          console.warn('Geolocation access denied or failed:', error.message || error);
           setIsLoadingLocation(false);
           resolve(null);
         },

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Plane, Hotel, Train, Search, ArrowRight, ExternalLink, Loader2 } from 'lucide-react';
 import { cn } from '../lib/utils';
 
@@ -13,34 +13,90 @@ export default function GoSolo() {
   const [errorFlights, setErrorFlights] = useState('');
 
   // Hotels State
-  const [hotelCity, setHotelCity] = useState('');
+  const [hotelCity, setHotelCity] = useState<string>('Goa');
+  const [hotels, setHotels] = useState<any[]>([]);
+  const [isLoadingHotels, setIsLoadingHotels] = useState<boolean>(false);
+  const [hotelError, setHotelError] = useState<string | null>(null);
   
   // Trains State
   const [trainOrigin, setTrainOrigin] = useState('');
   const [trainDestination, setTrainDestination] = useState('');
+
+  const handleHotelSearch = async (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
+    if (!hotelCity.trim()) return;
+    setIsLoadingHotels(true);
+    setHotelError(null);
+    try {
+      const res = await fetch(`/api/hotels?city=${encodeURIComponent(hotelCity.trim())}`);
+      const contentType = res.headers.get("content-type");
+      if (!contentType || !contentType.includes("application/json")) {
+        throw new Error("Server returned an invalid non-JSON response.");
+      }
+      const data = await res.json();
+      if (!res.ok || data.error) {
+        throw new Error(data.error?.message || data.error || "Failed to fetch hotels");
+      }
+      setHotels(data);
+    } catch (err: any) {
+      console.error("Hotel Search Error:", err);
+      setHotelError(err.message || 'Error fetching hotels.');
+      setHotels([]);
+    } finally {
+      setIsLoadingHotels(false);
+    }
+  };
+
+  useEffect(() => {
+    if (hotels.length === 0) {
+      handleHotelSearch();
+    }
+  }, []);
+
 
   const searchFlights = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!originIata) return;
     setLoadingFlights(true);
     setErrorFlights('');
+    
     try {
-      const res = await fetch(`/api/flights?dep_iata=${encodeURIComponent(originIata)}`);
-      const contentType = res.headers.get("content-type");
+      const apiKey = import.meta.env.VITE_AVIATIONSTACK_API_KEY;
+      if (!apiKey) {
+        throw new Error("Aviationstack API key is missing. Ensure VITE_AVIATIONSTACK_API_KEY is set in your environment.");
+      }
+
+      // 1. Aviationstack requires a 3-letter IATA code, NOT a full city name.
+      let iataCode = originIata.toUpperCase().trim();
+      // Quick fallback for testing common inputs
+      if (iataCode === 'DELHI') iataCode = 'DEL';
+      if (iataCode === 'KOLKATA') iataCode = 'CCU';
+      if (iataCode === 'MUMBAI') iataCode = 'BOM';
       
-      if (!contentType || !contentType.includes("application/json")) {
-        throw new Error("Server returned non-JSON response. Please check server/API setup.");
+      // 2. We use allorigins as a proxy to bypass the HTTPS Mixed Content block on the free Aviationstack tier
+      const targetUrl = encodeURIComponent(`http://api.aviationstack.com/v1/flights?access_key=${apiKey}&dep_iata=${iataCode}&limit=10`);
+      const proxyUrl = `https://api.allorigins.win/get?url=${targetUrl}`;
+
+      const res = await fetch(proxyUrl);
+      if (!res.ok) throw new Error("Network response was not ok");
+
+      const proxyData = await res.json();
+      
+      // allorigins returns the actual JSON string inside the `contents` property
+      const data = JSON.parse(proxyData.contents);
+
+      if (data.error) {
+        throw new Error(data.error.message || data.error.info || "Aviationstack API Error");
       }
       
-      const data = await res.json();
-      if (!res.ok || data.error) {
-        throw new Error(data.error?.message || data.error || "Failed to load flights.");
+      if (!data.data || data.data.length === 0) {
+          throw new Error(`No active flights found departing from ${iataCode}. Check if the 3-letter IATA code is correct.`);
       }
-      
+
       setFlights(data.data || []);
     } catch (error: any) {
       console.error("Flight Search Error:", error);
-      setErrorFlights(error.message || "Unable to fetch live flight data.");
+      setErrorFlights(error.message || "Unable to fetch live flight data. Please try again.");
       setFlights([]);
     } finally {
       setLoadingFlights(false);
@@ -189,39 +245,55 @@ export default function GoSolo() {
         {activeTab === 'hotels' && (
           <div className="animate-in fade-in duration-300">
             <h2 className="text-2xl font-black mb-6 flex items-center gap-2">Solo-Friendly Stays</h2>
-            <div className="flex flex-col md:flex-row gap-4 mb-8">
+            <form onSubmit={handleHotelSearch} className="flex flex-col md:flex-row gap-4 mb-8">
               <div className="flex-1">
                 <input 
                   type="text" 
                   placeholder="Where are you heading?" 
                   value={hotelCity}
                   onChange={(e) => setHotelCity(e.target.value)}
-                  className="w-full bg-gray-100 border-4 border-black rounded-xl px-4 py-3 font-bold focus:outline-none focus:bg-white focus:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all"
+                  className="w-full bg-gray-100 border-4 border-black rounded-xl px-4 py-3 font-bold shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] focus:outline-none focus:ring-2 focus:ring-yellow-300 transition-all"
+                  required
                 />
               </div>
-              <a 
-                href={`https://www.google.com/travel/hotels?q=hotels+in+${hotelCity || 'Goa'}`}
-                target="_blank"
-                rel="noreferrer"
-                className="w-full md:w-auto bg-[#0A0A0A] text-white border-4 border-[#0A0A0A] rounded-xl px-8 py-3 font-black shadow-[4px_4px_0px_0px_rgba(200,200,200,1)] hover:bg-gray-800 hover:-translate-y-1 transition-all flex items-center gap-2 justify-center"
+              <button 
+                type="submit"
+                disabled={isLoadingHotels}
+                className="w-full md:w-auto bg-yellow-300 border-4 border-black font-black px-6 py-3 rounded-xl shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] active:scale-95 transition-transform hover:bg-yellow-400 disabled:opacity-50 flex items-center gap-2 justify-center text-black"
               >
-                <Search className="w-5 h-5" /> Search Hotels
-              </a>
-            </div>
+                {isLoadingHotels ? <Loader2 className="w-5 h-5 animate-spin" /> : <Search className="w-5 h-5" />} 
+                {isLoadingHotels ? 'Searching...' : 'Search Hotels'}
+              </button>
+            </form>
+
+            {hotelError && (
+              <div className="bg-red-200 border-4 border-black p-4 rounded-xl font-bold text-red-900 mb-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+                {hotelError}
+              </div>
+            )}
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {[
-                { name: 'The Solo Backpacker Hostel', price: '₹800/night', amenities: 'Free Wi-Fi, Solo Safety Certified' },
-                { name: 'Zen City Boutique', price: '₹2,500/night', amenities: 'Breakfast, Central Location' },
-                { name: 'Wanderer Homestay', price: '₹1,200/night', amenities: 'Community Events, Safe Zone' },
-              ].map((h, i) => (
-                <div key={i} className="bg-white border-4 border-black rounded-xl p-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] flex flex-col h-full">
+              {hotels.length === 0 && !isLoadingHotels && !hotelError && (
+                <div className="col-span-full text-center py-12 bg-gray-50 border-4 border-dashed border-gray-300 rounded-xl shadow-[4px_4px_0px_0px_rgba(0,0,0,0.1)]">
+                  <Hotel className="w-12 h-12 text-gray-400 mx-auto mb-3" />
+                  <p className="text-gray-500 font-bold">Search a city to find solo-friendly stays.</p>
+                </div>
+              )}
+              {hotels.map((h, i) => (
+                <div key={i} className="bg-white border-4 border-black rounded-2xl p-5 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] flex flex-col h-full hover:-translate-y-1 hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] transition-all">
                   <Hotel className="w-8 h-8 mb-4 text-cyan-600" />
                   <h3 className="font-black text-lg mb-2">{h.name}</h3>
-                  <p className="text-gray-500 font-bold text-sm mb-4">{h.amenities}</p>
+                  <div className="flex flex-wrap gap-2 mb-4">
+                    {h.amenities?.map((amenity: string, idx: number) => (
+                      <span key={idx} className="bg-yellow-200 border-2 border-black text-xs font-bold px-2 py-1 rounded-md">{amenity}</span>
+                    ))}
+                  </div>
                   <div className="mt-auto pt-4 border-t-2 border-dashed border-gray-200 flex items-center justify-between">
-                    <span className="font-black text-xl">{h.price}</span>
-                    <a href={`https://www.google.com/travel/hotels?q=${encodeURIComponent(h.name)}`} target="_blank" rel="noreferrer" className="text-sm font-black underline hover:text-cyan-600">View Stay</a>
+                    <div>
+                      <span className="font-black text-xl text-black">{h.price}</span>
+                      <p className="text-xs font-bold text-gray-500">{h.rating}</p>
+                    </div>
+                    <a href={h.bookingUrl} target="_blank" rel="noreferrer" className="text-sm font-black text-white bg-blue-600 px-4 py-2 rounded-xl border-2 border-black hover:bg-blue-700 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:scale-95 transition-transform">View Stay</a>
                   </div>
                 </div>
               ))}
