@@ -5,6 +5,7 @@
 
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './contexts/AuthContext';
+import { LocationProvider } from './contexts/LocationContext';
 import GlobalAuthModal from './components/layout/GlobalAuthModal';
 import Layout from './components/layout/Layout';
 import Home from './pages/Home';
@@ -26,6 +27,7 @@ import AgencyDashboard from './pages/AgencyDashboard';
 export default function App() {
   return (
     <AuthProvider>
+      <LocationProvider>
       <BrowserRouter>
         <GlobalAuthModal />
         <Routes>
@@ -57,6 +59,7 @@ export default function App() {
         </Route>
       </Routes>
     </BrowserRouter>
+    </LocationProvider>
     </AuthProvider>
   );
 }

@@ -11,10 +11,18 @@ import AuthModal from '../components/auth/AuthModal';
 import { useAuth } from '../contexts/AuthContext';
 import heroImage1 from '../assets/images/regenerated_image_1785007937394.png';
 import { getTripImageUrl } from '../lib/utils';
+import { useLocationContext } from '../contexts/LocationContext';
 
 export default function Home() {
   const [isWelcomeModalOpen, setIsWelcomeModalOpen] = useState(false);
   const { user } = useAuth();
+  const { userLocation, requestUserLocation, isLoadingLocation } = useLocationContext();
+
+  useEffect(() => {
+    if (!userLocation) {
+      requestUserLocation();
+    }
+  }, []);
 
   useEffect(() => {
     if (!user && !localStorage.getItem('travy_has_visited')) {
@@ -90,6 +98,11 @@ export default function Home() {
     setPlan(null);
     setTripDetails(null);
 
+    let originCity = userLocation;
+    if (!originCity) {
+      originCity = await requestUserLocation();
+    }
+
     const fullPrompt = `${queryText}. ${startDate && endDate ? 'Dates: ' + startDate + ' to ' + endDate + '.' : ''} ${budget ? 'Budget: ' + budget + '.' : ''}`;
 
     try {
@@ -104,6 +117,7 @@ export default function Home() {
         body: JSON.stringify({
           userRequest: fullPrompt,
           availableTrips: trips,
+          originCity: originCity || "Unknown",
         }),
       });
 
@@ -233,7 +247,10 @@ export default function Home() {
                   className="bg-yellow-400 text-[#0A0A0A] font-black border-4 border-[#0A0A0A] rounded-[24px] px-8 py-4 shadow-[4px_4px_0px_0px_rgba(10,10,10,1)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_rgba(10,10,10,1)] transition-all whitespace-nowrap disabled:opacity-70 flex items-center gap-2"
                 >
                   {loadingPlan ? (
-                    <div className="w-5 h-5 border-4 border-[#0A0A0A] border-t-transparent rounded-full animate-spin" />
+                    <>
+                      <div className="w-5 h-5 border-4 border-[#0A0A0A] border-t-transparent rounded-full animate-spin" />
+                      {isLoadingLocation ? "Fetching location..." : "Generating..."}
+                    </>
                   ) : (
                     <>
                       <Zap className="w-5 h-5" />

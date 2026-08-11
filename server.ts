@@ -16,7 +16,7 @@ async function startServer() {
 
   app.post("/api/plan-trip", async (req, res) => {
     try {
-      const { userRequest, availableTrips } = req.body;
+      const { userRequest, availableTrips, originCity } = req.body;
 
       if (!userRequest || !availableTrips) {
         return res.status(400).json({ error: "Missing userRequest or availableTrips" });
@@ -28,6 +28,8 @@ USER REQUEST: "${userRequest}"
 AVAILABLE TRAVY DATABASE TRIPS: ${JSON.stringify(availableTrips)}
 
 YOUR TASK:
+USER ORIGIN CONTEXT: The user's current detected location is '${originCity || "Unknown"}'. If the user's prompt does not explicitly state where they are traveling FROM, you MUST assume they are departing from '${originCity || "Unknown"}'. Use this origin city to accurately generate the transportation search links (Flights and Trains) to the selected package destination.
+
 1. Select the best matching trip from the AVAILABLE DATABASE TRIPS.
 CRITICAL DESTINATION MATCHING: Analyze the user's prompt to identify the exact destination they are requesting. You MUST select a base trip from the provided DATABASE TRIPS where the destination geographically matches the user's request. Do NOT recommend a package for a completely different state or region (e.g., do not recommend Tripura if the user asked for Meghalaya). Only fallback to a different region if absolutely no logical match exists.
 2. Generate a custom, engaging day-by-day itinerary based on that trip. Ensure you provide highly detailed, precise, and interactive data.

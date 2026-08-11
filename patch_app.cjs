@@ -1,19 +1,6 @@
 const fs = require('fs');
-
-let appCode = fs.readFileSync('src/App.tsx', 'utf8');
-
-if (!appCode.includes('AgencyDashboard')) {
-  appCode = appCode.replace(
-    /import AdminProtectedRoute from '\.\/components\/auth\/AdminProtectedRoute';/,
-    `import AdminProtectedRoute from './components/auth/AdminProtectedRoute';
-import AgencyDashboard from './pages/AgencyDashboard';`
-  );
-
-  appCode = appCode.replace(
-    /<Route path="profile" element={<UserProfile \/>} \/>/,
-    `<Route path="profile" element={<UserProfile />} />
-          <Route path="agency-dashboard" element={<AgencyDashboard />} />`
-  );
-
-  fs.writeFileSync('src/App.tsx', appCode);
-}
+let code = fs.readFileSync('src/App.tsx', 'utf8');
+code = code.replace("import { AuthProvider } from './contexts/AuthContext';", "import { AuthProvider } from './contexts/AuthContext';\nimport { LocationProvider } from './contexts/LocationContext';");
+code = code.replace("<AuthProvider>", "<AuthProvider>\n      <LocationProvider>");
+code = code.replace("</AuthProvider>", "</LocationProvider>\n    </AuthProvider>");
+fs.writeFileSync('src/App.tsx', code);

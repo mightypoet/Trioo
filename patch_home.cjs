@@ -1,37 +1,57 @@
 const fs = require('fs');
 let code = fs.readFileSync('src/pages/Home.tsx', 'utf8');
 
-// Replace LandingAuthModal import with AuthModal
-code = code.replace(
-  /import LandingAuthModal from '\.\.\/components\/auth\/LandingAuthModal';/,
-  "import AuthModal from '../components/auth/AuthModal';\nimport { useAuth } from '../contexts/AuthContext';"
-);
+if (!code.includes("useLocationContext")) {
+  code = code.replace("import { getTripImageUrl } from '../lib/utils';", "import { getTripImageUrl } from '../lib/utils';\nimport { useLocationContext } from '../contexts/LocationContext';");
+}
 
-// Add the state and useEffect to Home component
-const stateAndEffect = `
-  const [isWelcomeModalOpen, setIsWelcomeModalOpen] = useState(false);
-  const { user } = useAuth();
+const setupVars = `  const { user } = useAuth();`;
+if (code.includes(setupVars) && !code.includes("useLocationContext()")) {
+  code = code.replace(setupVars, `  const { user } = useAuth();\n  const { userLocation, requestUserLocation, isLoadingLocation } = useLocationContext();`);
+}
 
-  useEffect(() => {
-    if (!user && !localStorage.getItem('travy_has_visited')) {
-      const timer = setTimeout(() => {
-        setIsWelcomeModalOpen(true);
-        localStorage.setItem('travy_has_visited', 'true');
-      }, 1500);
-      return () => clearTimeout(timer);
+const generatePlanOriginal = `  const generatePlan = async (queryText: string) => {
+    if (!queryText.trim()) return;
+    setLoadingPlan(true);
+    setPlan(null);
+    setTripDetails(null);
+
+    const fullPrompt = \`\${queryText}. \${startDate && endDate ? 'Dates: ' + startDate + ' to ' + endDate + '.' : ''} \${budget ? 'Budget: ' + budget + '.' : ''}\`;
+
+    try {
+      const { data: trips, error } = await supabase.from('trips').select('*, agencies(name)');
+      if (error) throw error;`;
+
+const generatePlanNew = `  const generatePlan = async (queryText: string) => {
+    if (!queryText.trim()) return;
+    setLoadingPlan(true);
+    setPlan(null);
+    setTripDetails(null);
+
+    let originCity = userLocation;
+    if (!originCity) {
+      originCity = await requestUserLocation();
     }
-  }, [user]);
-`;
 
-code = code.replace(
-  /export default function Home\(\) \{/,
-  "export default function Home() {" + stateAndEffect
-);
+    const fullPrompt = \`\${queryText}. \${startDate && endDate ? 'Dates: ' + startDate + ' to ' + endDate + '.' : ''} \${budget ? 'Budget: ' + budget + '.' : ''}\`;
 
-// Replace <LandingAuthModal /> with the new one
-code = code.replace(
-  /<LandingAuthModal \/>/,
-  "<AuthModal isOpen={isWelcomeModalOpen} onClose={() => setIsWelcomeModalOpen(false)} />"
-);
+    try {
+      const { data: trips, error } = await supabase.from('trips').select('*, agencies(name)');
+      if (error) throw error;`;
+
+code = code.replace(generatePlanOriginal, generatePlanNew);
+
+const generatePlanBodyOriginal = `        body: JSON.stringify({
+          userRequest: fullPrompt,
+          availableTrips: trips,
+        }),`;
+        
+const generatePlanBodyNew = `        body: JSON.stringify({
+          userRequest: fullPrompt,
+          availableTrips: trips,
+          originCity: originCity || "Unknown",
+        }),`;
+
+code = code.replace(generatePlanBodyOriginal, generatePlanBodyNew);
 
 fs.writeFileSync('src/pages/Home.tsx', code);
