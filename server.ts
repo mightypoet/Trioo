@@ -29,6 +29,7 @@ AVAILABLE TRAVY DATABASE TRIPS: ${JSON.stringify(availableTrips)}
 
 YOUR TASK:
 1. Select the best matching trip from the AVAILABLE DATABASE TRIPS.
+CRITICAL DESTINATION MATCHING: Analyze the user's prompt to identify the exact destination they are requesting. You MUST select a base trip from the provided DATABASE TRIPS where the destination geographically matches the user's request. Do NOT recommend a package for a completely different state or region (e.g., do not recommend Tripura if the user asked for Meghalaya). Only fallback to a different region if absolutely no logical match exists.
 2. Generate a custom, engaging day-by-day itinerary based on that trip. Ensure you provide highly detailed, precise, and interactive data.
 3. Generate search links for transportation based on the user's origin.
 
