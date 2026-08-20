@@ -15,7 +15,7 @@ import { useLocationContext } from '../contexts/LocationContext';
 
 export default function Home() {
   const [isWelcomeModalOpen, setIsWelcomeModalOpen] = useState(false);
-  const { user } = useAuth();
+  const { user, requireAuth } = useAuth();
   const { userLocation, requestUserLocation, isLoadingLocation } = useLocationContext();
 
   useEffect(() => {
@@ -161,7 +161,7 @@ export default function Home() {
     <div className="w-full overflow-x-hidden">
       <AuthModal isOpen={isWelcomeModalOpen} onClose={() => setIsWelcomeModalOpen(false)} />
       {/* Hero Section */}
-      <section className="relative px-6 pt-20 pb-32 z-10 flex flex-col items-center justify-center text-center w-full max-w-4xl mx-auto">
+      <section className="relative px-4 md:px-8 pt-10 md:pt-20 pb-16 md:pb-32 z-10 flex flex-col items-center justify-center text-center w-full max-w-7xl mx-auto">
         <motion.div 
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
@@ -171,7 +171,7 @@ export default function Home() {
           <div className="inline-block bg-[#0A0A0A] text-[var(--color-primary)] px-4 py-1.5 border-4 border-[#0A0A0A] rounded-full text-xs font-black tracking-widest uppercase mb-6" style={{ boxShadow: '4px 4px 0px 0px rgba(10, 10, 10, 1)' }}>
             AI-POWERED TRAVEL PLANNING
           </div>
-          <h1 className="text-5xl md:text-6xl lg:text-7xl font-black mb-6 leading-[1.1] text-[#0A0A0A] text-center">
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-black mb-6 leading-[1.1] text-[#0A0A0A] text-center">
             Just tell us where.<br />
             <span className="text-gradient">We'll handle everything else.</span>
           </h1>
@@ -180,93 +180,101 @@ export default function Home() {
           </p>
 
           
-          <div className="flex flex-col items-center gap-6 w-full max-w-4xl mx-auto mt-8 relative z-10">
-            <form onSubmit={handleSearch} className="bg-white border-4 border-[#0A0A0A] rounded-[32px] p-6 flex flex-col gap-4 w-full shadow-[8px_8px_0px_0px_rgba(10,10,10,1)]">
-              
-              <div className="flex items-center gap-3">
-                <Search className="w-6 h-6 text-[#0A0A0A]" strokeWidth={3} />
-                <h3 className="text-xl font-black text-[#0A0A0A] uppercase tracking-wide">AI Trip Planner</h3>
-              </div>
-
-              {/* Grid for Inputs */}
-              <div className="grid grid-cols-1 md:grid-cols-12 gap-4">
+<div className="flex flex-col items-center gap-6 w-full max-w-6xl mx-auto mt-8 relative z-10">
+<div className="bg-white border-4 border-black rounded-3xl p-6 md:p-8 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] max-w-6xl mx-auto w-full relative z-10 my-8">
+            <div className="flex items-center gap-3 mb-6 border-b-4 border-black pb-4">
+              <Search className="w-8 h-8 text-[#0A0A0A]" strokeWidth={3} />
+              <h2 className="font-black text-2xl uppercase tracking-tighter text-[#0A0A0A]">AI Trip Planner</h2>
+            </div>
+            
+            <form onSubmit={handleSearch} className="flex flex-col lg:flex-row gap-4 items-stretch w-full">
+              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 flex-1">
                 
                 {/* Destination / Prompt */}
-                <div className="md:col-span-4 bg-gray-50 border-4 border-[#0A0A0A] rounded-2xl p-3 flex items-center gap-3 shadow-[4px_4px_0px_0px_rgba(10,10,10,1)] focus-within:bg-white focus-within:ring-4 focus-within:ring-yellow-300 transition-all">
-                  <MapPin className="w-5 h-5 text-gray-500" strokeWidth={3} />
+                <div className="relative h-full">
+                  <MapPin className="w-5 h-5 text-gray-500 absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none" strokeWidth={3} />
                   <input 
                     type="text" 
                     value={searchQuery} 
                     onChange={(e) => setSearchQuery(e.target.value)} 
-                    placeholder="Where to? (e.g., 5-day Meghalaya)" 
-                    className="w-full bg-transparent border-none outline-none text-base md:text-lg font-bold placeholder:font-semibold placeholder:text-gray-400 text-[#0A0A0A]" 
+                    placeholder="Where to? (e.g., Meghalaya)" 
+                    className="w-full bg-gray-50 border-4 border-black rounded-xl p-4 pl-12 font-bold text-base md:text-lg shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] focus:outline-none focus:ring-4 focus:ring-cyan-300 focus:bg-white transition-all placeholder-gray-500 h-full text-[#0A0A0A]"
                     required
                   />
                 </div>
 
                 {/* Dates */}
-                <div className="md:col-span-4 bg-gray-50 border-4 border-[#0A0A0A] rounded-2xl p-3 flex items-center gap-3 shadow-[4px_4px_0px_0px_rgba(10,10,10,1)] focus-within:bg-white transition-all">
-                  <Calendar className="w-5 h-5 text-gray-500" strokeWidth={3} />
-                  <div className="flex-1 flex gap-2 items-center">
-                    <input 
-                      type="date" 
-                      value={startDate} 
-                      onChange={(e) => setStartDate(e.target.value)} 
-                      className="w-full bg-transparent border-none outline-none text-sm font-bold text-[#0A0A0A]" 
-                    />
-                    <span className="font-black text-gray-400">-</span>
-                    <input 
-                      type="date" 
-                      value={endDate} 
-                      onChange={(e) => setEndDate(e.target.value)} 
-                      className="w-full bg-transparent border-none outline-none text-sm font-bold text-[#0A0A0A]" 
-                    />
-                  </div>
+                <div className="relative flex items-center gap-1 w-full bg-gray-50 border-4 border-black rounded-xl p-4 pl-12 font-bold text-base md:text-lg shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] focus-within:outline-none focus-within:ring-4 focus-within:ring-cyan-300 focus-within:bg-white transition-all h-full">
+                  <Calendar className="w-5 h-5 text-gray-500 absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none" strokeWidth={3} />
+                  <input 
+                    type={startDate ? "date" : "text"}
+                    onFocus={(e) => (e.target.type = "date")}
+                    onBlur={(e) => (e.target.type = startDate ? "date" : "text")}
+                    value={startDate} 
+                    onChange={(e) => setStartDate(e.target.value)} 
+                    placeholder="Start"
+                    className="w-full bg-transparent border-none outline-none placeholder-gray-500 text-[#0A0A0A] uppercase truncate min-w-0" 
+                  />
+                  <span className="font-black text-gray-400 shrink-0">-</span>
+                  <input 
+                    type={endDate ? "date" : "text"}
+                    onFocus={(e) => (e.target.type = "date")}
+                    onBlur={(e) => (e.target.type = endDate ? "date" : "text")}
+                    value={endDate} 
+                    onChange={(e) => setEndDate(e.target.value)} 
+                    placeholder="End"
+                    className="w-full bg-transparent border-none outline-none placeholder-gray-500 text-[#0A0A0A] uppercase truncate min-w-0" 
+                  />
                 </div>
 
                 {/* People */}
-                <div className="md:col-span-2 bg-gray-50 border-4 border-[#0A0A0A] rounded-2xl p-3 flex items-center gap-3 shadow-[4px_4px_0px_0px_rgba(10,10,10,1)] focus-within:bg-white transition-all">
-                  <input type="number" min="1" value={peopleCount} onChange={(e) => setPeopleCount(Number(e.target.value))} className="w-full bg-transparent border-none outline-none text-sm font-bold text-[#0A0A0A]" placeholder="No. of People" />
+                <div className="relative h-full">
+                  <input 
+                    type="number" 
+                    min="1" 
+                    value={peopleCount} 
+                    onChange={(e) => setPeopleCount(Number(e.target.value))} 
+                    className="w-full bg-gray-50 border-4 border-black rounded-xl p-4 font-bold text-base md:text-lg shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] focus:outline-none focus:ring-4 focus:ring-cyan-300 focus:bg-white transition-all placeholder-gray-500 h-full text-[#0A0A0A]" 
+                    placeholder="No. of People" 
+                  />
                 </div>
+                
                 {/* Budget */}
-                <div className="md:col-span-2 bg-gray-50 border-4 border-[#0A0A0A] rounded-2xl p-3 flex items-center gap-3 shadow-[4px_4px_0px_0px_rgba(10,10,10,1)] focus-within:bg-white transition-all">
-                  <Wallet className="w-5 h-5 text-gray-500" strokeWidth={3} />
+                <div className="relative h-full">
+                  <Wallet className="w-5 h-5 text-gray-500 absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none" strokeWidth={3} />
                   <select 
                     value={budget} 
                     onChange={(e) => setBudget(e.target.value)} 
-                    className="w-full bg-transparent border-none outline-none text-sm font-bold text-[#0A0A0A] appearance-none"
+                    className="w-full bg-gray-50 border-4 border-black rounded-xl p-4 pl-12 font-bold text-base md:text-lg shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] focus:outline-none focus:ring-4 focus:ring-cyan-300 focus:bg-white transition-all placeholder-gray-500 appearance-none h-full text-[#0A0A0A]"
                   >
                     <option value="">Budget (Any)</option>
-                    <option value="Economy (Under ₹10k)">Economy (Under ₹10k)</option>
-                    <option value="Standard (₹10k - ₹30k)">Standard (₹10k - ₹30k)</option>
-                    <option value="Luxury (₹30k+)">Luxury (₹30k+)</option>
+                    <option value="Economy (< ₹10k)">Economy (&lt; ₹10k)</option>
+                    <option value="Standard (₹10k-30k)">Standard (₹10k-30k)</option>
+                    <option value="Luxury (> ₹30k)">Luxury (&gt; ₹30k)</option>
                   </select>
                 </div>
-
               </div>
 
               {/* Action Button */}
-              <div className="flex justify-end mt-2">
-                <button 
-                  type="submit" 
-                  disabled={loadingPlan}
-                  className="bg-yellow-400 text-[#0A0A0A] font-black border-4 border-[#0A0A0A] rounded-[24px] px-8 py-4 shadow-[4px_4px_0px_0px_rgba(10,10,10,1)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_rgba(10,10,10,1)] transition-all whitespace-nowrap disabled:opacity-70 flex items-center gap-2"
-                >
-                  {loadingPlan ? (
-                    <>
-                      <div className="w-5 h-5 border-4 border-[#0A0A0A] border-t-transparent rounded-full animate-spin" />
-                      {isLoadingLocation ? "Fetching location..." : "Generating..."}
-                    </>
-                  ) : (
-                    <>
-                      <Zap className="w-5 h-5" />
-                      Generate AI Itinerary
-                    </>
-                  )}
-                </button>
-              </div>
+              <button 
+                type="submit" 
+                disabled={loadingPlan}
+                className="w-full lg:w-auto bg-yellow-300 border-4 border-black text-black font-black px-8 py-4 rounded-xl text-lg shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-1 hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] active:translate-y-1 active:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all flex items-center justify-center gap-2 whitespace-nowrap h-full min-h-[64px]"
+              >
+                {loadingPlan ? (
+                  <>
+                    <div className="w-5 h-5 border-4 border-[#0A0A0A] border-t-transparent rounded-full animate-spin shrink-0" />
+                    {isLoadingLocation ? "Fetching location..." : "Generating..."}
+                  </>
+                ) : (
+                  <>
+                    <Zap className="w-5 h-5 shrink-0" />
+                    Generate
+                  </>
+                )}
+              </button>
             </form>
-
+          </div>
             {/* Results Section directly under form */}
             {loadingPlan && (
               <div className="w-full mt-8 flex flex-col items-center justify-center p-8 bg-white border-4 border-[#0A0A0A] rounded-[32px] shadow-[8px_8px_0px_0px_rgba(10,10,10,1)]">
@@ -504,7 +512,7 @@ export default function Home() {
       </section>
 
       {/* Trusted Travel Partners */}
-      <section className="py-12 bg-[var(--color-card)] border-y-4 border-[#0A0A0A] relative z-10 overflow-hidden">
+      <section className="py-10 md:py-20 bg-[var(--color-card)] border-y-4 border-[#0A0A0A] relative z-10 overflow-hidden">
         <div className="max-w-7xl mx-auto px-6 mb-8 text-center">
           <p className="text-sm font-black text-[#0A0A0A] uppercase tracking-widest">Trusted Travel Partners</p>
         </div>
@@ -523,7 +531,7 @@ export default function Home() {
 
       
       {/* What can you do with Travy AI? */}
-      <section className="px-6 py-24 relative bg-white">
+      <section className="px-4 md:px-8 py-12 md:py-24 relative bg-white">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-4xl md:text-5xl lg:text-6xl font-black mb-6 text-[#0A0A0A]" style={{ textShadow: '2px 2px 0px var(--color-primary)' }}>
@@ -571,11 +579,11 @@ export default function Home() {
 
       {/* Featured Destinations */}
 
-      <section className="px-6 py-20 relative z-10">
+      <section className="px-4 md:px-8 py-10 md:py-20 relative z-10">
         <div className="max-w-7xl mx-auto">
           <div className="flex flex-col sm:flex-row items-start sm:items-end justify-between mb-12 gap-6">
             <div>
-              <h2 className="text-4xl md:text-5xl font-black mb-4 text-[#0A0A0A]" style={{ textShadow: '2px 2px 0px var(--color-card)' }}>Trending Destinations</h2>
+              <h2 className="text-3xl md:text-5xl font-black mb-4 text-[#0A0A0A]" style={{ textShadow: '2px 2px 0px var(--color-card)' }}>Trending Destinations</h2>
               <p className="text-[#0A0A0A] font-bold text-lg bg-white inline-block px-3 py-1 border-2 border-[#0A0A0A] transform -rotate-1" style={{ boxShadow: '2px 2px 0px 0px rgba(10,10,10,1)' }}>Most searched places right now</p>
             </div>
             <Link to="/search" className="inline-flex items-center gap-2 text-[#0A0A0A] font-black bg-white px-6 py-3 border-4 border-[#0A0A0A] rounded-full hover:-translate-y-1 hover:translate-x-1 transition-transform" style={{ boxShadow: '4px 4px 0px 0px rgba(10, 10, 10, 1)' }}>
@@ -583,10 +591,10 @@ export default function Home() {
             </Link>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="flex overflow-x-auto pb-8 pt-4 px-4 -mx-4 md:px-0 md:mx-0 md:grid md:grid-cols-2 lg:grid-cols-4 gap-6 snap-x snap-mandatory hide-scrollbar">
             {loadingTrips ? (
               [1, 2, 3, 4].map(i => (
-                <div key={i} className="h-[400px] bg-white/20 animate-pulse rounded-[2rem]"></div>
+                <div key={i} className="h-[400px] w-[85vw] sm:w-80 md:w-auto flex-shrink-0 snap-center bg-white/20 animate-pulse rounded-[2rem]"></div>
               ))
             ) : destinations.length === 0 ? (
               <p className="text-gray-500 col-span-full text-center">No trips available right now.</p>
@@ -598,7 +606,7 @@ export default function Home() {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ delay: i * 0.1 }}
-                  className="h-[400px]"
+                  className="h-[400px] w-[85vw] sm:w-80 md:w-auto flex-shrink-0 snap-center"
                 >
                   <DestinationCard
                     tripId={dest.id}
@@ -616,17 +624,17 @@ export default function Home() {
       </section>
 
       {/* Featured Tripboards Section */}
-      <section className="px-6 py-20 relative bg-pink-100 border-t-4 border-[#0A0A0A]">
+      <section className="px-4 md:px-8 py-10 md:py-20 relative bg-pink-100 border-t-4 border-[#0A0A0A]">
         <div className="max-w-7xl mx-auto">
           <div className="flex flex-col md:flex-row items-start md:items-end justify-between mb-12 gap-6">
             <div className="max-w-2xl">
-              <h2 className="text-4xl md:text-5xl font-black mb-4 text-[#0A0A0A]" style={{ textShadow: '2px 2px 0px var(--color-card)' }}>Creator Tripboards 🗺️</h2>
+              <h2 className="text-3xl md:text-5xl font-black mb-4 text-[#0A0A0A]" style={{ textShadow: '2px 2px 0px var(--color-card)' }}>Creator Tripboards 🗺️</h2>
               <p className="text-[#0A0A0A] font-bold text-lg bg-white inline-block px-3 py-1 border-2 border-[#0A0A0A] transform -rotate-1" style={{ boxShadow: '2px 2px 0px 0px rgba(10,10,10,1)' }}>Explore day-by-day logs, authentic stays, food discoveries, and photos from real travelers.</p>
             </div>
             <div className="flex flex-col sm:flex-row gap-4">
-              <Link to="/create-tripboard" className="inline-flex items-center justify-center gap-2 text-white font-black bg-blue-600 px-6 py-3 border-4 border-[#0A0A0A] rounded-xl hover:-translate-y-1 hover:translate-x-1 transition-transform shadow-[4px_4px_0px_0px_rgba(10,10,10,1)] whitespace-nowrap">
+              <button onClick={() => requireAuth(() => navigate('/create-tripboard'))} className="inline-flex items-center justify-center gap-2 text-white font-black bg-blue-600 px-6 py-3 border-4 border-[#0A0A0A] rounded-xl hover:-translate-y-1 hover:translate-x-1 transition-transform shadow-[4px_4px_0px_0px_rgba(10,10,10,1)] whitespace-nowrap cursor-pointer">
                 Upload Your Tripboard
-              </Link>
+              </button>
               <Link to="/tripboards" className="inline-flex items-center justify-center gap-2 text-[#0A0A0A] font-black bg-yellow-300 px-6 py-3 border-4 border-[#0A0A0A] rounded-xl hover:-translate-y-1 hover:translate-x-1 transition-transform shadow-[4px_4px_0px_0px_rgba(10,10,10,1)] whitespace-nowrap">
                 Explore All <ArrowRight className="w-5 h-5" strokeWidth={3} />
               </Link>
@@ -634,14 +642,14 @@ export default function Home() {
           </div>
           
           {/* Horizontal Scroll Grid */}
-          <div className="flex overflow-x-auto pb-8 gap-6 snap-x snap-mandatory" style={{ scrollbarWidth: 'none' }}>
+          <div className="flex overflow-x-auto gap-6 pb-8 pt-4 px-4 -mx-4 md:px-0 md:mx-0 snap-x snap-mandatory hide-scrollbar">
             {[
               { title: 'South Korea Explorer: Seoul to Jeju', duration: '10 Days', image: 'https://images.unsplash.com/photo-1546874177-9e664ce025b0?auto=format&fit=crop&q=80&w=600', path: 'Seoul (2n) → Gyeongju (2n) → Busan (4n) → Jeju (1n)', avatar: 'https://i.pravatar.cc/150?img=32', name: 'Sarah Explorer', handle: '@pathandpassports', stats: '25 Activities · 24 Food Spots · 4 Stays', color: 'bg-green-200' },
               { title: 'Meghalaya Monsoon Magic', duration: '7 Days', image: 'https://images.unsplash.com/photo-1629831969299-fb93cc2267f7?auto=format&fit=crop&q=80&w=600', path: 'Shillong (2n) → Cherrapunji (3n) → Dawki (1n)', avatar: 'https://i.pravatar.cc/150?img=12', name: 'Rahul Hikes', handle: '@himalayanrahul', stats: '12 Activities · 15 Food Spots · 3 Stays', color: 'bg-cyan-200' },
               { title: 'Bali Budget Backpacker Guide', duration: '14 Days', image: 'https://images.unsplash.com/photo-1537996194471-e657df975ab4?auto=format&fit=crop&q=80&w=600', path: 'Canggu (4n) → Ubud (5n) → Nusa Penida (4n)', avatar: 'https://i.pravatar.cc/150?img=41', name: 'Aussie Nomad', handle: '@budgetbali', stats: '40 Activities · 30 Food Spots · 5 Stays', color: 'bg-yellow-200' },
               { title: 'Swiss Alps Luxury Honeymoon', duration: '8 Days', image: 'https://images.unsplash.com/photo-1530122037265-a5f1f91d3b99?auto=format&fit=crop&q=80&w=600', path: 'Zurich (1n) → Zermatt (3n) → St. Moritz (3n)', avatar: 'https://i.pravatar.cc/150?img=25', name: 'Luxury Escapes', handle: '@luxuryswiss', stats: '10 Activities · 18 Food Spots · 3 Stays', color: 'bg-white' }
             ].map((item, i) => (
-              <Link key={i} to="/tripboards/1" className={`min-w-[320px] md:min-w-[400px] snap-start ${item.color} border-4 border-[#0A0A0A] rounded-[2rem] p-4 shadow-[6px_6px_0px_0px_rgba(10,10,10,1)] hover:-translate-y-1 hover:shadow-[8px_8px_0px_0px_rgba(10,10,10,1)] transition-all flex flex-col group`}>
+              <Link key={i} to="/tripboards/1" className={`w-[85vw] sm:w-80 md:w-96 flex-shrink-0 snap-center ${item.color} border-4 border-[#0A0A0A] rounded-2xl p-5 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-1 hover:shadow-[8px_8px_0px_0px_rgba(10,10,10,1)] transition-transform flex flex-col group`}>
                 <div className="relative w-full h-[200px] rounded-xl border-4 border-[#0A0A0A] overflow-hidden mb-4 bg-white">
                   <img src={item.image} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" alt="Trip Cover" />
                   <div className="absolute top-3 left-3 bg-white border-2 border-[#0A0A0A] px-3 py-1 rounded-full font-black text-xs uppercase shadow-[2px_2px_0px_0px_rgba(10,10,10,1)]">
@@ -662,11 +670,11 @@ export default function Home() {
                 <h3 className="font-black text-xl mb-3 line-clamp-2">{item.title}</h3>
                 
                 <div className="bg-white border-2 border-black rounded-lg p-2 mb-4">
-                  <p className="text-xs font-bold text-gray-800 whitespace-nowrap overflow-hidden text-ellipsis">{item.path}</p>
+                  <p className="text-xs font-bold text-gray-800 truncate w-full">{item.path}</p>
                 </div>
                 
                 <div className="mt-auto flex items-center justify-between border-t-2 border-dashed border-black/30 pt-3">
-                  <p className="text-[11px] font-black text-black uppercase tracking-wider">{item.stats}</p>
+                  <p className="text-[11px] font-black text-black uppercase tracking-wider truncate w-full">{item.stats}</p>
                 </div>
               </Link>
             ))}
@@ -675,7 +683,7 @@ export default function Home() {
       </section>
       
       {/* Impact Metrics Bar */}
-      <section className="py-12 bg-cyan-400 border-y-4 border-[#0A0A0A] relative overflow-hidden">
+      <section className="py-8 md:py-12 bg-cyan-400 border-y-4 border-[#0A0A0A] relative overflow-hidden">
         <div className="max-w-7xl mx-auto px-6 relative z-10">
           <div className="flex flex-col md:flex-row items-center justify-between gap-8 md:gap-4 text-center">
             <div className="flex-1">
@@ -697,7 +705,7 @@ export default function Home() {
       </section>
 
       {/* Social Proof / Testimonial Wall */}
-      <section className="px-6 py-24 relative bg-[var(--color-bg)]">
+      <section className="px-4 md:px-8 py-12 md:py-24 relative bg-[var(--color-bg)]">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-4xl md:text-5xl lg:text-6xl font-black mb-6 text-[#0A0A0A]" style={{ textShadow: '2px 2px 0px #FFD700' }}>
@@ -776,7 +784,7 @@ export default function Home() {
       </section>
 
       {/* Dual Audience CTA */}
-      <section className="px-6 py-24 relative bg-white border-t-4 border-[#0A0A0A]">
+      <section className="px-4 md:px-8 py-12 md:py-24 relative bg-white border-t-4 border-[#0A0A0A]">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-4xl md:text-5xl lg:text-7xl font-black mb-4 text-[#0A0A0A]" style={{ textShadow: '2px 2px 0px var(--color-primary)' }}>

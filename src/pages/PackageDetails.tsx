@@ -162,7 +162,7 @@ export default function PackageDetails() {
               Journey Map
             </h2>
             
-            <div className="relative py-12 px-4 md:px-10 bg-[#F9F5EE] border-4 border-[#0A0A0A] rounded-[3rem] overflow-hidden" style={{ boxShadow: '8px 8px 0px 0px rgba(10,10,10,1)' }}>
+            <div className="relative py-12 px-4 md:px-10 w-full h-64 md:h-[600px] min-h-[250px] bg-gray-100 border-4 border-black rounded-xl overflow-y-auto shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
               
               {/* Map Background grid */}
               <div className="absolute inset-0 opacity-20" style={{ backgroundImage: 'radial-gradient(#0A0A0A 2px, transparent 2px)', backgroundSize: '30px 30px' }}></div>

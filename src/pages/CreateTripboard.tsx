@@ -1,9 +1,21 @@
 import React, { useState } from 'react';
 import { Upload, Plus, Trash2, ArrowRight, Save, Image as ImageIcon, MapPin } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
+import { useNavigate } from 'react-router-dom';
+
 
 export default function CreateTripboard() {
   const [step, setStep] = useState(1);
+  const { user, loading } = useAuth();
+  const navigate = useNavigate();
+
+  React.useEffect(() => {
+    if (!loading && !user) {
+      navigate('/tripboards?login=required');
+    }
+  }, [user, loading, navigate]);
+
 
   return (
     <div className="min-h-screen bg-gray-50 pt-24 pb-20 px-6">

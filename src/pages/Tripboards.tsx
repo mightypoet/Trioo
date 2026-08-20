@@ -1,6 +1,10 @@
 import React, { useState } from 'react';
 import { Compass, Filter } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
+import { useNavigate, useLocation } from 'react-router-dom';
+
+
 import { motion } from 'motion/react';
 
 const categories = ["All", "South East Asia", "Europe", "Mountains", "Solo & Budget", "Luxury"];
@@ -16,6 +20,17 @@ const tripboards = [
 
 export default function Tripboards() {
   const [activeCategory, setActiveCategory] = useState("All");
+  const { requireAuth, setAuthModalOpen } = useAuth();
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  React.useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    if (params.get('login') === 'required') {
+      setAuthModalOpen(true);
+    }
+  }, [location, setAuthModalOpen]);
+
 
   return (
     <div className="min-h-screen bg-gray-50 pt-24 pb-20 px-6">
@@ -28,9 +43,9 @@ export default function Tripboards() {
             </h1>
             <p className="font-bold text-gray-600 mt-2">Discover curated itineraries from real travelers.</p>
           </div>
-          <Link to="/create-tripboard" className="bg-[#0A0A0A] text-white px-6 py-3 rounded-xl border-4 border-[#0A0A0A] font-black hover:-translate-y-1 hover:bg-gray-800 transition-all shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] whitespace-nowrap">
+          <button onClick={() => requireAuth(() => navigate('/create-tripboard'))} className="bg-[#0A0A0A] text-white px-6 py-3 rounded-xl border-4 border-[#0A0A0A] font-black hover:-translate-y-1 hover:bg-gray-800 transition-all shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] whitespace-nowrap cursor-pointer">
             + Create Tripboard
-          </Link>
+          </button>
         </div>
 
         {/* Categories */}
