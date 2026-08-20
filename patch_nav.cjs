@@ -1,27 +1,21 @@
 const fs = require('fs');
-let code = fs.readFileSync('src/components/layout/BottomNav.tsx', 'utf8');
-code = code.replace("Home, Search, Flame, Wallet, User", "Home, Search, Flame, Wallet, User, Plane");
-code = code.replace("{ name: 'Wallet', icon: Wallet, path: '/wallet' }", "{ name: 'Go Solo', icon: Plane, path: '/go-solo' }");
-fs.writeFileSync('src/components/layout/BottomNav.tsx', code);
 
+// 1. BottomNav.tsx
+let bottomNav = fs.readFileSync('src/components/layout/BottomNav.tsx', 'utf8');
+bottomNav = bottomNav.replace("import { Home, Search, Flame, Wallet, User, Plane } from 'lucide-react';", "import { Home, Search, Compass, Wallet, User, Plane } from 'lucide-react';");
+bottomNav = bottomNav.replace("{ name: 'Feed', icon: Flame, path: '/feed' },", "{ name: 'Tripboards', icon: Compass, path: '/tripboards' },");
+fs.writeFileSync('src/components/layout/BottomNav.tsx', bottomNav);
+
+// 2. Navbar.tsx
+// It doesn't seem to have a Feed link directly in the code output I saw, let's check it.
 let navbar = fs.readFileSync('src/components/layout/Navbar.tsx', 'utf8');
-navbar = navbar.replace("Compass, Wallet, User, Moon, Sun, Menu, X, MapPin, Loader2", "Compass, Wallet, User, Moon, Sun, Menu, X, MapPin, Loader2, Plane");
-const oldWalletLink = `<Link to="/wallet" className="hidden sm:flex items-center gap-2 px-4 py-2 bg-white border-4 border-[#0A0A0A] rounded-full transition-all hover:-translate-y-1 hover:translate-x-1" style={{ boxShadow: '4px 4px 0px 0px rgba(10, 10, 10, 1)' }}>
-            <Wallet className="w-4 h-4 text-[#0A0A0A]" />
-            {user && <span className="font-semibold text-sm text-[#0A0A0A]">₹500</span>}
-          </Link>`;
-const newGoSoloLink = `<Link to="/go-solo" className="hidden sm:flex items-center gap-2 px-4 py-2 bg-yellow-300 border-4 border-[#0A0A0A] rounded-full transition-all hover:-translate-y-1 hover:translate-x-1" style={{ boxShadow: '4px 4px 0px 0px rgba(10, 10, 10, 1)' }}>
-            <Plane className="w-4 h-4 text-[#0A0A0A]" />
-            <span className="font-bold text-sm text-[#0A0A0A]">Go Solo</span>
-          </Link>`;
-navbar = navbar.replace(oldWalletLink, newGoSoloLink);
-
-const oldMobileWallet = `<Link to="/wallet" onClick={() => setMobileMenuOpen(false)} className="text-text-main font-medium py-2 flex items-center gap-2">
-            <Wallet className="w-4 h-4 text-primary" /> Wallet {user && "(₹500)"}
-          </Link>`;
-const newMobileGoSolo = `<Link to="/go-solo" onClick={() => setMobileMenuOpen(false)} className="text-text-main font-medium py-2 flex items-center gap-2">
-            <Plane className="w-4 h-4 text-primary" /> Go Solo
-          </Link>`;
-navbar = navbar.replace(oldMobileWallet, newMobileGoSolo);
-
+if (navbar.includes('to="/feed"')) {
+    navbar = navbar.replace('to="/feed"', 'to="/tripboards"').replace('>Feed<', '>Tripboards<');
+}
 fs.writeFileSync('src/components/layout/Navbar.tsx', navbar);
+
+// 3. App.tsx
+let app = fs.readFileSync('src/App.tsx', 'utf8');
+app = app.replace("import Feed from './pages/Feed';", "import Tripboards from './pages/Tripboards';\nimport TripboardDetail from './pages/TripboardDetail';\nimport CreateTripboard from './pages/CreateTripboard';");
+app = app.replace('<Route path="feed" element={<Feed />} />', '<Route path="tripboards" element={<Tripboards />} />\n          <Route path="tripboards/:id" element={<TripboardDetail />} />\n          <Route path="create-tripboard" element={<CreateTripboard />} />');
+fs.writeFileSync('src/App.tsx', app);

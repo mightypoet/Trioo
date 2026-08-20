@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'motion/react';
-import { Search, MapPin, Calendar, Users, ArrowRight, Star, Wallet, PlayCircle, Zap, Map, ShieldCheck, Quote, ExternalLink, IndianRupee, CheckCircle2, Home as HomeIcon, Flame } from 'lucide-react';
+import { Search, MapPin, Calendar, Users, ArrowRight, Star, Wallet, PlayCircle, Zap, Map, ShieldCheck, Quote, ExternalLink, IndianRupee, CheckCircle2, Home as HomeIcon, Flame, Hotel } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { PinkDevilBot } from './PinkDevilBot';
 import { Navigation } from 'lucide-react';
@@ -91,6 +91,7 @@ export default function Home() {
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
   const [budget, setBudget] = useState('');
+  const [peopleCount, setPeopleCount] = useState<number>(2);
   
   const generatePlan = async (queryText: string) => {
     if (!queryText.trim()) return;
@@ -118,6 +119,7 @@ export default function Home() {
           userRequest: fullPrompt,
           availableTrips: trips,
           originCity: originCity || "Unknown",
+          peopleCount: peopleCount,
         }),
       });
 
@@ -190,7 +192,7 @@ export default function Home() {
               <div className="grid grid-cols-1 md:grid-cols-12 gap-4">
                 
                 {/* Destination / Prompt */}
-                <div className="md:col-span-5 bg-gray-50 border-4 border-[#0A0A0A] rounded-2xl p-3 flex items-center gap-3 shadow-[4px_4px_0px_0px_rgba(10,10,10,1)] focus-within:bg-white focus-within:ring-4 focus-within:ring-yellow-300 transition-all">
+                <div className="md:col-span-4 bg-gray-50 border-4 border-[#0A0A0A] rounded-2xl p-3 flex items-center gap-3 shadow-[4px_4px_0px_0px_rgba(10,10,10,1)] focus-within:bg-white focus-within:ring-4 focus-within:ring-yellow-300 transition-all">
                   <MapPin className="w-5 h-5 text-gray-500" strokeWidth={3} />
                   <input 
                     type="text" 
@@ -222,8 +224,12 @@ export default function Home() {
                   </div>
                 </div>
 
+                {/* People */}
+                <div className="md:col-span-2 bg-gray-50 border-4 border-[#0A0A0A] rounded-2xl p-3 flex items-center gap-3 shadow-[4px_4px_0px_0px_rgba(10,10,10,1)] focus-within:bg-white transition-all">
+                  <input type="number" min="1" value={peopleCount} onChange={(e) => setPeopleCount(Number(e.target.value))} className="w-full bg-transparent border-none outline-none text-sm font-bold text-[#0A0A0A]" placeholder="No. of People" />
+                </div>
                 {/* Budget */}
-                <div className="md:col-span-3 bg-gray-50 border-4 border-[#0A0A0A] rounded-2xl p-3 flex items-center gap-3 shadow-[4px_4px_0px_0px_rgba(10,10,10,1)] focus-within:bg-white transition-all">
+                <div className="md:col-span-2 bg-gray-50 border-4 border-[#0A0A0A] rounded-2xl p-3 flex items-center gap-3 shadow-[4px_4px_0px_0px_rgba(10,10,10,1)] focus-within:bg-white transition-all">
                   <Wallet className="w-5 h-5 text-gray-500" strokeWidth={3} />
                   <select 
                     value={budget} 
@@ -391,73 +397,88 @@ export default function Home() {
                   </div>
 
                   <div className="flex flex-col gap-8">
-                    {/* Transportation */}
-                    <div className="bg-white border-4 border-[#0A0A0A] rounded-[2rem] p-6 shadow-[4px_4px_0px_0px_rgba(10,10,10,1)] h-fit">
-                      <h3 className="text-2xl font-black mb-6 flex items-center gap-2">
-                        <Navigation className="w-6 h-6 text-blue-500" strokeWidth={3} />
-                        Transport Links
-                      </h3>
-                      <div className="space-y-4">
-                        {plan?.transportation?.train_link && (
-                          <a href={plan?.transportation?.train_link} target="_blank" rel="noopener noreferrer" className="block p-4 border-2 border-[#0A0A0A] rounded-xl font-bold text-[#0A0A0A] hover:bg-yellow-50 transition-colors flex justify-between items-center group">
-                            Train Options <ArrowRight className="w-4 h-4 opacity-50 group-hover:opacity-100 group-hover:translate-x-1 transition-all" />
-                          </a>
-                        )}
-                        {plan?.transportation?.flight_link && (
-                          <a href={plan?.transportation?.flight_link} target="_blank" rel="noopener noreferrer" className="block p-4 border-2 border-[#0A0A0A] rounded-xl font-bold text-[#0A0A0A] hover:bg-yellow-50 transition-colors flex justify-between items-center group">
-                            Flight Options <ArrowRight className="w-4 h-4 opacity-50 group-hover:opacity-100 group-hover:translate-x-1 transition-all" />
-                          </a>
-                        )}
-                        {plan?.transportation?.irctc_portal && (
-                          <a href={plan?.transportation?.irctc_portal} target="_blank" rel="noopener noreferrer" className="block p-4 border-2 border-[#0A0A0A] rounded-xl font-bold text-[#0A0A0A] hover:bg-yellow-50 transition-colors flex justify-between items-center group">
-                            IRCTC Portal <ArrowRight className="w-4 h-4 opacity-50 group-hover:opacity-100 group-hover:translate-x-1 transition-all" />
-                          </a>
-                        )}
-                        {!plan?.transportation?.train_link && !plan?.transportation?.flight_link && !plan?.transportation?.irctc_portal && (
-                          <p className="text-gray-500 font-medium italic">No transport links generated.</p>
-                        )}
-                      </div>
-                    </div>
-
+                    
                     {/* Budget Breakdown */}
                     {plan?.budgetBreakdown && (
-                      <div className="bg-yellow-300 border-4 border-[#0A0A0A] rounded-[2rem] p-6 sm:p-8 shadow-[4px_4px_0px_0px_rgba(10,10,10,1)] h-fit">
-                        <h3 className="text-2xl font-black mb-6 flex items-center gap-2 text-[#0A0A0A]">
-                          <IndianRupee className="w-6 h-6" strokeWidth={3} />
-                          Budget Estimate
+                      <div className="bg-yellow-300 border-4 border-[#0A0A0A] rounded-[2rem] p-6 shadow-[4px_4px_0px_0px_rgba(10,10,10,1)]">
+                        <h3 className="text-xl font-black mb-6 flex items-center gap-2 text-[#0A0A0A]">
+                          <IndianRupee className="w-5 h-5" strokeWidth={3} /> Budget Breakdown
                         </h3>
-                        <div className="flex flex-col">
+                        
+                        <div className="bg-green-300 border-4 border-black rounded-xl p-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] mb-6 text-center transform -rotate-1 hover:rotate-0 transition-all">
+                          <p className="text-xs font-black uppercase mb-1 opacity-70 text-black">Total Group Cost</p>
+                          <p className="text-2xl font-black text-black">{plan.budgetBreakdown.totalGroup}</p>
+                          {plan.budgetBreakdown.perPerson && <p className="text-sm font-bold text-black mt-2">Per Person: {plan.budgetBreakdown.perPerson}</p>}
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-3">
                           {[
-                            { label: 'Accommodation', desc: 'Hotel or hostel stay', value: plan.budgetBreakdown.accommodation, icon: HomeIcon },
-                            { label: 'Local Transport', desc: 'Cabs, metros, autos', value: plan.budgetBreakdown.localTransport, icon: Navigation },
-                            { label: 'Food & Dining', desc: 'Meals and snacks', value: plan.budgetBreakdown.foodAndDining, icon: Flame },
-                            { label: 'Activities', desc: 'Entry fees and tours', value: plan.budgetBreakdown.entryFeesAndActivities, icon: Star },
-                            { label: 'Miscellaneous', desc: 'Shopping and tips', value: plan.budgetBreakdown.miscellaneous, icon: ShieldCheck }
+                            { label: 'Hotels', value: plan.budgetBreakdown.accommodation },
+                            { label: 'Food', value: plan.budgetBreakdown.food },
+                            { label: 'Transport', value: plan.budgetBreakdown.localTransport }
                           ].map((item, idx) => (
                             item.value && (
-                              <div key={idx} className="flex justify-between items-start py-3 border-b border-black/20 last:border-0">
-                                <div className="flex flex-col">
-                                  <div className="font-bold text-lg flex items-center gap-2 text-[#0A0A0A]">
-                                    {item.icon && <item.icon className="w-5 h-5" strokeWidth={2.5} />}
-                                    {item.label}
-                                  </div>
-                                  <span className="text-sm text-gray-800/80 mt-1 max-w-[70%]">{item.desc}</span>
-                                </div>
-                                <div className="font-extrabold text-lg text-right whitespace-nowrap text-[#0A0A0A] mt-0.5">
-                                  {item.value}
-                                </div>
+                              <div key={idx} className="bg-white border-2 border-black rounded-xl p-3 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+                                <p className="text-xs font-bold text-gray-500 uppercase mb-1">{item.label}</p>
+                                <p className="text-sm font-black text-black leading-tight">{item.value}</p>
                               </div>
                             )
                           ))}
                         </div>
-                        {plan.budgetBreakdown.totalEstimatedCost && (
-                          <div className="mt-4 pt-4 border-t-4 border-[#0A0A0A] flex justify-between items-center gap-2">
-                            <span className="font-black text-[#0A0A0A] uppercase tracking-wider text-xl">Est. Total (PP)</span>
-                            <span className="font-black text-3xl text-[#0A0A0A]">{plan.budgetBreakdown.totalEstimatedCost}</span>
-                          </div>
-                        )}
                       </div>
                     )}
+
+                    {/* Hotel Suggestions */}
+                    {plan?.hotelSuggestions && plan.hotelSuggestions.length > 0 && (
+                      <div className="bg-pink-300 border-4 border-[#0A0A0A] rounded-[2rem] p-6 shadow-[4px_4px_0px_0px_rgba(10,10,10,1)]">
+                        <h3 className="text-xl font-black mb-4 flex items-center gap-2 text-[#0A0A0A]">
+                          <Hotel className="w-5 h-5" strokeWidth={3} /> Stays
+                        </h3>
+                        <div className="flex flex-col gap-4">
+                          {plan.hotelSuggestions.map((hotel: any, idx: number) => (
+                            <div key={idx} className="bg-cyan-200 border-2 border-black rounded-xl p-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-1 hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-all flex flex-col">
+                              <h4 className="font-black text-base leading-tight mb-1 text-black">{hotel.name}</h4>
+                              <div className="flex justify-between items-center mb-3">
+                                <span className="bg-white text-black text-[10px] font-black uppercase px-2 py-0.5 rounded border border-black">{hotel.type}</span>
+                                <span className="font-bold text-sm text-black">{hotel.estimatedPricePerNight}</span>
+                              </div>
+                              <a href={hotel.searchLink} target="_blank" rel="noopener noreferrer" className="bg-[#0A0A0A] text-white text-xs font-black py-2 rounded-lg text-center border-2 border-transparent hover:bg-white hover:text-[#0A0A0A] hover:border-[#0A0A0A] transition-all">
+                                View Prices
+                              </a>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Transportation & Logistics */}
+                    {plan?.transportation && (
+                      <div className="bg-blue-300 border-4 border-[#0A0A0A] rounded-[2rem] p-6 shadow-[4px_4px_0px_0px_rgba(10,10,10,1)]">
+                        <h3 className="text-xl font-black mb-4 flex items-center gap-2 text-[#0A0A0A]">
+                          <Navigation className="w-5 h-5" strokeWidth={3} /> Logistics
+                        </h3>
+                        
+                        {plan.transportation.localAdvice && (
+                          <div className="bg-white border-2 border-black rounded-xl p-4 mb-4 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] text-sm font-bold text-gray-800 leading-snug italic">
+                            💡 {plan.transportation.localAdvice}
+                          </div>
+                        )}
+
+                        <div className="flex flex-col gap-3">
+                          {plan.transportation.flights && (
+                            <a href={plan.transportation.flights} target="_blank" rel="noopener noreferrer" className="bg-white p-3 border-2 border-[#0A0A0A] rounded-xl font-bold text-sm text-[#0A0A0A] hover:bg-yellow-50 transition-colors flex justify-between items-center group shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-1">
+                              Search Flights <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                            </a>
+                          )}
+                          {plan.transportation.trains && (
+                            <a href={plan.transportation.trains} target="_blank" rel="noopener noreferrer" className="bg-white p-3 border-2 border-[#0A0A0A] rounded-xl font-bold text-sm text-[#0A0A0A] hover:bg-yellow-50 transition-colors flex justify-between items-center group shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-1">
+                              Search Trains <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                            </a>
+                          )}
+                        </div>
+                      </div>
+                    )}
+
                   </div>
                 </div>
 
@@ -594,6 +615,64 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Featured Tripboards Section */}
+      <section className="px-6 py-20 relative bg-pink-100 border-t-4 border-[#0A0A0A]">
+        <div className="max-w-7xl mx-auto">
+          <div className="flex flex-col md:flex-row items-start md:items-end justify-between mb-12 gap-6">
+            <div className="max-w-2xl">
+              <h2 className="text-4xl md:text-5xl font-black mb-4 text-[#0A0A0A]" style={{ textShadow: '2px 2px 0px var(--color-card)' }}>Creator Tripboards 🗺️</h2>
+              <p className="text-[#0A0A0A] font-bold text-lg bg-white inline-block px-3 py-1 border-2 border-[#0A0A0A] transform -rotate-1" style={{ boxShadow: '2px 2px 0px 0px rgba(10,10,10,1)' }}>Explore day-by-day logs, authentic stays, food discoveries, and photos from real travelers.</p>
+            </div>
+            <div className="flex flex-col sm:flex-row gap-4">
+              <Link to="/create-tripboard" className="inline-flex items-center justify-center gap-2 text-white font-black bg-blue-600 px-6 py-3 border-4 border-[#0A0A0A] rounded-xl hover:-translate-y-1 hover:translate-x-1 transition-transform shadow-[4px_4px_0px_0px_rgba(10,10,10,1)] whitespace-nowrap">
+                Upload Your Tripboard
+              </Link>
+              <Link to="/tripboards" className="inline-flex items-center justify-center gap-2 text-[#0A0A0A] font-black bg-yellow-300 px-6 py-3 border-4 border-[#0A0A0A] rounded-xl hover:-translate-y-1 hover:translate-x-1 transition-transform shadow-[4px_4px_0px_0px_rgba(10,10,10,1)] whitespace-nowrap">
+                Explore All <ArrowRight className="w-5 h-5" strokeWidth={3} />
+              </Link>
+            </div>
+          </div>
+          
+          {/* Horizontal Scroll Grid */}
+          <div className="flex overflow-x-auto pb-8 gap-6 snap-x snap-mandatory" style={{ scrollbarWidth: 'none' }}>
+            {[
+              { title: 'South Korea Explorer: Seoul to Jeju', duration: '10 Days', image: 'https://images.unsplash.com/photo-1546874177-9e664ce025b0?auto=format&fit=crop&q=80&w=600', path: 'Seoul (2n) → Gyeongju (2n) → Busan (4n) → Jeju (1n)', avatar: 'https://i.pravatar.cc/150?img=32', name: 'Sarah Explorer', handle: '@pathandpassports', stats: '25 Activities · 24 Food Spots · 4 Stays', color: 'bg-green-200' },
+              { title: 'Meghalaya Monsoon Magic', duration: '7 Days', image: 'https://images.unsplash.com/photo-1629831969299-fb93cc2267f7?auto=format&fit=crop&q=80&w=600', path: 'Shillong (2n) → Cherrapunji (3n) → Dawki (1n)', avatar: 'https://i.pravatar.cc/150?img=12', name: 'Rahul Hikes', handle: '@himalayanrahul', stats: '12 Activities · 15 Food Spots · 3 Stays', color: 'bg-cyan-200' },
+              { title: 'Bali Budget Backpacker Guide', duration: '14 Days', image: 'https://images.unsplash.com/photo-1537996194471-e657df975ab4?auto=format&fit=crop&q=80&w=600', path: 'Canggu (4n) → Ubud (5n) → Nusa Penida (4n)', avatar: 'https://i.pravatar.cc/150?img=41', name: 'Aussie Nomad', handle: '@budgetbali', stats: '40 Activities · 30 Food Spots · 5 Stays', color: 'bg-yellow-200' },
+              { title: 'Swiss Alps Luxury Honeymoon', duration: '8 Days', image: 'https://images.unsplash.com/photo-1530122037265-a5f1f91d3b99?auto=format&fit=crop&q=80&w=600', path: 'Zurich (1n) → Zermatt (3n) → St. Moritz (3n)', avatar: 'https://i.pravatar.cc/150?img=25', name: 'Luxury Escapes', handle: '@luxuryswiss', stats: '10 Activities · 18 Food Spots · 3 Stays', color: 'bg-white' }
+            ].map((item, i) => (
+              <Link key={i} to="/tripboards/1" className={`min-w-[320px] md:min-w-[400px] snap-start ${item.color} border-4 border-[#0A0A0A] rounded-[2rem] p-4 shadow-[6px_6px_0px_0px_rgba(10,10,10,1)] hover:-translate-y-1 hover:shadow-[8px_8px_0px_0px_rgba(10,10,10,1)] transition-all flex flex-col group`}>
+                <div className="relative w-full h-[200px] rounded-xl border-4 border-[#0A0A0A] overflow-hidden mb-4 bg-white">
+                  <img src={item.image} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" alt="Trip Cover" />
+                  <div className="absolute top-3 left-3 bg-white border-2 border-[#0A0A0A] px-3 py-1 rounded-full font-black text-xs uppercase shadow-[2px_2px_0px_0px_rgba(10,10,10,1)]">
+                    {item.duration}
+                  </div>
+                </div>
+                
+                <div className="flex items-center gap-3 mb-3">
+                  <div className="w-10 h-10 rounded-full bg-white border-2 border-[#0A0A0A] overflow-hidden">
+                    <img src={item.avatar} className="w-full h-full object-cover" alt="Creator" />
+                  </div>
+                  <div>
+                    <p className="font-black text-sm text-[#0A0A0A] leading-tight">{item.name}</p>
+                    <p className="text-xs font-bold text-gray-700">{item.handle}</p>
+                  </div>
+                </div>
+                
+                <h3 className="font-black text-xl mb-3 line-clamp-2">{item.title}</h3>
+                
+                <div className="bg-white border-2 border-black rounded-lg p-2 mb-4">
+                  <p className="text-xs font-bold text-gray-800 whitespace-nowrap overflow-hidden text-ellipsis">{item.path}</p>
+                </div>
+                
+                <div className="mt-auto flex items-center justify-between border-t-2 border-dashed border-black/30 pt-3">
+                  <p className="text-[11px] font-black text-black uppercase tracking-wider">{item.stats}</p>
+                </div>
+              </Link>
+            ))}
+          </div>
+        </div>
+      </section>
       
       {/* Impact Metrics Bar */}
       <section className="py-12 bg-cyan-400 border-y-4 border-[#0A0A0A] relative overflow-hidden">

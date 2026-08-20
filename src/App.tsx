@@ -16,7 +16,9 @@ import Wallet from './pages/Wallet';
 import CreatorRewards from './pages/CreatorRewards';
 import UserProfile from './pages/UserProfile';
 import GoSolo from './pages/GoSolo';
-import Feed from './pages/Feed';
+import Tripboards from './pages/Tripboards';
+import TripboardDetail from './pages/TripboardDetail';
+import CreateTripboard from './pages/CreateTripboard';
 
 import AdminLayout from './components/admin/AdminLayout';
 import AdminDashboard from './pages/admin/AdminDashboard';
@@ -35,7 +37,9 @@ export default function App() {
         <Route path="/" element={<Layout />}>
           <Route index element={<Home />} />
           <Route path="search" element={<Search />} />
-                    <Route path="feed" element={<Feed />} />
+                    <Route path="tripboards" element={<Tripboards />} />
+          <Route path="tripboards/:id" element={<TripboardDetail />} />
+          <Route path="create-tripboard" element={<CreateTripboard />} />
           <Route path="package/:id" element={<PackageDetails />} />
           <Route path="book/:id" element={<BookingFlow />} />
           <Route path="wallet" element={<Wallet />} />
