@@ -24,6 +24,7 @@ import AdminLayout from './components/admin/AdminLayout';
 import AdminDashboard from './pages/admin/AdminDashboard';
 import CreateTrip from './pages/admin/CreateTrip';
 import Agencies from './pages/admin/Agencies';
+import AdminTripboards from './pages/admin/AdminTripboards';
 import AdminProtectedRoute from './components/auth/AdminProtectedRoute';
 import AgencyDashboard from './pages/AgencyDashboard';
 
@@ -61,6 +62,7 @@ export default function App() {
           <Route index element={<AdminDashboard />} />
           <Route path="agencies" element={<Agencies />} />
           <Route path="trips" element={<div><h2 className="text-2xl font-bold mb-4">Trips Management</h2><CreateTrip /></div>} />
+          <Route path="tripboards" element={<AdminTripboards />} />
           <Route path="settings" element={<div>Settings</div>} />
         </Route>
       </Routes>

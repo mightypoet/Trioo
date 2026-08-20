@@ -7,6 +7,7 @@ const NAV_ITEMS = [
   { name: 'Dashboard', path: '/admin', icon: LayoutDashboard },
   { name: 'Agencies', path: '/admin/agencies', icon: Building2 },
   { name: 'Trips', path: '/admin/trips', icon: Map },
+  { name: 'Tripboards', path: '/admin/tripboards', icon: Compass },
   { name: 'Settings', path: '/admin/settings', icon: Settings },
 ];
 
