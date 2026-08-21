@@ -142,8 +142,15 @@ export default function TripboardDetail() {
                     </div>
                   </div>
                   <p className="font-bold text-gray-700 mb-4">{day.description}</p>
+                  
+                  {day.image && (
+                    <div className="mb-4 rounded-xl border-4 border-black overflow-hidden shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] max-w-2xl">
+                      <img src={day.image} alt={day.title} className="w-full h-auto object-cover max-h-80" />
+                    </div>
+                  )}
+
                   {day.transport && (
-                    <div className="bg-gray-100 border-2 border-dashed border-black rounded-xl p-3 inline-flex items-center gap-2">
+                    <div className="bg-gray-100 border-2 border-dashed border-black rounded-xl p-3 inline-flex items-center gap-2 mt-2">
                       <Train className="w-5 h-5" /> <span className="font-bold text-sm">Transport: {day.transport}</span>
                     </div>
                   )}
@@ -160,6 +167,11 @@ export default function TripboardDetail() {
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {data.stays?.length > 0 ? data.stays.map((stay: any, i: number) => (
                 <div key={i} className="bg-white border-4 border-black rounded-2xl p-4 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] flex flex-col hover:-translate-y-1 transition-all">
+                  {stay.image && (
+                    <div className="mb-3 rounded-lg border-2 border-black overflow-hidden w-full h-40">
+                      <img src={stay.image} alt={stay.name} className="w-full h-full object-cover" />
+                    </div>
+                  )}
                   <h3 className="font-black text-xl mb-1">{stay.name}</h3>
                   <p className="font-bold text-gray-600 text-sm mb-3">{stay.room}</p>
                   <div className="mt-auto flex items-center justify-between pt-4 border-t-2 border-dashed border-gray-300">
@@ -180,7 +192,12 @@ export default function TripboardDetail() {
           {activeTab === 'Food' && (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                {data.food?.length > 0 ? data.food.map((f: any, i: number) => (
-                <div key={i} className="bg-white border-4 border-black rounded-2xl p-4 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-1 transition-all">
+                <div key={i} className="bg-white border-4 border-black rounded-2xl p-4 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-1 transition-all flex flex-col">
+                  {f.image && (
+                    <div className="mb-3 rounded-lg border-2 border-black overflow-hidden w-full h-40">
+                      <img src={f.image} alt={f.name} className="w-full h-full object-cover" />
+                    </div>
+                  )}
                   <h3 className="font-black text-xl mb-1">{f.name}</h3>
                   {f.dish && (
                     <div className="bg-pink-100 border-2 border-black rounded-lg p-2 mb-3">

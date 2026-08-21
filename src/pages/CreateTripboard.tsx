@@ -1,8 +1,73 @@
 import React, { useState } from 'react';
-import { Upload, Plus, Trash2, ArrowRight, Save, Image as ImageIcon, MapPin, Loader2 } from 'lucide-react';
+import { Upload, Plus, Trash2, ArrowRight, Image as ImageIcon, MapPin, Loader2 } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { supabase } from '../lib/supabase';
+
+function ImageUploader({ value, onChange, label = "Upload Image", className = "", user }: { value: string, onChange: (url: string) => void, label?: string, className?: string, user: any }) {
+  const [isUploading, setIsUploading] = useState(false);
+
+  const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !user) {
+      if (!user) alert("You must be logged in to upload images.");
+      return;
+    }
+
+    setIsUploading(true);
+    try {
+      const fileName = `${user.id}-${Date.now()}-${file.name.replace(/[^a-zA-Z0-9.-]/g, '_')}`;
+      const { data, error } = await supabase.storage
+        .from('tripboard-images')
+        .upload(fileName, file);
+
+      if (error) throw error;
+
+      const { data: { publicUrl } } = supabase.storage
+        .from('tripboard-images')
+        .getPublicUrl(fileName);
+
+      onChange(publicUrl);
+    } catch (err: any) {
+      console.error('Error uploading image:', err);
+      alert('Upload failed: ' + err.message);
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
+  if (value) {
+    return (
+      <div className={`relative rounded-xl border-4 border-black overflow-hidden shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] bg-white ${className}`}>
+        <img src={value} alt="Uploaded preview" className="w-full h-48 object-cover" />
+        <button 
+          onClick={() => onChange('')} 
+          className="absolute top-2 right-2 bg-red-400 border-2 border-black w-8 h-8 rounded-full flex items-center justify-center text-white hover:bg-red-500 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all"
+          title="Remove Image"
+        >
+          <Trash2 className="w-4 h-4" />
+        </button>
+      </div>
+    );
+  }
+
+  return (
+    <label className={`block bg-yellow-200 border-4 border-black border-dashed rounded-xl p-6 text-center cursor-pointer hover:bg-yellow-300 font-bold transition-all shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] ${className}`}>
+      <input type="file" accept="image/*" className="hidden" onChange={handleUpload} disabled={isUploading} />
+      {isUploading ? (
+        <div className="flex flex-col items-center gap-2">
+          <Loader2 className="w-6 h-6 animate-spin mx-auto" />
+          <span>Uploading...</span>
+        </div>
+      ) : (
+        <div className="flex flex-col items-center gap-2">
+          <ImageIcon className="w-6 h-6 mx-auto" />
+          <span>{label}</span>
+        </div>
+      )}
+    </label>
+  );
+}
 
 export default function CreateTripboard() {
   const [step, setStep] = useState(1);
@@ -19,14 +84,14 @@ export default function CreateTripboard() {
   const [newNights, setNewNights] = useState('');
   
   // Step 2
-  const [itinerary, setItinerary] = useState([{ day: 1, title: '', description: '', transport: '' }]);
+  const [itinerary, setItinerary] = useState([{ day: 1, title: '', description: '', transport: '', image: '' }]);
   
   // Step 3
-  const [stays, setStays] = useState([{ name: '', price: '', room: '', link: '' }]);
+  const [stays, setStays] = useState([{ name: '', price: '', room: '', link: '', image: '' }]);
   
   // Step 4
   const [totalCost, setTotalCost] = useState('');
-  const [food, setFood] = useState([{ name: '', dish: '', review: '' }]);
+  const [food, setFood] = useState([{ name: '', dish: '', review: '', image: '' }]);
 
   React.useEffect(() => {
     if (!loading && !user) {
@@ -121,11 +186,8 @@ export default function CreateTripboard() {
                   <input type="text" value={title} onChange={e => setTitle(e.target.value)} placeholder="e.g. 10 Days in South Korea" className="w-full bg-gray-50 border-4 border-black rounded-xl p-4 font-bold shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] focus:outline-none focus:bg-yellow-50" />
                 </div>
                 <div>
-                  <label className="block font-black text-lg mb-2">Cover Photo URL</label>
-                  <div className="flex gap-2">
-                    <div className="bg-gray-100 border-4 border-black rounded-xl p-4 flex items-center justify-center shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"><ImageIcon className="w-6 h-6" /></div>
-                    <input type="text" value={coverPhotoUrl} onChange={e => setCoverPhotoUrl(e.target.value)} placeholder="https://..." className="w-full bg-gray-50 border-4 border-black rounded-xl p-4 font-bold shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] focus:outline-none focus:bg-yellow-50" />
-                  </div>
+                  <label className="block font-black text-lg mb-2">Cover Photo</label>
+                  <ImageUploader value={coverPhotoUrl} onChange={setCoverPhotoUrl} label="Upload Cover Photo" user={user} />
                 </div>
                 <div>
                   <label className="block font-black text-lg mb-2">Cities Visited</label>
@@ -152,15 +214,18 @@ export default function CreateTripboard() {
               {itinerary.map((day, i) => (
                 <div key={i} className="bg-gray-100 border-4 border-black rounded-xl p-4 relative shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
                    {itinerary.length > 1 && (
-                     <button onClick={() => setItinerary(itinerary.filter((_, idx) => idx !== i))} className="absolute -top-3 -right-3 bg-red-400 border-4 border-black w-8 h-8 rounded-full flex items-center justify-center text-white hover:bg-red-500"><Trash2 className="w-4 h-4"/></button>
+                     <button onClick={() => setItinerary(itinerary.filter((_, idx) => idx !== i))} className="absolute -top-3 -right-3 bg-red-400 border-4 border-black w-8 h-8 rounded-full flex items-center justify-center text-white hover:bg-red-500 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"><Trash2 className="w-4 h-4"/></button>
                    )}
                    <h3 className="font-black text-lg mb-3">Day {day.day}</h3>
                    <input type="text" value={day.title} onChange={e => { const newIt = [...itinerary]; newIt[i].title = e.target.value; setItinerary(newIt); }} placeholder="Highlight Title (e.g. Arrival & Palaces)" className="w-full bg-white border-2 border-black rounded-lg p-2 font-bold mb-3 focus:outline-none focus:bg-yellow-50" />
                    <textarea value={day.description} onChange={e => { const newIt = [...itinerary]; newIt[i].description = e.target.value; setItinerary(newIt); }} placeholder="Describe the day's activities..." rows={3} className="w-full bg-white border-2 border-black rounded-lg p-2 font-bold mb-3 focus:outline-none focus:bg-yellow-50"></textarea>
-                   <input type="text" value={day.transport} onChange={e => { const newIt = [...itinerary]; newIt[i].transport = e.target.value; setItinerary(newIt); }} placeholder="Transport Mode (e.g. KTX Train)" className="w-full bg-white border-2 border-black rounded-lg p-2 font-bold focus:outline-none focus:bg-yellow-50" />
+                   <input type="text" value={day.transport} onChange={e => { const newIt = [...itinerary]; newIt[i].transport = e.target.value; setItinerary(newIt); }} placeholder="Transport Mode (e.g. KTX Train)" className="w-full bg-white border-2 border-black rounded-lg p-2 font-bold mb-3 focus:outline-none focus:bg-yellow-50" />
+                   
+                   <label className="block font-bold text-sm mb-2 text-gray-700">Add a Photo for this Day</label>
+                   <ImageUploader value={day.image || ''} onChange={(url) => { const newIt = [...itinerary]; newIt[i].image = url; setItinerary(newIt); }} label="Upload Day Photo" user={user} />
                 </div>
               ))}
-              <button onClick={() => setItinerary([...itinerary, { day: itinerary.length + 1, title: '', description: '', transport: '' }])} className="w-full bg-green-300 border-4 border-black rounded-xl p-4 font-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-1 transition-all flex justify-center gap-2">
+              <button onClick={() => setItinerary([...itinerary, { day: itinerary.length + 1, title: '', description: '', transport: '', image: '' }])} className="w-full bg-green-300 border-4 border-black rounded-xl p-4 font-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-1 transition-all flex justify-center gap-2">
                 <Plus /> Add Another Day
               </button>
             </div>
@@ -172,7 +237,7 @@ export default function CreateTripboard() {
               {stays.map((stay, i) => (
                 <div key={i} className="bg-pink-100 border-4 border-black rounded-xl p-4 relative shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
                    {stays.length > 1 && (
-                     <button onClick={() => setStays(stays.filter((_, idx) => idx !== i))} className="absolute -top-3 -right-3 bg-red-400 border-4 border-black w-8 h-8 rounded-full flex items-center justify-center text-white hover:bg-red-500"><Trash2 className="w-4 h-4"/></button>
+                     <button onClick={() => setStays(stays.filter((_, idx) => idx !== i))} className="absolute -top-3 -right-3 bg-red-400 border-4 border-black w-8 h-8 rounded-full flex items-center justify-center text-white hover:bg-red-500 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"><Trash2 className="w-4 h-4"/></button>
                    )}
                    <h3 className="font-black text-lg mb-3">Stay {i + 1}</h3>
                    <input type="text" value={stay.name} onChange={e => { const newS = [...stays]; newS[i].name = e.target.value; setStays(newS); }} placeholder="Hotel / Hostel Name" className="w-full bg-white border-2 border-black rounded-lg p-2 font-bold mb-3 focus:outline-none focus:bg-yellow-50" />
@@ -180,10 +245,13 @@ export default function CreateTripboard() {
                      <input type="text" value={stay.price} onChange={e => { const newS = [...stays]; newS[i].price = e.target.value; setStays(newS); }} placeholder="Price (e.g. ₹2000/n)" className="flex-1 bg-white border-2 border-black rounded-lg p-2 font-bold focus:outline-none focus:bg-yellow-50" />
                      <input type="text" value={stay.room} onChange={e => { const newS = [...stays]; newS[i].room = e.target.value; setStays(newS); }} placeholder="Room Type" className="flex-1 bg-white border-2 border-black rounded-lg p-2 font-bold focus:outline-none focus:bg-yellow-50" />
                    </div>
-                   <input type="text" value={stay.link} onChange={e => { const newS = [...stays]; newS[i].link = e.target.value; setStays(newS); }} placeholder="Booking Link (Optional)" className="w-full bg-white border-2 border-black rounded-lg p-2 font-bold focus:outline-none focus:bg-yellow-50" />
+                   <input type="text" value={stay.link} onChange={e => { const newS = [...stays]; newS[i].link = e.target.value; setStays(newS); }} placeholder="Booking Link (Optional)" className="w-full bg-white border-2 border-black rounded-lg p-2 font-bold mb-3 focus:outline-none focus:bg-yellow-50" />
+                   
+                   <label className="block font-bold text-sm mb-2 text-gray-700">Add a Photo of the Stay</label>
+                   <ImageUploader value={stay.image || ''} onChange={(url) => { const newS = [...stays]; newS[i].image = url; setStays(newS); }} label="Upload Stay Photo" user={user} />
                 </div>
               ))}
-              <button onClick={() => setStays([...stays, { name: '', price: '', room: '', link: '' }])} className="w-full bg-green-300 border-4 border-black rounded-xl p-4 font-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-1 transition-all flex justify-center gap-2">
+              <button onClick={() => setStays([...stays, { name: '', price: '', room: '', link: '', image: '' }])} className="w-full bg-green-300 border-4 border-black rounded-xl p-4 font-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-1 transition-all flex justify-center gap-2">
                 <Plus /> Add Another Stay
               </button>
             </div>
@@ -200,15 +268,18 @@ export default function CreateTripboard() {
               {food.map((f, i) => (
                 <div key={i} className="bg-yellow-100 border-4 border-black rounded-xl p-4 relative shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
                    {food.length > 1 && (
-                     <button onClick={() => setFood(food.filter((_, idx) => idx !== i))} className="absolute -top-3 -right-3 bg-red-400 border-4 border-black w-8 h-8 rounded-full flex items-center justify-center text-white hover:bg-red-500"><Trash2 className="w-4 h-4"/></button>
+                     <button onClick={() => setFood(food.filter((_, idx) => idx !== i))} className="absolute -top-3 -right-3 bg-red-400 border-4 border-black w-8 h-8 rounded-full flex items-center justify-center text-white hover:bg-red-500 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"><Trash2 className="w-4 h-4"/></button>
                    )}
                    <h3 className="font-black text-lg mb-3">Food Spot {i + 1}</h3>
                    <input type="text" value={f.name} onChange={e => { const newF = [...food]; newF[i].name = e.target.value; setFood(newF); }} placeholder="Restaurant Name" className="w-full bg-white border-2 border-black rounded-lg p-2 font-bold mb-3 focus:outline-none focus:bg-yellow-50" />
                    <input type="text" value={f.dish} onChange={e => { const newF = [...food]; newF[i].dish = e.target.value; setFood(newF); }} placeholder="What did you order?" className="w-full bg-white border-2 border-black rounded-lg p-2 font-bold mb-3 focus:outline-none focus:bg-yellow-50" />
-                   <input type="text" value={f.review} onChange={e => { const newF = [...food]; newF[i].review = e.target.value; setFood(newF); }} placeholder="Short Review" className="w-full bg-white border-2 border-black rounded-lg p-2 font-bold focus:outline-none focus:bg-yellow-50" />
+                   <input type="text" value={f.review} onChange={e => { const newF = [...food]; newF[i].review = e.target.value; setFood(newF); }} placeholder="Short Review" className="w-full bg-white border-2 border-black rounded-lg p-2 font-bold mb-3 focus:outline-none focus:bg-yellow-50" />
+                   
+                   <label className="block font-bold text-sm mb-2 text-gray-700">Add a Food Photo</label>
+                   <ImageUploader value={f.image || ''} onChange={(url) => { const newF = [...food]; newF[i].image = url; setFood(newF); }} label="Upload Food Photo" user={user} />
                 </div>
               ))}
-              <button onClick={() => setFood([...food, { name: '', dish: '', review: '' }])} className="w-full bg-green-300 border-4 border-black rounded-xl p-4 font-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-1 transition-all flex justify-center gap-2">
+              <button onClick={() => setFood([...food, { name: '', dish: '', review: '', image: '' }])} className="w-full bg-green-300 border-4 border-black rounded-xl p-4 font-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-1 transition-all flex justify-center gap-2">
                 <Plus /> Add Another Restaurant
               </button>
             </div>
@@ -217,8 +288,7 @@ export default function CreateTripboard() {
           {/* Navigation Buttons */}
           <div className="flex justify-between mt-8 pt-6 border-t-4 border-black">
              {step > 1 ? (
-               <button onClick={() => setStep(s => s - 1)} className="font-black px-6 py-3 border-4 border-black rounded-xl bg-white hover:bg-gray-100 transition-colors shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">Back</button>
-             ) : <div></div>}
+               <button onClick={() => setStep(s => s - 1)} className="font-black px-6 py-3 border-4 border-black rounded-xl bg-white hover:bg-gray-100 transition-colors shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">Back</button>             ) : <div></div>}
              
              {step < 4 ? (
                <button onClick={() => setStep(s => s + 1)} className="font-black px-6 py-3 border-4 border-black rounded-xl bg-blue-500 text-white flex items-center gap-2 hover:-translate-y-1 transition-all shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">Next <ArrowRight className="w-4 h-4"/></button>
